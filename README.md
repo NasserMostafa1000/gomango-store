@@ -93,9 +93,11 @@ Important endpoints:
 
 ## Ownership & Contact
 
-I am the sole engineer and product owner for **Gomango.shop**. Feel free to review the live deployment or reach out for collaboration:
+I originally built **Gomango.shop** from scratch before selling the live store to a new owner. The entire codebase remains my intellectual property, and I maintain full rights to showcase, reuse, or adapt it.
+
+Feel free to explore the production deployment or reach out for collaboration:
 
 > [https://Gomango.shop](https://Gomango.shop)
 
-All rights reserved. Redistribution or reuse requires my written approval.
+All rights reserved. Any redistribution or reuse of the source code requires my written approval.
 
