@@ -1,95 +1,101 @@
-# Souq-Elbalad E-Commerce Platform [visit](https://souq-elbalad.netlify.app/)
+# Gomango.shop – Full Stack E-Commerce Platform
 
+This repository contains the complete source for **Gomango.shop**, a bilingual (Arabic/English) online store that I personally designed, coded, and deployed end-to-end: frontend, backend, admin panel, DevOps, and Stripe payments.
 
-Souq-Elbalad is a **single-store e-commerce platform** designed for store owners to manage their products, control inventory, process customer orders, and configure shipping rates based on locations. The platform also allows the creation of manager accounts with specific access permissions, including full product control, but with restricted access to customer data and site settings.
-
----
-
-## 🚀 Project Overview
-
-- **Frontend**: Built using **React.js** for a responsive and dynamic user experience.
-- **Backend**: Powered by **ASP.NET Core REST APIs with ef-core** to handle data management and communication.
-- **Admin Panel**: Provides an interface for store owners and managers to manage the store and products.
+> 🌍 Live store: [https://Gomango.shop](https://Gomango.shop)
 
 ---
 
-## 📋 Features
+## Why It Stands Out
 
-### For Customers:
-
-- **Product Browsing**:  
-  Customers can easily browse products by categories and search for specific items.
-
-- **Shopping Cart**:  
-  Add products to the cart and proceed to checkout.
-
-- **Order History**:  
-  Customers can view their past orders and track their current orders.
-
-- **Account Management**:  
-  Customers can create an account, manage their details, and save shipping information.
+- **Production-ready**: actively serving customers with real payments.
+- **Solo-built**: every component—from UI/UX to database design—is authored by me.
+- **Hiring-ready**: showcases product thinking, polished UX, secure payment flows, and resilient API design.
 
 ---
 
-### For Store Owner:
+## Feature Snapshot
 
-#### **Product Management**:
-
-- Add new products
-- Edit product details (name, description, price, etc.)
-- Manage product quantities (increase or decrease stock)
-- Remove products
-
-#### **Order Management**:
-
-- View and manage customer orders
-- Update order status (e.g., processing, shipped, delivered)
-- Handle customer inquiries regarding orders
-
-#### **Shipping Rates**:
-
-- Set shipping rates based on the customer's location (province or city)
-- Update shipping costs dynamically based on the selected shipping region
-
-#### **Add Shipping Agent**:
-
-- Add an email address for shipping agents who can only manage orders related to their cases and update the status of shipments.
-- Shipping agents have access only to the orders they are assigned to, not to full order or customer data.
- 
-
-
-
-#### **Clients Searching**
--  feature to monitor and log real-time client search activity.
-- Introduced backend endpoint `searching` to expose Clients searching for their need prosuct (for admin use).
-
-
+- **Instant language switch + RTL/LTR layout** for a culturally tailored UI.
+- **Smart checkout**: saved addresses, dual payment options (Stripe + COD), resumable carts.
+- **Reward automation**: shipping discount code generated and surfaced inside a celebratory `SuccessForm` (with audio) when Stripe confirms payment.
+- **Pending order pipeline**: webhook-safe flow with manual reprocess endpoint so no paid order is lost.
+- **Admin workspace**: roles (Admin, Manager, Shipping), catalog management, order dashboards, announcement controls, currency selector.
+- **Real-time signals**: SignalR notifications, live customer search logs, sticky navbar, animated announcement bar.
 
 ---
 
-### For Manager:
+## Tech Stack
 
-#### **Product Control**:
-
-- Managers can add, edit, and remove products
-- They can manage inventory and update quantities
-
-#### **Restricted Access**:
-
-- Managers cannot modify site settings (e.g., "Contact Us", site emails, etc.)
-- Managers cannot view customer information—this is limited to the **Admin** only.
+| Layer | Technologies |
+|-------|--------------|
+| Frontend | React 18, Vite, Tailwind CSS, React Router, Howler.js, Stripe.js |
+| Backend | ASP.NET Core 8, EF Core, SQL Server, SignalR, Stripe.NET |
+| Ops & Infra | Webhook signature verification, PendingOrders queue, Azure-style hosting |
 
 ---
 
-### For Admin:
+## Run the Frontend (`Store-React`)
 
-#### **Full Access Control**:
+```bash
+cd Store-React
+cp .env.example .env             # set API_BASE_URL
+npm install
+npm run dev                      # npm run build && npm run preview for prod check
+```
 
-- Admin has complete control over the website settings, including modifying site details (e.g., "Contact Us", email addresses, etc.)
-- Admin can view all customer data, manage store owners and managers, and perform site-wide configurations.
+- Default dev URL: `http://localhost:5173`.
+- Key UI files: `src/Components/Home/StoreLayout.jsx`, `src/Components/CreateOrder/*`, `src/Components/i18n/I18nContext.jsx`.
 
 ---
 
+## Run the Backend (`store-RESTAPIs`)
 
+```bash
+cd store-RESTAPIs/OnlineStoreAPIs
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<SQL-CONNECTION>"
+dotnet user-secrets set "Stripe:SecretKey" "<STRIPE-SECRET>"
+dotnet user-secrets set "Stripe:WebhookSecret" "<WEBHOOK-SECRET>"
+dotnet restore
+dotnet ef database update
+dotnet run
+```
 
+Important endpoints:
+- `POST /api/Payments/StripeCheckout` – create Checkout Session.
+- `POST /api/Payments/StripeWebhook` – validates signature, finalizes orders, assigns reward code.
+- `POST /api/Payments/ReprocessPendingOrders` – admin fallback for stuck pending orders.
+- `GET /api/Payments/CheckoutStatus?sessionId=...` – polled by frontend to open the success modal.
+
+---
+
+## Architecture Overview
+
+| Path | Description |
+|------|-------------|
+| `Store-React/src/Components/Home/StoreLayout.jsx` | Core layout, sticky navbar, sidebar, announcement bar. |
+| `Store-React/src/Components/CreateOrder` | Address selection, order summary, payment success flow. |
+| `Store-React/src/Components/i18n/I18nContext.jsx` | Translation keys and language context. |
+| `store-RESTAPIs/OnlineStoreAPIs/Controllers` | REST endpoints for products, orders, payments, customers. |
+| `StoreBusinessLayer/OrdersServices/PendingOrdersRepo.cs` | Pending order repository and recovery logic. |
+
+---
+
+## Suggested QA Scenarios
+
+1. Register → add address → place Cash-on-Delivery order → verify success modal (no discount).
+2. Place Stripe order → wait for webhook → success modal should show order number, play victory sound, and display shipping discount code.
+3. Toggle language/currency during browsing; verify RTL/LTR alignment and translations.
+4. Log in as Manager vs Shipping vs Admin to confirm scoped permissions.
+5. Call `POST /api/Payments/ReprocessPendingOrders` after a simulated webhook failure to prove resiliency.
+
+---
+
+## Ownership & Contact
+
+I am the sole engineer and product owner for **Gomango.shop**. Feel free to review the live deployment or reach out for collaboration:
+
+> [https://Gomango.shop](https://Gomango.shop)
+
+All rights reserved. Redistribution or reuse requires my written approval.
 
