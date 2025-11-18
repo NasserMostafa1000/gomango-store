@@ -1,0 +1,24 @@
+{
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+    "AllowedHosts": "*",
+    "ConnectionStrings": {
+      "ConnStr": "Data Source=SQL1003.site4now.net;Initial Catalog=db_ac07d8_gomango;User Id=db_ac07d8_gomango_admin;Password=Gomango@1234;"
+    },
+    "JwtSettings": {
+        "Key": "OnlineStoreqasdfasdfasdfasdfasdfasdfasdf ",
+        "Issuer": "souq-elbalad server",
+        "Audience": "souq-elbalad.netlify.app.com"
+    },
+    "Stripe": {
+        "PublishableKey": "pk_live",
+        "SecretKey": "sk_live",
+        "WebhookSecret": "whsec",
+        "SuccessUrl": "https://gomango.shop/payment-success",
+        "CancelUrl": "https://gomango.shop/payment-cancelled"
+    }
+}
