@@ -1,0 +1,80 @@
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.deps.json
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.runtimeconfig.json
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.dll
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.pdb
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.csproj.AssemblyReference.cache
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.AssemblyInfoInputs.cache
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.AssemblyInfo.cs
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.csproj.CoreCompileInputs.cache
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.sourcelink.json
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.dll
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\refint\StoreDataLayer.dll
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.pdb
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.genruntimeconfig.cache
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Debug\net8.0\ref\StoreDataLayer.dll
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.deps.json
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.runtimeconfig.json
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.dll
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.pdb
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.csproj.AssemblyReference.cache
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.AssemblyInfoInputs.cache
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.AssemblyInfo.cs
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.csproj.CoreCompileInputs.cache
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.sourcelink.json
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.dll
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\refint\StoreDataLayer.dll
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.pdb
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.genruntimeconfig.cache
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\ref\StoreDataLayer.dll
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\appsettings.Development.json
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.deps.json
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.runtimeconfig.json
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.dll
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.pdb
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.csproj.AssemblyReference.cache
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.GeneratedMSBuildEditorConfig.editorconfig
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.AssemblyInfoInputs.cache
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.AssemblyInfo.cs
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.csproj.CoreCompileInputs.cache
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.sourcelink.json
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.dll
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\refint\StoreDataLayer.dll
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.pdb
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.genruntimeconfig.cache
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\ref\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\appsettings.Development.json
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.deps.json
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.runtimeconfig.json
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.pdb
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.csproj.AssemblyReference.cache
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.AssemblyInfoInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.AssemblyInfo.cs
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.csproj.CoreCompileInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.sourcelink.json
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\refint\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.pdb
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.genruntimeconfig.cache
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\ref\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\appsettings.Development.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.deps.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.runtimeconfig.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\bin\Debug\net8.0\StoreDataLayer.pdb
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.csproj.AssemblyReference.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.AssemblyInfoInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.AssemblyInfo.cs
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.csproj.CoreCompileInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.sourcelink.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\refint\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.pdb
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\StoreDataLayer.genruntimeconfig.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Debug\net8.0\ref\StoreDataLayer.dll

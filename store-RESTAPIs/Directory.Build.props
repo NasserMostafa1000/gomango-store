@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <RestorePackagesPath>$(UserProfile)\.nuget\packages</RestorePackagesPath>
+    <RestoreNoCache>true</RestoreNoCache>
+    <RestoreIgnoreFailedSources>true</RestoreIgnoreFailedSources>
+  </PropertyGroup>
+</Project>
+

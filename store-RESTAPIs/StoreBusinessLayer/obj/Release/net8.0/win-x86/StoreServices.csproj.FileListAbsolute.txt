@@ -1,0 +1,17 @@
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\win-x86\appsettings.Development.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\win-x86\StoreServices.deps.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\win-x86\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\win-x86\StoreServices.pdb
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\win-x86\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\win-x86\StoreDataLayer.pdb
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\StoreServices.csproj.AssemblyReference.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\StoreServices.GeneratedMSBuildEditorConfig.editorconfig
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\StoreServices.AssemblyInfoInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\StoreServices.AssemblyInfo.cs
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\StoreServices.csproj.CoreCompileInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\StoreServices.sourcelink.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\StoreSer.3696EFA1.Up2Date
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\refint\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\StoreServices.pdb
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\win-x86\ref\StoreServices.dll

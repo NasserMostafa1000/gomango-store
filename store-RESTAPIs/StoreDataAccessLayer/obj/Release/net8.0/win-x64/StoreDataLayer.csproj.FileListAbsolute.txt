@@ -1,0 +1,16 @@
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\bin\Release\net8.0\win-x64\appsettings.Development.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\bin\Release\net8.0\win-x64\StoreDataLayer.deps.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\bin\Release\net8.0\win-x64\StoreDataLayer.runtimeconfig.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\bin\Release\net8.0\win-x64\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\bin\Release\net8.0\win-x64\StoreDataLayer.pdb
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\StoreDataLayer.csproj.AssemblyReference.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\StoreDataLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\StoreDataLayer.AssemblyInfoInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\StoreDataLayer.AssemblyInfo.cs
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\StoreDataLayer.csproj.CoreCompileInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\StoreDataLayer.sourcelink.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\refint\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\StoreDataLayer.pdb
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\StoreDataLayer.genruntimeconfig.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreDataAccessLayer\obj\Release\net8.0\win-x64\ref\StoreDataLayer.dll

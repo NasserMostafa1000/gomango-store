@@ -1,0 +1,68 @@
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\appsettings.Development.json
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.deps.json
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.dll
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.pdb
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreDataLayer.dll
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreDataLayer.pdb
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.csproj.AssemblyReference.cache
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.AssemblyInfoInputs.cache
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.AssemblyInfo.cs
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.csproj.CoreCompileInputs.cache
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.sourcelink.json
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreSer.3696EFA1.Up2Date
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.dll
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\refint\StoreServices.dll
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.pdb
+C:\Users\Elalamia\Desktop\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\ref\StoreServices.dll
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\appsettings.Development.json
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.deps.json
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.dll
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.pdb
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreDataLayer.dll
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreDataLayer.pdb
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.csproj.AssemblyReference.cache
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.GeneratedMSBuildEditorConfig.editorconfig
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.AssemblyInfoInputs.cache
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.AssemblyInfo.cs
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.csproj.CoreCompileInputs.cache
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.sourcelink.json
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreSer.3696EFA1.Up2Date
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.dll
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\refint\StoreServices.dll
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.pdb
+E:\WORK\My Apps\Souq\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\ref\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\appsettings.Development.json
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.deps.json
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.pdb
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreDataLayer.pdb
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.csproj.AssemblyReference.cache
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.GeneratedMSBuildEditorConfig.editorconfig
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.AssemblyInfoInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.AssemblyInfo.cs
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.csproj.CoreCompileInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.sourcelink.json
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreSer.3696EFA1.Up2Date
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\refint\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.pdb
+D:\MR Comapny\Projects\All Apps\Apps\E-Commerce-souq-elbalad--main\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\ref\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\appsettings.Development.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.deps.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreServices.pdb
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreDataLayer.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\bin\Release\net8.0\StoreDataLayer.pdb
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.csproj.AssemblyReference.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.GeneratedMSBuildEditorConfig.editorconfig
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.AssemblyInfoInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.AssemblyInfo.cs
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.csproj.CoreCompileInputs.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.sourcelink.json
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreSer.3696EFA1.Up2Date
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\refint\StoreServices.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\StoreServices.pdb
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\StoreBusinessLayer\obj\Release\net8.0\ref\StoreServices.dll

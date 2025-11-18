@@ -1,0 +1,63 @@
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\bin\Release\net8.0\appsettings.Development.json
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.deps.json
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.runtimeconfig.json
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.pdb
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.csproj.AssemblyReference.cache
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.AssemblyInfoInputs.cache
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.AssemblyInfo.cs
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.csproj.CoreCompileInputs.cache
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\obj\Release\net8.0\refint\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.pdb
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.genruntimeconfig.cache
+C:\Users\Elalamia\Desktop\OnlineStore\StoreDataAccessLayer\obj\Release\net8.0\ref\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\appsettings.Development.json
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.deps.json
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.runtimeconfig.json
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.pdb
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.csproj.AssemblyReference.cache
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.AssemblyInfoInputs.cache
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.AssemblyInfo.cs
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.csproj.CoreCompileInputs.cache
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\refint\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.pdb
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.genruntimeconfig.cache
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\ref\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\online store\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.sourcelink.json
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\appsettings.Development.json
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.deps.json
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.runtimeconfig.json
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.pdb
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.csproj.AssemblyReference.cache
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.AssemblyInfoInputs.cache
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.AssemblyInfo.cs
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.csproj.CoreCompileInputs.cache
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.sourcelink.json
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\refint\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.pdb
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.genruntimeconfig.cache
+C:\Users\Elalamia\Desktop\souq-elbalad\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\ref\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\appsettings.Development.json
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.deps.json
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.runtimeconfig.json
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\bin\Release\net8.0\StoreDataAccessLayer.pdb
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.csproj.AssemblyReference.cache
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.AssemblyInfoInputs.cache
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.AssemblyInfo.cs
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.csproj.CoreCompileInputs.cache
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.sourcelink.json
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\refint\StoreDataAccessLayer.dll
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.pdb
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\StoreDataAccessLayer.genruntimeconfig.cache
+C:\Users\Elalamia\Desktop\souq\store-asp.net\StoreDataAccessLayer\obj\Release\net8.0\ref\StoreDataAccessLayer.dll
