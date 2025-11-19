@@ -57,7 +57,7 @@ async function generateSitemap() {
   </url>
 
   <url>
-    <loc>https://souq-elbalad.netlify.app/FindProducts</loc>
+    <loc>https://gomango.shop/FindProducts</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>

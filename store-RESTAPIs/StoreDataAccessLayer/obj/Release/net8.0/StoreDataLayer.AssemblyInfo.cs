@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("StoreDataLayer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+886ea871d545fc96b07dcb3c33b75d01b61a5728")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dae414341b68625ea02b30c54ac253ff328552cb")]
 [assembly: System.Reflection.AssemblyProductAttribute("StoreDataLayer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("StoreDataLayer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

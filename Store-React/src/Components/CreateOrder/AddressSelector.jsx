@@ -1,6 +1,7 @@
 import { egyptianGovernorates as emirates } from "../../Components/utils";
 import { handleAddAddress } from "./api.js";
 import { useState } from "react";
+import { useI18n } from "../i18n/I18nContext";
 
 export default function AddressSelector({
   addresses,
@@ -13,11 +14,13 @@ export default function AddressSelector({
   setAddresses,
 }) {
   const [isLoading, setIsLoading] = useState(false);
+  const { t, lang } = useI18n();
+  const isRTL = lang === "ar";
 
   const HandleSaveClick = async () => {
     const token = sessionStorage.getItem("token");
     if (!token) {
-      alert("لم يتم العثور على التوكن، الرجاء تسجيل الدخول.");
+      alert(t("addressSelector.tokenNotFound", "لم يتم العثور على التوكن، الرجاء تسجيل الدخول."));
       return;
     }
 
@@ -31,19 +34,23 @@ export default function AddressSelector({
       });
 
       if (!addressId)
-        throw new Error("❌ فشل في الحصول على ID العنوان الجديد!");
+        throw new Error(t("addressSelector.failedToGetId", "❌ فشل في الحصول على ID العنوان الجديد!"));
 
+      const addressFormat = isRTL 
+        ? `${newAddress.governorate}- مدينه ${newAddress.city} شارع ${newAddress.street}`
+        : `${newAddress.governorate}- City ${newAddress.city} Street ${newAddress.street}`;
+      
       setAddresses((prevAddresses) => ({
         ...prevAddresses,
-        [addressId]: `${newAddress.governorate}- مدينه ${newAddress.city} شارع ${newAddress.street}`,
+        [addressId]: addressFormat,
       }));
 
       setSelectedAddressId(addressId);
       setShowAddAddressModal(false);
       setNewAddress({ governorate: "", city: "", street: "" });
     } catch (error) {
-      console.error("❌ خطأ أثناء إضافة العنوان:", error.message);
-      alert(`⚠️ خطأ: ${error.message}`);
+      console.error(t("addressSelector.errorAdding", "❌ خطأ أثناء إضافة العنوان:"), error.message);
+      alert(`⚠️ ${t("addressSelector.error", "خطأ")}: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -56,12 +63,12 @@ export default function AddressSelector({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-xl p-6 flex flex-col items-center space-y-4">
             <div className="w-12 h-12 border-4 border-orange-500 border-t-blue-900 rounded-full animate-spin"></div>
-            <p className="text-blue-900 font-semibold">جاري حفظ العنوان...</p>
+            <p className="text-blue-900 font-semibold">{t("addressSelector.saving", "جاري حفظ العنوان...")}</p>
           </div>
         </div>
       )}
 
-      <h4 className="text-lg font-semibold text-blue-900">العنوان المختار</h4>
+      <h4 className="text-lg font-semibold text-blue-900">{t("addressSelector.selectedAddress", "العنوان المختار")}</h4>
 
       {Object.keys(addresses).length > 0 ? (
         <select
@@ -77,7 +84,7 @@ export default function AddressSelector({
         </select>
       ) : (
         <button className="text-orange-600 text-sm font-medium bg-orange-50 px-4 py-2 rounded-lg border border-orange-200 w-full">
-          👇 لا توجد عناوين متاحة، قم بإضافة عنوان الآن 👇
+          {t("addressSelector.noAddresses", "👇 لا توجد عناوين متاحة، قم بإضافة عنوان الآن 👇")}
         </button>
       )}
 
@@ -89,21 +96,21 @@ export default function AddressSelector({
           }}
           className="text-blue-900 font-semibold hover:text-orange-600 transition-colors text-sm bg-blue-50 px-4 py-2 rounded-lg hover:bg-orange-50 border border-blue-200 hover:border-orange-200"
         >
-          + أضف عنوانًا جديدًا
+          + {t("addressSelector.addNewAddress", "أضف عنوانًا جديدًا")}
         </button>
       </div>
 
       {showAddAddressModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 space-y-6 border-2 border-orange-500">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md mx-4 space-y-6 border-2 border-orange-500" dir={isRTL ? "rtl" : "ltr"}>
             <h3 className="text-xl font-bold text-blue-900 text-center">
-              إضافة عنوان جديد
+              {t("addressSelector.addNewAddressTitle", "إضافة عنوان جديد")}
             </h3>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-blue-900 mb-2">
-                  المحافظة:
+                  {t("addressSelector.governorate", "المحافظة")}:
                 </label>
                 <select
                   value={newAddress.governorate}
@@ -113,9 +120,10 @@ export default function AddressSelector({
                       governorate: e.target.value,
                     })
                   }
-                  className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-right focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-colors"
+                  className={`w-full rounded-lg border-2 border-gray-300 px-4 py-3 ${isRTL ? "text-right" : "text-left"} focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-colors`}
+                  dir={isRTL ? "rtl" : "ltr"}
                 >
-                  <option value="">اختر إمارة</option>
+                  <option value="">{t("addressSelector.selectEmirate", "اختر إمارة")}</option>
                   {emirates.map((governorate, index) => (
                     <option key={index} value={governorate}>
                       {governorate}
@@ -126,7 +134,7 @@ export default function AddressSelector({
 
               <div>
                 <label className="block text-sm font-semibold text-blue-900 mb-2">
-                  المدينة:
+                  {t("addressSelector.city", "المدينة")}:
                 </label>
                 <input
                   type="text"
@@ -134,14 +142,15 @@ export default function AddressSelector({
                   onChange={(e) =>
                     setNewAddress({ ...newAddress, city: e.target.value })
                   }
-                  className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-right focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-colors"
-                  placeholder="أدخل اسم المدينة"
+                  className={`w-full rounded-lg border-2 border-gray-300 px-4 py-3 ${isRTL ? "text-right" : "text-left"} focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-colors`}
+                  placeholder={t("addressSelector.enterCity", "أدخل اسم المدينة")}
+                  dir={isRTL ? "rtl" : "ltr"}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-blue-900 mb-2">
-                  الشارع + الشقة + الدور + تفاصيل إضافية
+                  {t("addressSelector.streetDetails", "الشارع + الشقة + الدور + تفاصيل إضافية")}
                 </label>
                 <input
                   type="text"
@@ -149,8 +158,9 @@ export default function AddressSelector({
                   onChange={(e) =>
                     setNewAddress({ ...newAddress, street: e.target.value })
                   }
-                  className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-right focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-colors"
-                  placeholder="أدخل تفاصيل العنوان"
+                  className={`w-full rounded-lg border-2 border-gray-300 px-4 py-3 ${isRTL ? "text-right" : "text-left"} focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-colors`}
+                  placeholder={t("addressSelector.enterAddressDetails", "أدخل تفاصيل العنوان")}
+                  dir={isRTL ? "rtl" : "ltr"}
                 />
               </div>
             </div>
@@ -161,14 +171,14 @@ export default function AddressSelector({
                 onClick={HandleSaveClick}
                 disabled={isLoading}
               >
-                {isLoading ? "جاري الحفظ..." : "حفظ العنوان"}
+                {isLoading ? t("addressSelector.saving", "جاري الحفظ...") : t("addressSelector.saveAddress", "حفظ العنوان")}
               </button>
               <button
                 className="flex-1 bg-blue-900 text-white rounded-xl py-3 font-semibold hover:bg-blue-800 transition-colors shadow-md hover:shadow-lg"
                 onClick={() => setShowAddAddressModal(false)}
                 disabled={isLoading}
               >
-                إلغاء
+                {t("general.cancel", "إلغاء")}
               </button>
             </div>
           </div>

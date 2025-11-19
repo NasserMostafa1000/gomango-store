@@ -11,6 +11,7 @@ export default function AddProduct() {
   const [productNameEn, setProductNameEn] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [discountPercentage, setDiscountPercentage] = useState("");
+  const [discountType, setDiscountType] = useState("percentage"); // "percentage" or "amount"
   const [categoryName, setCategoryName] = useState("");
   const [moreDetailsAr, setMoreDetailsAr] = useState("");
   const [moreDetailsEn, setMoreDetailsEn] = useState("");
@@ -50,6 +51,18 @@ export default function AddProduct() {
     e.preventDefault();
     setLoading(true);
 
+    // حساب نسبة الخصم النهائية
+    let finalDiscountPercentage = 0;
+    if (discountType === "percentage") {
+      finalDiscountPercentage = Number(discountPercentage);
+    } else {
+      const price = parseFloat(productPrice);
+      const discountAmount = parseFloat(discountPercentage);
+      if (price > 0) {
+        finalDiscountPercentage = (discountAmount / price) * 100;
+      }
+    }
+
     const newProduct = {
       productId: 0,
       productNameAr,
@@ -57,7 +70,7 @@ export default function AddProduct() {
       shortNameAr,
       shortNameEn,
       productPrice: Number(productPrice),
-      discountPercentage: Number(discountPercentage),
+      discountPercentage: finalDiscountPercentage,
       categoryName,
       moreDetailsAr,
       moreDetailsEn,
@@ -97,7 +110,16 @@ export default function AddProduct() {
       setDiscountPercentage("");
       return;
     }
-    setDiscountPercentage(Math.max(0, Math.min(100, value)));
+    if (discountType === "percentage") {
+      setDiscountPercentage(Math.max(0, Math.min(100, value)));
+    } else {
+      const price = parseFloat(productPrice);
+      if (!isNaN(price) && price > 0) {
+        setDiscountPercentage(Math.max(0, Math.min(price, value)));
+      } else {
+        setDiscountPercentage(value >= 0 ? value : "");
+      }
+    }
   };
 
   // حساب السعر بعد الخصم
@@ -106,8 +128,29 @@ export default function AddProduct() {
     const price = parseFloat(productPrice);
     const discount = parseFloat(discountPercentage);
     if (isNaN(price) || isNaN(discount)) return null;
-    const priceAfterDiscount = price - (price * (discount / 100));
-    return priceAfterDiscount.toFixed(2);
+    
+    let priceAfterDiscount;
+    if (discountType === "percentage") {
+      priceAfterDiscount = price - (price * (discount / 100));
+    } else {
+      priceAfterDiscount = price - discount;
+    }
+    
+    return priceAfterDiscount > 0 ? priceAfterDiscount.toFixed(2) : 0;
+  };
+
+  // حساب نسبة الخصم للعرض
+  const calculateDiscountPercentage = () => {
+    if (!productPrice || !discountPercentage) return null;
+    const price = parseFloat(productPrice);
+    const discount = parseFloat(discountPercentage);
+    if (isNaN(price) || isNaN(discount) || price === 0) return null;
+    
+    if (discountType === "percentage") {
+      return discount.toFixed(2);
+    } else {
+      return ((discount / price) * 100).toFixed(2);
+    }
   };
 
   const priceAfterDiscount = calculatePriceAfterDiscount();
@@ -274,32 +317,102 @@ export default function AddProduct() {
                 />
               </div>
 
-              {/* Discount Percentage */}
+              {/* Discount */}
               <div className="mb-6">
                 <label htmlFor="discountPercentage" className="block text-lg font-bold text-[#0A2C52] mb-3 flex items-center gap-2">
                   <FiPercent className="text-[#F55A00]" size={20} />
-                  {t("addProduct.fields.discountPercentage", "نسبة الخصم")} <span className="text-red-500">*</span>
+                  {t("addProduct.fields.discountPercentage", "الخصم")} <span className="text-red-500">*</span>
                 </label>
+                
+                {/* Discount Type Selector */}
+                <div className="mb-3 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDiscountType("percentage");
+                      setDiscountPercentage("");
+                    }}
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                      discountType === "percentage"
+                        ? "bg-[#0A2C52] text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    {t("addProduct.discountType.percentage", "نسبة مئوية")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDiscountType("amount");
+                      setDiscountPercentage("");
+                    }}
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                      discountType === "amount"
+                        ? "bg-[#0A2C52] text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    {t("addProduct.discountType.amount", "مبلغ ثابت")}
+                  </button>
+                </div>
+
                 <div className="relative">
                   <input
                     type="number"
                     id="discountPercentage"
                     name="discountPercentage"
                     min="0"
-                    step="0.01"
-                    max="100"
+                    step={discountType === "percentage" ? "0.01" : "0.01"}
+                    max={discountType === "percentage" ? "100" : undefined}
                     value={discountPercentage}
                     onChange={handleDiscountChange}
                     required
                     disabled={loading}
                     className="w-full p-4 border-2 border-[#0A2C52]/30 rounded-xl focus:ring-2 focus:ring-[#F55A00] focus:border-[#F55A00] transition-all duration-200 bg-white placeholder-gray-500 pr-12"
-                    placeholder={t("addProduct.placeholders.discountPercentage", "0 - 100")}
+                    placeholder={discountType === "percentage" ? t("addProduct.placeholders.discountPercentage", "0 - 100") : t("addProduct.placeholders.discountAmount", "أدخل مبلغ الخصم")}
                   />
-                  <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0A2C52]">%</span>
+                  <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#0A2C52] font-semibold">
+                    {discountType === "percentage" ? "%" : "د.إ"}
+                  </span>
                 </div>
-                <p className="text-sm text-[#0A2C52]/70 mt-2">
-                  {t("addProduct.hints.discountRange", "يجب أن تكون النسبة بين 0 و 100")}
-                </p>
+                
+                {/* عرض تفاصيل الخصم */}
+                {productPrice && discountPercentage && parseFloat(discountPercentage) > 0 && (
+                  <div className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl p-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-blue-800 font-semibold text-sm">
+                          {t("addProduct.discountDetails.originalPrice", "السعر الأصلي:")}
+                        </span>
+                        <span className="text-blue-900 font-bold">
+                          {parseFloat(productPrice).toFixed(2)} د.إ
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-blue-800 font-semibold text-sm">
+                          {discountType === "percentage" 
+                            ? t("addProduct.discountDetails.discountPercentage", "نسبة الخصم:")
+                            : t("addProduct.discountDetails.discountAmount", "مبلغ الخصم:")}
+                        </span>
+                        <span className="text-blue-900 font-bold">
+                          {discountType === "percentage" 
+                            ? `${parseFloat(discountPercentage).toFixed(2)}%`
+                            : `${parseFloat(discountPercentage).toFixed(2)} د.إ`}
+                        </span>
+                      </div>
+                      {discountType === "amount" && (
+                        <div className="flex items-center justify-between pt-2 border-t border-blue-200">
+                          <span className="text-blue-800 font-semibold text-sm">
+                            {t("addProduct.discountDetails.equivalentPercentage", "ما يعادل:")}
+                          </span>
+                          <span className="text-blue-900 font-bold">
+                            {calculateDiscountPercentage()}%
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
                 
                 {/* عرض السعر بعد الخصم */}
                 {priceAfterDiscount && parseFloat(discountPercentage) > 0 && (

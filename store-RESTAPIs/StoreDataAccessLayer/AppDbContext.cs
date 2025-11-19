@@ -35,6 +35,7 @@ namespace StoreDataAccessLayer
 
         public DbSet<CartDetails> CartDetails { get; set; }
         public DbSet<ProductsDetails> ProductDetails { get; set; }
+        public DbSet<ProductDetailImages> ProductDetailImages { get; set; }
         public DbSet<Banner> Banners { get; set; }
         public DbSet<AnnouncementBar> AnnouncementBars { get; set; }
         public DbSet<CurrencyRate> CurrencyRates { get; set; }

@@ -497,7 +497,11 @@ export default function PurchaseOperationDetails() {
           )}
 
           <button
-            className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`w-full text-white font-bold py-4 px-6 rounded-lg text-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+              paymentMethod === "online"
+                ? "bg-[#0A2C52] hover:bg-[#13345d]"
+                : "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+            }`}
             onClick={HandleBuyClick}
             disabled={purchaseLoading}
             style={{ color: 'white' }}
@@ -506,7 +510,7 @@ export default function PurchaseOperationDetails() {
               {purchaseLoading
                 ? t("purchaseDetails.processing", "جاري المعالجة...")
                 : paymentMethod === "online"
-                ? t("purchaseDetails.onlinePayment", "الدفع الإلكتروني")
+                ? t("purchaseDetails.buyNow", "شراء الآن")
                 : t("purchaseDetails.completePurchase", "اتمام الشراء")}
             </span>
           </button>

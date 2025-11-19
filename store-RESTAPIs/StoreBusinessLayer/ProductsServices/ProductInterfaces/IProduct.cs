@@ -36,6 +36,12 @@ namespace StoreServices.Products.ProductInterfaces
         Task<bool> UpdateProductAsync(UpdateProductDto updateProductDto);
         Task<List<int>> GetProductsIds();
         Task<bool> DeleteProductAsync(int productId);
+        
+        // ProductDetailImages methods
+        Task<int> AddProductDetailImageAsync(ProductsDtos.AddProductDetailImageDto dto);
+        Task<List<ProductsDtos.ProductDetailImageDto>> GetProductDetailImagesAsync(int productDetailsId);
+        Task<bool> DeleteProductDetailImageAsync(int productDetailImageId);
+        Task<bool> DeleteAllProductDetailImagesAsync(int productDetailsId);
 
     }
 }

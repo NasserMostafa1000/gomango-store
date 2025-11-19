@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import API_BASE_URL from "../Constant";
 import { useI18n } from "../i18n/I18nContext";
@@ -13,26 +13,6 @@ export default function PaymentSuccess() {
   const [discountCode, setDiscountCode] = useState(null);
   const [error, setError] = useState("");
   const [showSuccessForm, setShowSuccessForm] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const rewardRequestedRef = useRef(false);
-  const completedRef = useRef(false);
-
-  const fetchRewardCode = async () => {
-    if (rewardRequestedRef.current) return;
-    rewardRequestedRef.current = true;
-    try {
-      const response = await fetch(`${API_BASE_URL}ShippingDiscountsCodes/get-random-active-code`);
-      if (!response.ok) {
-        throw new Error("no_code");
-      }
-      const payload = await response.json();
-      if (payload?.code) {
-        setDiscountCode(payload.code);
-      }
-    } catch (err) {
-      console.error("Failed to fetch reward code", err);
-    }
-  };
 
   useEffect(() => {
     if (!sessionId) {
@@ -59,43 +39,23 @@ export default function PaymentSuccess() {
         }
         const data = await response.json();
         if (data.status === "completed") {
-          if (completedRef.current) {
-            clearInterval(interval);
-            return;
-          }
-          completedRef.current = true;
           setOrderId(data.orderId);
+          setDiscountCode(data.discountCode);
           setStatus("completed");
-          const messageText = `${t("payments.completedBody", "تم تسجيل طلبك بنجاح. رقم طلبك")} #${data.orderId ?? ""}`;
-          setSuccessMessage(messageText);
           if (data.discountCode) {
-            setDiscountCode(data.discountCode);
-          } else {
-            setDiscountCode(null);
-            if (!rewardRequestedRef.current) {
-              fetchRewardCode();
-            }
+            setShowSuccessForm(true);
           }
-          setShowSuccessForm(true);
           clearInterval(interval);
         } else if (data.status === "not_found") {
-          if (completedRef.current) {
-            clearInterval(interval);
-            return;
-          }
           setError(t("payments.notFound", "لم يتم العثور على الطلب، يرجى التواصل مع الدعم."));
           setStatus("error");
           clearInterval(interval);
         } else {
-          if (!completedRef.current) {
-            setStatus("pending");
-          }
+          setStatus("pending");
         }
       } catch (err) {
-        if (!completedRef.current) {
-          setError(t("payments.checkStatusError", "حدث خطأ أثناء التحقق من حالة الدفع."));
-          setStatus("error");
-        }
+        setError(t("payments.checkStatusError", "حدث خطأ أثناء التحقق من حالة الدفع."));
+        setStatus("error");
         clearInterval(interval);
       }
     }, 3000);
@@ -105,17 +65,16 @@ export default function PaymentSuccess() {
 
   return (
     <>
-      {showSuccessForm && status === "completed" && (
+      {showSuccessForm && (
         <SuccessForm
-          message={successMessage || `${t("payments.completedBody", "تم تسجيل طلبك بنجاح. رقم طلبك")} #${orderId ?? ""}`}
+          message={`${t("payments.completedBody", "تم تسجيل طلبك بنجاح. رقم طلبك")} #${orderId ?? ""}`}
           onClose={() => setShowSuccessForm(false)}
           discountCode={discountCode}
           showDiscountCode={!!discountCode}
         />
       )}
       <div className="min-h-screen bg-gradient-to-br from-blue-900 to-blue-800 flex items-center justify-center px-4">
-      {!(status === "completed" && showSuccessForm) && (
-        <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full text-center space-y-6">
+      <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full text-center space-y-6">
         <div className="w-16 h-16 rounded-full mx-auto flex items-center justify-center" style={{ backgroundColor: status === "completed" ? "#16a34a" : status === "error" ? "#dc2626" : "#f97316" }}>
           {status === "completed" ? "✓" : status === "error" ? "!" : "…"}
         </div>
@@ -133,6 +92,10 @@ export default function PaymentSuccess() {
         )}
         {status === "completed" && (
           <>
+            <p className="text-blue-700">
+              {t("payments.completedBody", "تم تسجيل طلبك بنجاح. رقم طلبك")}{" "}
+              <span className="font-bold text-orange-600">#{orderId}</span>
+            </p>
             {discountCode && (
               <div className="mt-4 p-4 bg-gradient-to-r from-orange-100 to-orange-50 border-2 border-orange-300 rounded-xl shadow-lg">
                 <div className="text-center space-y-2">
@@ -164,10 +127,6 @@ export default function PaymentSuccess() {
                 </div>
               </div>
             )}
-            <p className="text-blue-700 mt-4">
-              {t("payments.completedBody", "تم تسجيل طلبك بنجاح. رقم طلبك")}{" "}
-              <span className="font-bold text-orange-600">#{orderId}</span>
-            </p>
           </>
         )}
         {status === "error" && (
@@ -188,8 +147,7 @@ export default function PaymentSuccess() {
             {t("payments.backHome", "العودة للرئيسية")}
           </Link>
         </div>
-        </div>
-      )}
+      </div>
     </div>
     </>
   );

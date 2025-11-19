@@ -79,6 +79,24 @@ namespace StoreBusinessLayer.Products
             public int ProductDetailsId { get; set; }
             public int Quantity { get; set; }
             public string Image { get; set; } = null!;
+            public List<string>? Images { get; set; }
+        }
+        
+        public class AddProductDetailImageDto
+        {
+            [Required]
+            public int ProductDetailsId { get; set; }
+            [Required]
+            public string ImageUrl { get; set; } = null!;
+            public int DisplayOrder { get; set; } = 0;
+        }
+        
+        public class ProductDetailImageDto
+        {
+            public int ProductDetailImageId { get; set; }
+            public int ProductDetailsId { get; set; }
+            public string ImageUrl { get; set; } = null!;
+            public int DisplayOrder { get; set; }
         }
 
          public class UpdateProductDto

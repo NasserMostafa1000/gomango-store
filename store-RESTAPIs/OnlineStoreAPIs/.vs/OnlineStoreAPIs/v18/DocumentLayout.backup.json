@@ -7,16 +7,20 @@
       "RelativeMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\onlinestoreapis\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|solutionrelative:controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\onlinestoreapis\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\onlinestoreapis\\controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|solutionrelative:controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\onlinestoreapis\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|solutionrelative:controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\onlinestoreapis\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\onlinestoreapis\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -43,10 +47,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\onlinestoreapis\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|solutionrelative:controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\onlinestoreapis\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|solutionrelative:controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B79279B1-8F17-41E8-B078-97CEFCB3DE77}|..\\StoreDataAccessLayer\\StoreDataLayer.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\storedataaccesslayer\\entitiesconfigurations\\sizesconfigurations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
@@ -76,7 +76,7 @@
       "VerticalTabListWidth": 116,
       "DocumentGroups": [
         {
-          "DockedWidth": 277,
+          "DockedWidth": 355,
           "SelectedChildIndex": 10,
           "Children": [
             {
@@ -113,7 +113,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "OrdersController.cs",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\Controllers\\OrdersController.cs",
               "RelativeDocumentMoniker": "Controllers\\OrdersController.cs",
@@ -121,21 +121,19 @@
               "RelativeToolTip": "Controllers\\OrdersController.cs",
               "ViewState": "AgIAAIcAAAAAAAAAAAA4wJ4AAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-16T15:38:31.056Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-16T15:38:31.056Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
               "ToolTip": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAADAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-14T11:20:56.389Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T11:20:56.389Z"
             },
             {
               "$type": "Document",
@@ -145,14 +143,14 @@
               "RelativeDocumentMoniker": "Properties\\launchSettings.json",
               "ToolTip": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\Properties\\launchSettings.json",
               "RelativeToolTip": "Properties\\launchSettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAALAAAAAAAAAA==",
+              "ViewState": "AgIAACcAAAAAAAAAAAAAACgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-11-16T16:03:08.64Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -160,12 +158,11 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAK8AAAAAAAAAAAAYwDsAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-17T18:16:26.203Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T18:16:26.203Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "CategoriesController.cs",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\Controllers\\CategoriesController.cs",
               "RelativeDocumentMoniker": "Controllers\\CategoriesController.cs",
@@ -173,24 +170,22 @@
               "RelativeToolTip": "Controllers\\CategoriesController.cs",
               "ViewState": "AgIAAE8AAAAAAAAAAAAcwFMAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-17T12:58:40.688Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T12:58:40.688Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "OnlineStoreAPIs",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\OnlineStoreAPIs.csproj",
               "RelativeDocumentMoniker": "OnlineStoreAPIs.csproj",
               "ToolTip": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\OnlineStoreAPIs.csproj",
               "RelativeToolTip": "OnlineStoreAPIs.csproj",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-11-17T17:08:06.567Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T17:08:06.567Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "StoreServices.csproj",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\StoreBusinessLayer\\StoreServices.csproj",
               "RelativeDocumentMoniker": "..\\StoreBusinessLayer\\StoreServices.csproj",
@@ -198,25 +193,23 @@
               "RelativeToolTip": "..\\StoreBusinessLayer\\StoreServices.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-11-17T16:58:24.084Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T16:58:24.084Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "OnlineStoreAPIs.csproj",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\OnlineStoreAPIs.csproj",
               "RelativeDocumentMoniker": "OnlineStoreAPIs.csproj",
-              "ToolTip": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\OnlineStoreAPIs.csproj*",
-              "RelativeToolTip": "OnlineStoreAPIs.csproj*",
+              "ToolTip": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\OnlineStoreAPIs.csproj",
+              "RelativeToolTip": "OnlineStoreAPIs.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAABFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-11-17T16:56:48.387Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T16:56:48.387Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "StoreDataLayer.csproj",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\StoreDataAccessLayer\\StoreDataLayer.csproj",
               "RelativeDocumentMoniker": "..\\StoreDataAccessLayer\\StoreDataLayer.csproj",
@@ -224,12 +217,11 @@
               "RelativeToolTip": "..\\StoreDataAccessLayer\\StoreDataLayer.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-11-17T16:58:12.111Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T16:58:12.111Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "AnnouncementBarController.cs",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\Controllers\\AnnouncementBarController.cs",
               "RelativeDocumentMoniker": "Controllers\\AnnouncementBarController.cs",
@@ -237,8 +229,7 @@
               "RelativeToolTip": "Controllers\\AnnouncementBarController.cs",
               "ViewState": "AgIAAB0AAAAAAAAAAAAtwDgAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-17T17:01:34.097Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T17:01:34.097Z"
             },
             {
               "$type": "Document",
@@ -250,8 +241,7 @@
               "RelativeToolTip": "..\\StoreBusinessLayer\\ClientsServices\\ClientsRepo.cs",
               "ViewState": "AgIAABEAAAAAAAAAAAAQwDQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-17T10:10:47.437Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T10:10:47.437Z"
             },
             {
               "$type": "Document",
@@ -263,8 +253,7 @@
               "RelativeToolTip": "..\\StoreDataAccessLayer\\Migrations\\20251117100044_InitialCreate.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-17T10:00:44.275Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T10:00:44.275Z"
             },
             {
               "$type": "Document",
@@ -276,8 +265,7 @@
               "RelativeToolTip": "..\\StoreDataAccessLayer\\AppDbContext.cs",
               "ViewState": "AgIAAAgAAAAAAAAAAAAiwBoAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-17T09:59:28.946Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T09:59:28.946Z"
             },
             {
               "$type": "Document",
@@ -289,8 +277,7 @@
               "RelativeToolTip": "..\\StoreBusinessLayer\\OrdersServices\\OrdersRepo.cs",
               "ViewState": "AgIAABkAAAAAAAAAAAAgwEoAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-16T15:39:00.795Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-16T15:39:00.795Z"
             },
             {
               "$type": "Document",
@@ -302,14 +289,13 @@
               "RelativeToolTip": "..\\StoreBusinessLayer\\UsersServices\\UsersRepo.cs",
               "ViewState": "AgIAAGsAAAAAAAAAAAAIwIIAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T11:43:54.582Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T11:43:54.582Z"
             }
           ]
         },
         {
-          "DockedWidth": 381,
-          "SelectedChildIndex": 2,
+          "DockedWidth": 303,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -321,26 +307,25 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "PaymentsController.cs",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\Controllers\\PaymentsController.cs",
               "RelativeDocumentMoniker": "Controllers\\PaymentsController.cs",
               "ToolTip": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\Controllers\\PaymentsController.cs",
               "RelativeToolTip": "Controllers\\PaymentsController.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAIwBgAAAA+AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-17T15:56:30.972Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T15:56:30.972Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 1,
               "Title": "ProductController.cs",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\Controllers\\ProductController.cs",
               "RelativeDocumentMoniker": "Controllers\\ProductController.cs",
               "ToolTip": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\Controllers\\ProductController.cs",
               "RelativeToolTip": "Controllers\\ProductController.cs",
-              "ViewState": "AgIAAHUCAAAAAAAAAAAgwHsCAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAEcBAAAAAAAAAIA7wGMBAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-17T11:01:37.019Z",
               "EditorCaption": ""
@@ -355,8 +340,7 @@
               "RelativeToolTip": "..\\StoreDataAccessLayer\\EntitiesConfigurations\\SizesConfigurations.cs",
               "ViewState": "AgIAABgAAAAAAAAAAAAgwCUAAABJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-17T09:42:29.195Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-17T09:42:29.195Z"
             },
             {
               "$type": "Document",
@@ -368,8 +352,7 @@
               "RelativeToolTip": "..\\StoreDataAccessLayer\\EntitiesConfigurations\\BannerConfigurations.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-14T11:31:45.608Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-14T11:31:45.608Z"
             }
           ]
         },

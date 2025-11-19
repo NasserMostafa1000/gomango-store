@@ -23,6 +23,7 @@ export default function ProductDetails() {
   const navigate = useNavigate();
   const [product, setProduct] = useState(location.state?.product || null);
   const [Img, setImg] = useState("");
+  const [productImages, setProductImages] = useState([]);
   const [loading, setLoading] = useState(!product);
   const [Colors, setColors] = useState([]);
   const [DetailsId, setDetailsId] = useState(0);
@@ -103,6 +104,25 @@ export default function ProductDetails() {
         setAvailableQuantity(data.quantity);
         setDetailsId(data.productDetailsId);
         setImg(data.productImage);
+        // Fetch additional images for the initial product details
+        if (data.productDetailsId) {
+          try {
+            const imagesResponse = await fetch(
+              `${API_BASE_URL}Product/GetProductDetailImages/${data.productDetailsId}`
+            );
+            if (imagesResponse.ok) {
+              const imagesData = await imagesResponse.json();
+              if (imagesData && Array.isArray(imagesData) && imagesData.length > 0) {
+                setProductImages(imagesData.map(img => img.imageUrl));
+              } else {
+                setProductImages([]);
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching product images:", error);
+            setProductImages([]);
+          }
+        }
       } catch (error) {
         if (isMounted) {
           console.error("Error fetching product:", error);
@@ -146,6 +166,12 @@ export default function ProductDetails() {
       setAvailableQuantity(data.quantity);
       setDetailsId(data.productDetailsId);
       setImg(data.image);
+      // Set additional images if available
+      if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+        setProductImages(data.images);
+      } else {
+        setProductImages([]);
+      }
     } catch (error) {
       console.error(error.message);
     } finally {
@@ -387,11 +413,87 @@ export default function ProductDetails() {
         <div className="mb-4">
           <BackButton />
         </div>
-        {/* القسم العلوي: الصورة والمعلومات */}
-        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 ${isRTL ? "" : "lg:flex-row-reverse"}`}>
+        
+        {/* Mobile Layout: Vertical Stack */}
+        <div className="flex flex-col lg:hidden space-y-6">
+          {/* الصور */}
           <ProductMediaCard
             imageUrl={ServerPath + Img}
             productName={productName}
+            additionalImages={productImages.map(img => ServerPath + img)}
+          />
+
+          {/* الكمية والألوان والمخزون */}
+          <div className="space-y-6">
+            <ProductInfoCard
+              productName={productName || ""}
+              priceFormatted={format(Price)}
+              originalPriceFormatted={format(product?.productPrice)}
+              discountPercentage={product?.discountPercentage || 0}
+              availableQuantity={availableQuantity}
+              isRTL={isRTL}
+              t={t}
+              deliveryText={deliveryText}
+              returnPolicyText={returnPolicyText}
+              CurrencySelectorComponent={CurrencySelector}
+              onShare={handleShareProduct}
+            />
+
+            <ProductOptionsCard
+              t={t}
+              Colors={Colors}
+              CurrentColor={CurrentColor}
+              setCurrentColor={setCurrentColor}
+              Sizes={Sizes}
+              CurrentSize={CurrentSize}
+              setCurrentSize={setCurrentSize}
+              Quantity={Quantity}
+              setQuantity={setQuantity}
+              availableQuantity={availableQuantity}
+              handlBuyClick={handlBuyClick}
+              DetailsId={DetailsId}
+              translateColor={translateColor}
+              isRTL={isRTL}
+              showBanner={showBanner}
+              productId={product?.productId}
+              onColorChange={(color) => {
+                setCurrentColor(color);
+                GetDetailsOfCurrentSizeAndColor();
+              }}
+              onSizeChange={(size) => {
+                setCurrentSize(size);
+                GetDetailsOfCurrentSizeAndColor();
+              }}
+            />
+          </div>
+
+          {/* قسم التفاصيل الإضافية */}
+          <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+              {t("productDetails.productDetails", "تفاصيل المنتج")}
+            </h3>
+            <div className="text-gray-700 leading-relaxed text-lg">
+              {formatDescription(moreDetails)}
+            </div>
+          </div>
+
+          {/* التعليقات */}
+          <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
+            <Reviews productId={Number(product?.productId || id)} />
+          </div>
+
+          {/* المنتجات ذات الصلة */}
+          <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
+            <RelatedProducts product={product} />
+          </div>
+        </div>
+
+        {/* Desktop Layout: Two Columns */}
+        <div className={`hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-8 ${isRTL ? "" : "lg:flex-row-reverse"}`}>
+          <ProductMediaCard
+            imageUrl={ServerPath + Img}
+            productName={productName}
+            additionalImages={productImages.map(img => ServerPath + img)}
           />
 
           <div className="space-y-6">
@@ -425,28 +527,40 @@ export default function ProductDetails() {
               translateColor={translateColor}
               isRTL={isRTL}
               showBanner={showBanner}
+              productId={product?.productId}
+              onColorChange={(color) => {
+                setCurrentColor(color);
+                GetDetailsOfCurrentSizeAndColor();
+              }}
+              onSizeChange={(size) => {
+                setCurrentSize(size);
+                GetDetailsOfCurrentSizeAndColor();
+              }}
             />
           </div>
         </div>
 
-        {/* قسم التفاصيل الإضافية */}
-        <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">
-            {t("productDetails.productDetails", "تفاصيل المنتج")}
-          </h3>
-          <div className="text-gray-700 leading-relaxed text-lg">
-            {formatDescription(moreDetails)}
+        {/* Desktop: التفاصيل والتعليقات والمنتجات ذات الصلة */}
+        <div className="hidden lg:block space-y-10">
+          {/* قسم التفاصيل الإضافية */}
+          <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+              {t("productDetails.productDetails", "تفاصيل المنتج")}
+            </h3>
+            <div className="text-gray-700 leading-relaxed text-lg">
+              {formatDescription(moreDetails)}
+            </div>
           </div>
-        </div>
 
-        {/* التعليقات */}
-        <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
-          <Reviews productId={Number(product?.productId || id)} />
-        </div>
+          {/* التعليقات */}
+          <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
+            <Reviews productId={Number(product?.productId || id)} />
+          </div>
 
-        {/* المنتجات ذات الصلة */}
-        <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
-          <RelatedProducts product={product} />
+          {/* المنتجات ذات الصلة */}
+          <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
+            <RelatedProducts product={product} />
+          </div>
         </div>
         </div>
       </StoreLayout>

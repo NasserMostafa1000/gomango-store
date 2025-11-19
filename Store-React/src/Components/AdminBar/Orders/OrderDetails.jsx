@@ -148,7 +148,9 @@ export default function OrderDetails() {
 
         {/* جدول المنتجات */}
         {products.length > 0 ? (
-          <div className="bg-white rounded-xl shadow-lg border border-blue-200 overflow-hidden">
+          <>
+            {/* Desktop Table */}
+            <div className="hidden md:block bg-white rounded-xl shadow-lg border border-blue-200 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-[#2563eb] text-white">
@@ -204,6 +206,57 @@ export default function OrderDetails() {
               </table>
             </div>
           </div>
+
+            {/* Mobile Cards */}
+            <div className="md:hidden space-y-4">
+              {products.map((product, index) => (
+                <div 
+                  key={index}
+                  className="bg-white rounded-xl shadow-lg border border-blue-200 p-4 w-full"
+                >
+                  <div className="space-y-3">
+                    <div className="flex flex-col items-center justify-center border-b border-blue-100 pb-3">
+                      <button
+                        onClick={() => HandleProductClick(product.productName, product.productId)}
+                        className="text-blue-900 hover:text-orange-600 font-bold underline transition-colors duration-200 text-lg text-center"
+                      >
+                        {product.productName}
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-blue-50 rounded-lg p-3">
+                        <p className="text-xs text-blue-600 font-semibold mb-1">{t("orderDetails.color", "اللون")}</p>
+                        <p className="text-blue-900 font-medium">{translateColor(product.colorName)}</p>
+                      </div>
+                      
+                      <div className="bg-blue-50 rounded-lg p-3">
+                        <p className="text-xs text-blue-600 font-semibold mb-1">{t("orderDetails.size", "المقاس")}</p>
+                        <p className="text-blue-900 font-medium">{product.sizeName}</p>
+                      </div>
+                      
+                      <div className="bg-orange-50 rounded-lg p-3">
+                        <p className="text-xs text-orange-600 font-semibold mb-1">{t("orderDetails.quantity", "الكمية")}</p>
+                        <p className="bg-orange-100 text-orange-800 font-bold py-1 px-3 rounded-full text-center inline-block">
+                          {product.quantity}
+                        </p>
+                      </div>
+                      
+                      <div className="bg-blue-50 rounded-lg p-3">
+                        <p className="text-xs text-blue-600 font-semibold mb-1">{t("orderDetails.unitPrice", "سعر الوحدة")}</p>
+                        <p className="text-blue-900 font-bold">{format(product.unitPrice)}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-4 text-center">
+                      <p className="text-xs text-white font-semibold mb-1">{t("orderDetails.totalPrice", "السعر الإجمالي")}</p>
+                      <p className="text-white font-bold text-xl">{format(product.totalPrice)}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         ) : (
           !loading && (
             <div className="bg-white rounded-xl shadow-lg border border-blue-200 p-8 text-center">

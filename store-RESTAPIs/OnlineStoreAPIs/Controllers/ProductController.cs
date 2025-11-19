@@ -353,7 +353,7 @@ namespace OnlineStoreAPIs.Controllers
                     ? imagePath
                     : $"{baseUrl}{(imagePath.StartsWith("/") ? string.Empty : "/")}{imagePath}";
                 var redirectLang = isEnglish ? "en" : "ar";
-                var redirectUrl = $"http://localhost:5173/productDetails/{id}?lang={redirectLang}";
+                var redirectUrl = $"https://gomango.shop/productDetails/{id}?lang={redirectLang}";
 
                 var encodedDescription = System.Net.WebUtility.HtmlEncode(description ?? string.Empty);
                 var html = $@"<!DOCTYPE html>
@@ -766,6 +766,98 @@ namespace OnlineStoreAPIs.Controllers
             }
 
             return NoContent();
+        }
+
+        // ProductDetailImages endpoints
+        [HttpPost("AddProductDetailImage")]
+        [Authorize(Roles = "Admin,Manager")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> AddProductDetailImage(ProductsDtos.AddProductDetailImageDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "معلومات هامة مفقودة" });
+            }
+            try
+            {
+                int id = await _ProductsRepo.AddProductDetailImageAsync(dto);
+                return Ok(new { Id = id });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message.ToString() });
+            }
+        }
+
+        [HttpGet("GetProductDetailImages/{productDetailsId:int}")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> GetProductDetailImages(int productDetailsId)
+        {
+            if (productDetailsId <= 0)
+            {
+                return BadRequest(new { message = "معرف تفاصيل المنتج غير صالح" });
+            }
+            try
+            {
+                var images = await _ProductsRepo.GetProductDetailImagesAsync(productDetailsId);
+                return Ok(images);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message.ToString() });
+            }
+        }
+
+        [HttpDelete("DeleteProductDetailImage/{productDetailImageId:int}")]
+        [Authorize(Roles = "Admin,Manager")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> DeleteProductDetailImage(int productDetailImageId)
+        {
+            if (productDetailImageId <= 0)
+            {
+                return BadRequest(new { message = "معرف الصورة غير صالح" });
+            }
+            try
+            {
+                var deleted = await _ProductsRepo.DeleteProductDetailImageAsync(productDetailImageId);
+                if (!deleted)
+                {
+                    return NotFound(new { message = "الصورة غير موجودة" });
+                }
+                return Ok(new { message = "تم حذف الصورة بنجاح" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message.ToString() });
+            }
+        }
+
+        [HttpDelete("DeleteAllProductDetailImages/{productDetailsId:int}")]
+        [Authorize(Roles = "Admin,Manager")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> DeleteAllProductDetailImages(int productDetailsId)
+        {
+            if (productDetailsId <= 0)
+            {
+                return BadRequest(new { message = "معرف تفاصيل المنتج غير صالح" });
+            }
+            try
+            {
+                var deleted = await _ProductsRepo.DeleteAllProductDetailImagesAsync(productDetailsId);
+                return Ok(new { message = "تم حذف جميع الصور بنجاح" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message.ToString() });
+            }
         }
 
 }

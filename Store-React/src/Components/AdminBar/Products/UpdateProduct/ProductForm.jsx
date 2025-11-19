@@ -2,9 +2,110 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import API_BASE_URL, { ServerPath } from "../../../Constant";
 import { colors, sizes } from "../../../utils";
-import { FiPackage, FiImage, FiPlus, FiSave, FiLoader, FiArrowLeft, FiTag, FiDollarSign, FiPercent, FiEdit } from "react-icons/fi";
+import { FiPackage, FiImage, FiPlus, FiSave, FiLoader, FiArrowLeft, FiTag, FiDollarSign, FiPercent, FiEdit, FiTrash2, FiUpload, FiX } from "react-icons/fi";
 import { useI18n } from "../../../i18n/I18nContext";
 import WebSiteLogo from "../../../WebsiteLogo/WebsiteLogo.jsx";
+
+// Watermark functions
+const watermarkAssetPath = "/ProjectImages/SouqLogoEn.webp";
+let cachedWatermarkPromise = null;
+
+const loadImageFromSrc = (src) =>
+  new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("فشل في تحميل شعار المتجر."));
+    img.src = src;
+  });
+
+const loadImageFromFile = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error("تعذر قراءة ملف الصورة."));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error("تعذر قراءة ملف الصورة."));
+    reader.readAsDataURL(file);
+  });
+
+const getWatermarkImage = () => {
+  if (!cachedWatermarkPromise) {
+    cachedWatermarkPromise = loadImageFromSrc(watermarkAssetPath);
+  }
+  return cachedWatermarkPromise;
+};
+
+const addWatermarkToFile = async (file) => {
+  if (!file) {
+    throw new Error("لم يتم اختيار صورة.");
+  }
+  const [baseImage, watermarkImage] = await Promise.all([
+    loadImageFromFile(file),
+    getWatermarkImage(),
+  ]);
+
+  if (!baseImage.width || !baseImage.height) {
+    throw new Error("ملف الصورة غير صالح.");
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = baseImage.width;
+  canvas.height = baseImage.height;
+  const ctx = canvas.getContext("2d");
+
+  ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+
+  const maxWatermarkWidth = canvas.width * 0.4;
+  const maxWatermarkHeight = canvas.height * 0.4;
+  const scale = Math.min(
+    maxWatermarkWidth / watermarkImage.width,
+    maxWatermarkHeight / watermarkImage.height,
+    1
+  );
+
+  const watermarkWidth = watermarkImage.width * scale;
+  const watermarkHeight = watermarkImage.height * scale;
+  const x = canvas.width - watermarkWidth - (canvas.width * 0.05); // أعلى اليمين مع هامش 5%
+  const y = canvas.height * 0.05; // أعلى مع هامش 5%
+
+  ctx.globalAlpha = 0.4;
+  ctx.drawImage(watermarkImage, x, y, watermarkWidth, watermarkHeight);
+  ctx.globalAlpha = 1;
+
+  const preferredType =
+    file.type === "image/png"
+      ? "image/png"
+      : file.type === "image/webp"
+      ? "image/webp"
+      : "image/jpeg";
+
+  const blob = await new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (result) => {
+        if (result) resolve(result);
+        else reject(new Error("تعذر تجهيز الصورة بعد إضافة الشعار."));
+      },
+      preferredType,
+      preferredType === "image/jpeg" ? 0.92 : 1
+    );
+  });
+
+  const baseName = file.name?.replace(/\.[^/.]+$/, "") || "product";
+  const extension =
+    preferredType === "image/png"
+      ? ".png"
+      : preferredType === "image/webp"
+      ? ".webp"
+      : ".jpg";
+
+  return new File([blob], `${baseName}_logo${extension}`, {
+    type: preferredType,
+  });
+};
 
 export default function ProductForm() {
   const [product, setProduct] = useState(null);
@@ -12,6 +113,8 @@ export default function ProductForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [imageLoading, setImageLoading] = useState(null);
+  const [productDetailImages, setProductDetailImages] = useState({}); // { productDetailId: [images] }
+  const [uploadingImages, setUploadingImages] = useState({}); // { productDetailId: true/false }
   const navigate = useNavigate();
   const location = useLocation();
   const productId = location.state?.productId;
@@ -90,6 +193,34 @@ export default function ProductForm() {
       );
       const data = await response.json();
       setProduct(data);
+      
+      // Fetch images for each product detail
+      if (data.productDetails && Array.isArray(data.productDetails)) {
+        const imagesMap = {};
+        for (const detail of data.productDetails) {
+          try {
+            const imagesResponse = await fetch(
+              `${API_BASE_URL}Product/GetProductDetailImages/${detail.productDetailId}`,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+                },
+              }
+            );
+            if (imagesResponse.ok) {
+              const imagesData = await imagesResponse.json();
+              imagesMap[detail.productDetailId] = imagesData || [];
+            } else {
+              imagesMap[detail.productDetailId] = [];
+            }
+          } catch (error) {
+            console.error(`Error fetching images for detail ${detail.productDetailId}:`, error);
+            imagesMap[detail.productDetailId] = [];
+          }
+        }
+        setProductDetailImages(imagesMap);
+      }
     } catch (error) {
       setMessage("❌ " + t("productForm.loadError", "خطأ في تحميل المنتج."));
     }
@@ -151,10 +282,14 @@ export default function ProductForm() {
       if (!file) return;
 
       setImageLoading(productDetailId);
-      const formData = new FormData();
-      formData.append("imageFile", file);
 
       try {
+        // إضافة اللوجو على الصورة قبل الرفع
+        const stampedFile = await addWatermarkToFile(file);
+        
+        const formData = new FormData();
+        formData.append("imageFile", stampedFile);
+
         const response = await fetch(
           `${API_BASE_URL}Product/UpdateProductImage?ProductDetailsId=${productDetailId}`,
           {
@@ -176,18 +311,154 @@ export default function ProductForm() {
                 : detail
             ),
           }));
-          setMessage("✅ " + t("productForm.imageUpdateSuccess", "تم تحديث الصورة بنجاح!"));
+          setMessage("✅ " + t("productForm.imageUpdateSuccess", "تم تحديث الصورة بنجاح! تم إضافة شعار المتجر تلقائياً."));
         } else {
           setMessage("❌ " + t("productForm.imageUpdateError", "حدث خطأ أثناء تحديث الصورة."));
         }
       } catch (error) {
-        setMessage("❌ حدث خطأ أثناء تحديث الصورة.");
+        console.error("Watermark error:", error);
+        setMessage("❌ " + (error.message || t("productForm.imageUpdateError", "حدث خطأ أثناء تحديث الصورة.")));
       } finally {
         setImageLoading(null);
       }
     };
 
     fileInput.click();
+  };
+
+  // Handle adding multiple images to a product detail
+  const handleAddMultipleImages = async (productDetailId) => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.multiple = true;
+
+    fileInput.onchange = async (event) => {
+      const files = Array.from(event.target.files || []);
+      if (files.length === 0) return;
+
+      setUploadingImages(prev => ({ ...prev, [productDetailId]: true }));
+      const token = sessionStorage.getItem("token");
+      let successCount = 0;
+
+      try {
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          
+          try {
+            // إضافة اللوجو على الصورة قبل الرفع
+            const stampedFile = await addWatermarkToFile(file);
+            
+            const formData = new FormData();
+            formData.append("imageFile", stampedFile);
+
+            // Upload image
+            const uploadResponse = await fetch(
+              `${API_BASE_URL}Product/UploadProductImage`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+              }
+            );
+
+            if (uploadResponse.ok) {
+              const uploadData = await uploadResponse.json();
+              
+              // Add to product detail images
+              const addResponse = await fetch(
+                `${API_BASE_URL}Product/AddProductDetailImage`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({
+                    productDetailsId: productDetailId,
+                    imageUrl: uploadData.imageUrl,
+                    displayOrder: (productDetailImages[productDetailId]?.length || 0) + i + 1,
+                  }),
+                }
+              );
+
+              if (addResponse.ok) {
+                successCount++;
+              }
+            }
+          } catch (watermarkError) {
+            console.error(`Error processing image ${i + 1}:`, watermarkError);
+            // Continue with next image
+          }
+        }
+
+        // Refresh images list
+        const imagesResponse = await fetch(
+          `${API_BASE_URL}Product/GetProductDetailImages/${productDetailId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (imagesResponse.ok) {
+          const imagesData = await imagesResponse.json();
+          setProductDetailImages(prev => ({
+            ...prev,
+            [productDetailId]: imagesData || [],
+          }));
+        }
+
+        if (successCount > 0) {
+          setMessage(`✅ تم إضافة ${successCount} من ${files.length} صورة بنجاح! تم إضافة شعار المتجر تلقائياً على جميع الصور.`);
+        } else {
+          setMessage("❌ فشل إضافة الصور. الرجاء المحاولة مرة أخرى.");
+        }
+      } catch (error) {
+        setMessage("❌ حدث خطأ أثناء إضافة الصور.");
+      } finally {
+        setUploadingImages(prev => ({ ...prev, [productDetailId]: false }));
+      }
+    };
+
+    fileInput.click();
+  };
+
+  // Handle deleting a product detail image
+  const handleDeleteImage = async (productDetailId, imageId) => {
+    if (!window.confirm(t("productForm.confirmDeleteImage", "هل أنت متأكد من حذف هذه الصورة؟"))) {
+      return;
+    }
+
+    try {
+      const token = sessionStorage.getItem("token");
+      const response = await fetch(
+        `${API_BASE_URL}Product/DeleteProductDetailImage/${imageId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        // Remove from local state
+        setProductDetailImages(prev => ({
+          ...prev,
+          [productDetailId]: (prev[productDetailId] || []).filter(img => img.productDetailImageId !== imageId),
+        }));
+        setMessage("✅ " + t("productForm.imageDeleted", "تم حذف الصورة بنجاح!"));
+      } else {
+        setMessage("❌ " + t("productForm.imageDeleteError", "حدث خطأ أثناء حذف الصورة."));
+      }
+    } catch (error) {
+      setMessage("❌ حدث خطأ أثناء حذف الصورة.");
+    }
   };
 
   const handleAddDetails = () => {
@@ -497,8 +768,55 @@ export default function ProductForm() {
                         ) : (
                           <FiImage />
                         )}
-                        {t("productForm.updateImage", "تحديث الصورة")}
+                        {t("productForm.updateImage", "تحديث الصورة الرئيسية")}
                       </button>
+                    </div>
+
+                    {/* Additional Images Section */}
+                    <div className="w-full max-w-xs mt-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-sm font-medium text-gray-700">
+                          {t("productForm.additionalImages", "صور إضافية")}
+                        </h4>
+                        <button
+                          onClick={() => handleAddMultipleImages(detail.productDetailId)}
+                          disabled={uploadingImages[detail.productDetailId]}
+                          className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                        >
+                          {uploadingImages[detail.productDetailId] ? (
+                            <FiLoader className="animate-spin" />
+                          ) : (
+                            <FiPlus />
+                          )}
+                          {t("productForm.addImages", "إضافة")}
+                        </button>
+                      </div>
+                      
+                      {/* Images Grid */}
+                      {productDetailImages[detail.productDetailId] && productDetailImages[detail.productDetailId].length > 0 ? (
+                        <div className="grid grid-cols-2 gap-2">
+                          {productDetailImages[detail.productDetailId].map((img) => (
+                            <div key={img.productDetailImageId} className="relative group">
+                              <img
+                                src={ServerPath + img.imageUrl}
+                                alt={`Additional ${img.productDetailImageId}`}
+                                className="w-full h-24 object-cover rounded-lg border-2 border-gray-200"
+                              />
+                              <button
+                                onClick={() => handleDeleteImage(detail.productDetailId, img.productDetailImageId)}
+                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                title={t("productForm.deleteImage", "حذف الصورة")}
+                              >
+                                <FiX size={14} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-gray-500 text-center py-2">
+                          {t("productForm.noAdditionalImages", "لا توجد صور إضافية")}
+                        </p>
+                      )}
                     </div>
                   </div>
 

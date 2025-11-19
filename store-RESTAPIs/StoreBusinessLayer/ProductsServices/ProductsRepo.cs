@@ -449,18 +449,24 @@ namespace StoreBusinessLayer.Products
                 //this for search by color , size ,product Id
                 if (SizeId != null)
                 {
-                    var ProductDetails = await _Context.ProductDetails.FirstOrDefaultAsync(
+                    var ProductDetails = await _Context.ProductDetails
+                        .Include(pd => pd.ProductDetailImages)
+                        .FirstOrDefaultAsync(
                          Details => Details.ProductId == ProductId
                       && Details.SizeId == SizeId
                       && Details.ColorId == ColorId);
                     if(ProductDetails!=null)
                     {
+                    var images = ProductDetails.ProductDetailImages?
+                        .OrderBy(img => img.DisplayOrder)
+                        .Select(img => img.ImageUrl)
+                        .ToList() ?? new List<string>();
 
                     var result = new ProductsDtos.GetProductDetails
                     {
                         ProductDetailsId = ProductDetails.ProductDetailsId,
                         Image = ProductDetails!.ProductImage,
-
+                        Images = images,
                         Quantity = ProductDetails.Quantity
                     };
                        return result;
@@ -471,15 +477,22 @@ namespace StoreBusinessLayer.Products
                 //this for search by color and productid only=>that is for products that not contain  sizes
                 else
                 {
-                    var ProductDetails = await _Context.ProductDetails.FirstOrDefaultAsync(
+                    var ProductDetails = await _Context.ProductDetails
+                        .Include(pd => pd.ProductDetailImages)
+                        .FirstOrDefaultAsync(
                     Details => Details.ProductId == ProductId
                     && Details.ColorId == ColorId);
+
+                    var images = ProductDetails?.ProductDetailImages?
+                        .OrderBy(img => img.DisplayOrder)
+                        .Select(img => img.ImageUrl)
+                        .ToList() ?? new List<string>();
 
                     var result = new ProductsDtos.GetProductDetails
                     {
                         ProductDetailsId = ProductDetails!.ProductDetailsId,
                         Image = ProductDetails!.ProductImage,
-                      
+                        Images = images,
                         Quantity = ProductDetails.Quantity
                     };
                     return result;
@@ -820,6 +833,102 @@ namespace StoreBusinessLayer.Products
             _Context.Products.Remove(product);
             await _Context.SaveChangesAsync();
             return true;
+        }
+
+        // Methods for managing ProductDetailImages
+        public async Task<int> AddProductDetailImageAsync(ProductsDtos.AddProductDetailImageDto dto)
+        {
+            try
+            {
+                var image = new ProductDetailImages
+                {
+                    ProductDetailsId = dto.ProductDetailsId,
+                    ImageUrl = dto.ImageUrl,
+                    DisplayOrder = dto.DisplayOrder
+                };
+
+                _Context.ProductDetailImages.Add(image);
+                await _Context.SaveChangesAsync();
+                return image.ProductDetailImageId;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error adding product detail image: {ex.Message}");
+            }
+        }
+
+        public async Task<List<ProductsDtos.ProductDetailImageDto>> GetProductDetailImagesAsync(int productDetailsId)
+        {
+            try
+            {
+                var images = await _Context.ProductDetailImages
+                    .Where(img => img.ProductDetailsId == productDetailsId)
+                    .OrderBy(img => img.DisplayOrder)
+                    .Select(img => new ProductsDtos.ProductDetailImageDto
+                    {
+                        ProductDetailImageId = img.ProductDetailImageId,
+                        ProductDetailsId = img.ProductDetailsId,
+                        ImageUrl = img.ImageUrl,
+                        DisplayOrder = img.DisplayOrder
+                    })
+                    .ToListAsync();
+
+                return images;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error getting product detail images: {ex.Message}");
+            }
+        }
+
+        public async Task<bool> DeleteProductDetailImageAsync(int productDetailImageId)
+        {
+            try
+            {
+                var image = await _Context.ProductDetailImages
+                    .FirstOrDefaultAsync(img => img.ProductDetailImageId == productDetailImageId);
+
+                if (image == null)
+                    return false;
+
+                // Delete the physical file
+                await DeleteImageAsync(image.ImageUrl);
+
+                _Context.ProductDetailImages.Remove(image);
+                await _Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting product detail image: {ex.Message}");
+            }
+        }
+
+        public async Task<bool> DeleteAllProductDetailImagesAsync(int productDetailsId)
+        {
+            try
+            {
+                var images = await _Context.ProductDetailImages
+                    .Where(img => img.ProductDetailsId == productDetailsId)
+                    .ToListAsync();
+
+                if (!images.Any())
+                    return true;
+
+                // Delete physical files
+                foreach (var image in images)
+                {
+                    await DeleteImageAsync(image.ImageUrl);
+                }
+
+                _Context.ProductDetailImages.RemoveRange(images);
+                await _Context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting all product detail images: {ex.Message}");
+            }
         }
     }
 }

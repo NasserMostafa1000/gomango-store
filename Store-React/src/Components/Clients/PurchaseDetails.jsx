@@ -92,7 +92,56 @@ export default function OrderDetail() {
           throw new Error(t("purchaseDetails.fetchError", "فشل في جلب تفاصيل الطلب"));
         }
         const data = await response.json();
-        setOrderDetails(data);
+        
+        // جلب بيانات المنتجات باللغة الصحيحة
+        const enrichedData = await Promise.all(
+          data.map(async (detail) => {
+            if (detail.productId) {
+              try {
+                const productResponse = await fetch(
+                  `${API_BASE_URL}Product/GetProductById?ID=${detail.productId}&lang=${lang}`
+                );
+                if (productResponse.ok) {
+                  const productData = await productResponse.json();
+                  
+                  // API قد يعيد productNameAr و productNameEn منفصلين
+                  // أو قد يعيد productName باللغة الصحيحة مباشرة عند استخدام lang parameter
+                  let productNameAr = productData.productNameAr;
+                  let productNameEn = productData.productNameEn;
+                  
+                  // إذا لم يكن productNameAr موجود، استخدم productName إذا كانت اللغة عربية
+                  if (!productNameAr && lang === "ar" && productData.productName) {
+                    productNameAr = productData.productName;
+                  }
+                  
+                  // إذا لم يكن productNameEn موجود، استخدم productName إذا كانت اللغة إنجليزية
+                  if (!productNameEn && lang === "en" && productData.productName) {
+                    productNameEn = productData.productName;
+                  }
+                  
+                  // إذا لم يكن أي منهما موجود، استخدم productName أو الاسم الأصلي
+                  if (!productNameAr) productNameAr = productData.productName || detail.productName;
+                  if (!productNameEn) productNameEn = productData.productName || detail.productName;
+                  
+                  // اختر الاسم المناسب حسب اللغة
+                  const selectedName = lang === "ar" ? productNameAr : productNameEn;
+                  
+                  return {
+                    ...detail,
+                    productNameAr: productNameAr,
+                    productNameEn: productNameEn,
+                    productName: selectedName
+                  };
+                }
+              } catch (error) {
+                console.error(`Error fetching product ${detail.productId}:`, error);
+              }
+            }
+            return detail;
+          })
+        );
+        
+        setOrderDetails(enrichedData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -101,11 +150,48 @@ export default function OrderDetail() {
     };
 
     fetchOrderDetails();
-  }, [orderId]);
+  }, [orderId, lang, t]);
 
-  function GetProductName(name = " ") {
-    if (!name.includes(" ")) return name;
-    return name.split(" ")[0] + " " + name.split(" ")[1];
+  function GetProductName(detail) {
+    if (!detail) return "";
+    
+    // استخدم productName المحدث مباشرة (تم تحديثه في useEffect حسب اللغة)
+    if (detail.productName) {
+      const parts = detail.productName.split(" ");
+      return parts.slice(0, 2).join(" ");
+    }
+    
+    // إذا لم يكن productName موجود، استخدم productNameAr أو productNameEn حسب اللغة
+    if (detail.productNameAr && detail.productNameEn) {
+      const selectedName = lang === "ar" ? detail.productNameAr : detail.productNameEn;
+      if (selectedName) {
+        const parts = selectedName.split(" ");
+        return parts.slice(0, 2).join(" ");
+      }
+    }
+    
+    // إذا كان هناك productNameAr فقط (في حالة اللغة العربية)
+    if (detail.productNameAr && lang === "ar") {
+      const parts = detail.productNameAr.split(" ");
+      return parts.slice(0, 2).join(" ");
+    }
+    
+    // إذا كان هناك productNameEn فقط (في حالة اللغة الإنجليزية)
+    if (detail.productNameEn && lang === "en") {
+      const parts = detail.productNameEn.split(" ");
+      return parts.slice(0, 2).join(" ");
+    }
+    
+    // الحل الاحتياطي الأخير
+    const name = detail.name || "";
+    if (!name) return "";
+    
+    if (name.includes(" ")) {
+      const parts = name.split(" ");
+      return parts.slice(0, 2).join(" ");
+    }
+    
+    return name;
   }
 
   if (loading) return (
@@ -145,7 +231,7 @@ export default function OrderDetail() {
         />
       </Helmet>
       
-      <div className="max-w-6xl mx-auto">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <BackButton />
         </div>
@@ -153,17 +239,18 @@ export default function OrderDetail() {
           {t("purchaseDetails.orderDetailsTitle", "تفاصيل الطلب رقم")} #{orderId}
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
         {orderDetails[0]?.orderStatus && (
-          <p className="text-center text-blue-800 font-semibold mb-4 col-span-full">
+          <p className="text-center text-blue-800 font-semibold mb-6 w-full">
             {t("purchaseDetails.orderStatus", "حالة الطلب")}:{" "}
             {getTranslatedStatus(orderDetails[0].orderStatus)}
           </p>
         )}
+        <div className="flex flex-wrap justify-center gap-6 mb-8">
           {orderDetails.map((detail, index) => (
             <div 
               key={index}
-              className="bg-white rounded-xl shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 overflow-hidden"
+              className="bg-white rounded-xl shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 overflow-hidden w-full sm:w-[calc(50%-12px)] md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] xl:w-[calc(33.333%-16px)] 2xl:w-[calc(25%-18px)]"
+              style={{ minWidth: '280px', maxWidth: '400px' }}
             >
               <div className="flex flex-col h-full">
                 <div className="flex justify-center p-4 bg-blue-50">
@@ -176,7 +263,7 @@ export default function OrderDetail() {
                 
                 <div className="p-6 flex-1">
                   <h3 className="text-xl font-bold text-blue-900 mb-4 text-center border-b border-orange-200 pb-2">
-                    {GetProductName(detail.productName)}
+                    {GetProductName(detail)}
                   </h3>
                   
                   <div className="space-y-3">
@@ -202,9 +289,9 @@ export default function OrderDetail() {
                       <span className="text-orange-900 font-semibold">{detail.quantity} {t("purchaseDetails.piece", "قطعة")}</span>
                     </div>
                     
-                    <div className="flex justify-between items-center bg-blue-50 rounded-lg px-3 py-3 mt-4 border border-blue-100">
-                      <strong className="text-blue-900 text-lg">{t("purchaseDetails.total", "الإجمالي")}:</strong>
-                      <span className="text-blue-900 text-lg font-bold">
+                    <div className="flex justify-between items-center bg-gradient-to-r from-blue-500 to-orange-500 rounded-lg px-3 py-3 mt-4">
+                      <strong className="text-white text-lg">{t("purchaseDetails.total", "الإجمالي")}:</strong>
+                      <span className="text-white text-lg font-bold">
                         {format(detail.totalAmount)}
                       </span>
                     </div>
@@ -212,7 +299,7 @@ export default function OrderDetail() {
                       <div className="mt-4">
                         <OrderReviewForm
                           productId={detail.productId}
-                          productName={GetProductName(detail.productName)}
+                          productName={GetProductName(detail)}
                         />
                       </div>
                     )}

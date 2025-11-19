@@ -485,15 +485,12 @@ export default function Home() {
           </section>
           
           {/* Hero Section */}
-          <section className="relative bg-gradient-to-r from-orange-50 via-orange-100 to-orange-50 min-h-[70vh] sm:min-h-[80vh] flex items-center">
-            <div className="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-8 sm:py-12 md:py-16 text-[#0a2540] grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center w-full">
-              <div className="space-y-4 md:space-y-6 text-center md:text-right order-2 md:order-1">
+          <section className="relative bg-gradient-to-r from-orange-50 via-orange-100 to-orange-50">
+            <div className="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-10 sm:py-14 md:py-16 text-[#0a2540] space-y-8 w-full">
+              <div className="space-y-4 md:space-y-5 text-center md:text-right">
                 <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.35em] text-[#13345d]/70">
                  {t("homePage.brand", "جومانجو")}
                 </p>
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-[#0a2540]">
-                  {t("homePage.heroTitle", "اكتشف منتجات  أصلية بخدمة توصيل تغطي كل بيت")}
-                </h1>
                 <p className="text-xs sm:text-sm md:text-base text-[#13345d]/80 leading-relaxed">
                   {t("homePage.heroDesc", "متجر إلكتروني متكامل يدعم تعدد العملات، بانرز مخصصة للعروض، وتجربة مريحة لعملائك على كل الشاشات.")}
                 </p>
@@ -506,21 +503,8 @@ export default function Home() {
                   </button>
                 </div>
               </div>
-              <div className="bg-[#F9F6EF]/80 rounded-xl sm:rounded-2xl backdrop-blur shadow-lg p-4 sm:p-6 md:p-8 flex flex-col gap-3 sm:gap-4 border border-[#0a2540]/10 order-1 md:order-2">
-                <h3 className="text-base sm:text-lg md:text-xl font-semibold text-[#0a2540] text-center md:text-right">
-                  {t("homePage.latestOffers", "أحدث عروضنا")}
-                </h3>
+              <div className="w-full rounded-2xl overflow-hidden shadow-2xl border border-[#0a2540]/10 bg-white/70 backdrop-blur">
                 <BannerCarousel />
-                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
-                  <div>
-                    <dt className="text-[#13345d]/70">{t("homePage.gulfCurrencies", "دعم كامل للعملات الخليجية")}</dt>
-                    <dd className="text-[#0a2540] font-semibold">AED - SAR - QAR - OMR - USD</dd>
-                  </div>
-                  <div>
-                    <dt className="text-[#13345d]/70">{t("homePage.customBanners", "بانرز مخصصة")}</dt>
-                    <dd className="text-[#0a2540] font-semibold">{t("homePage.customBannersDesc", "إدارة مباشرة عبر لوحة التحكم")}</dd>
-                  </div>
-                </dl>
               </div>
             </div>
             <div className="absolute inset-x-0 bottom-0 h-12 sm:h-16 bg-gradient-to-t from-[#F9F6EF] to-transparent"></div>

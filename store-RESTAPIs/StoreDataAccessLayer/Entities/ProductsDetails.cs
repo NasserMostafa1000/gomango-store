@@ -11,6 +11,7 @@
         public Product Product { get; set; } = null!;
         public ICollection<CartDetails>? cartsDetails { get; set; }
         public ICollection<OrderDetails>? OrdersDetails { get; set; }
+        public ICollection<ProductDetailImages>? ProductDetailImages { get; set; }
 
         public Sizes? Size { get; set; }
         public Colors Color { get; set; } = null!;

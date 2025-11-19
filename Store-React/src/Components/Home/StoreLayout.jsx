@@ -229,7 +229,7 @@ function StoreLayout({ children }) {
       {/* Main Content */}
       <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${isSidebarOpen ? (isRTL ? 'lg:mr-[280px]' : 'lg:ml-[280px]') : ''}`}>
         {/* Desktop Header */}
-        <header className="hidden lg:flex sticky top-0 left-0 right-0 bg-[#F9F6EF] shadow-sm border-b items-center px-4 py-3 flex-shrink-0 z-50 gap-4" style={{ borderColor: '#e5e7eb' }}>
+        <header className="hidden lg:flex bg-[#F9F6EF] shadow-sm border-b items-center px-4 py-3 flex-shrink-0 z-50 gap-4" style={{ borderColor: '#e5e7eb' }}>
           <div className="flex items-center gap-3 flex-shrink-0">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -257,63 +257,71 @@ function StoreLayout({ children }) {
             <SearchBar onSearch={HandleSearhOn} searchType="products" />
           </div>
 
-          <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
-            {/* Language Switcher */}
-            <button
-              onClick={() => setLang(lang === "ar" ? "en" : "ar")}
-              className="flex items-center justify-center px-3 py-2 rounded-lg bg-[#F9F6EF] border border-gray-300 text-[#0A2C52] hover:bg-gray-50 font-bold shadow-sm text-xs whitespace-nowrap"
-              title={lang === "ar" ? t("switchToEnglish", "التبديل إلى الإنجليزية") : t("switchToArabic", "Switch to Arabic")}
-            >
-              {lang === "ar" ? "EN" : "العربية"}
-            </button>
-
-            {/* User Profile */}
-            {isLoggedIn && (
-              <Link 
-                to="/MyProfile" 
-                className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg transition duration-200 text-xs font-semibold shadow-md"
+          <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
+            {/* Left Group: Language & Login */}
+            <div className="flex items-center gap-2">
+              {/* Language Switcher */}
+              <button
+                onClick={() => setLang(lang === "ar" ? "en" : "ar")}
+                className="flex items-center justify-center px-3 py-2 rounded-lg bg-[#F9F6EF] border border-gray-300 text-[#0A2C52] hover:bg-gray-50 font-bold shadow-sm text-xs whitespace-nowrap transition-colors"
+                title={lang === "ar" ? t("switchToEnglish", "التبديل إلى الإنجليزية") : t("switchToArabic", "Switch to Arabic")}
               >
-                <FiUser size={14} />
-                <span className="max-w-20 truncate">
-                  {GetUserNameFromToken(token)}
-                </span>
-              </Link>
-            )}
-
-            {/* Cart */}
-            {currentRole === "User" && (
-              <button 
-                className="relative flex items-center gap-1.5 text-[#F55A00] hover:text-[#E04F00] px-3 py-2 rounded-lg transition duration-200 text-xs font-semibold"
-                onClick={HandleCartClick}
-              >
-                <span className="hidden xl:inline">{t("cart", "السلة")}</span>
-                <img 
-                  src="/ProjectImages/gomangoCart.png" 
-                  alt="Cart" 
-                  className="w-4 h-4 object-contain"
-                />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold shadow-lg text-[10px]">
-                    {cartCount}
-                  </span>
-                )}
+                {lang === "ar" ? "EN" : "العربية"}
               </button>
+
+              {/* Login/Logout Button */}
+              <button
+                onClick={handleLoginLogout}
+                className={`px-3 py-2 rounded-lg text-white font-semibold transition duration-200 text-xs shadow-md whitespace-nowrap ${
+                  isLoggedIn 
+                    ? "bg-red-600 hover:bg-red-700" 
+                    : "bg-[#0A2C52] hover:bg-[#13345d]"
+                }`}
+              >
+                {isLoggedIn ? t("logout", "خروج") : t("login", "دخول")}
+              </button>
+            </div>
+
+            {/* Middle Group: Currency & Profile */}
+            <div className="flex items-center gap-2">
+              {/* Currency Selector */}
+              <CurrencySelector />
+
+              {/* User Profile */}
+              {isLoggedIn && (
+                <Link 
+                  to="/MyProfile" 
+                  className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-lg transition duration-200 text-xs font-semibold shadow-md"
+                >
+                  <FiUser size={14} />
+                  <span className="max-w-20 truncate">
+                    {GetUserNameFromToken(token)}
+                  </span>
+                </Link>
+              )}
+            </div>
+
+            {/* Right Group: Cart */}
+            {currentRole === "User" && (
+              <div className="flex items-center">
+                <button 
+                  className="relative flex items-center gap-1.5 text-[#F55A00] hover:text-[#E04F00] px-3 py-2 rounded-lg transition duration-200 text-xs font-semibold"
+                  onClick={HandleCartClick}
+                >
+                  <span className="hidden xl:inline">{t("cart.title", "السلة")}</span>
+                  <img 
+                    src="/ProjectImages/gomangoCart.png" 
+                    alt="Cart" 
+                    className="w-4 h-4 object-contain"
+                  />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold shadow-lg text-[10px]">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+              </div>
             )}
-
-            {/* Currency Selector */}
-            <CurrencySelector />
-
-            {/* Login/Logout Button */}
-            <button
-              onClick={handleLoginLogout}
-              className={`px-3 py-2 rounded-lg text-white font-semibold transition duration-200 text-xs shadow-md whitespace-nowrap ${
-                isLoggedIn 
-                  ? "bg-red-600 hover:bg-red-700" 
-                  : "bg-[#0A2C52] hover:bg-[#13345d]"
-              }`}
-            >
-              {isLoggedIn ? t("logout", "خروج") : t("login", "دخول")}
-            </button>
           </div>
         </header>
 

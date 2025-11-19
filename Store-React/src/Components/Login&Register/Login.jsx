@@ -97,7 +97,7 @@ export default function Login() {
         />
       </Helmet>
 
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
+      <div className="login-form-container bg-white rounded-2xl shadow-xl p-8 border border-blue-100">
         {/* الشعار */}
         <div className="flex justify-center mb-8">
           <WebSiteLogo width={200} height={100} />

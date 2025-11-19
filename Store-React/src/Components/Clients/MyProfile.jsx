@@ -273,15 +273,16 @@ export default function MyProfile() {
 
   <div className="p-6">
     {client.clientAddresses && Object.keys(client.clientAddresses).length > 0 ? (
-      <div className="flex items-center gap-4 p-4 bg-orange-50 rounded-xl border border-orange-200">
-        <FaMapMarker className="text-orange-700 text-xl" />
+      <div className="flex items-center gap-4 p-4 bg-orange-50 rounded-xl border border-orange-200 min-w-0 overflow-hidden">
+        <FaMapMarker className="text-orange-700 text-xl flex-shrink-0" />
         <select
           value={selectedAddress}
           onChange={(e) => setSelectedAddress(e.target.value)}
-          className="flex-1 px-4 py-3 border border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-800 font-semibold truncate" // أضفنا truncate هنا
+          className="flex-1 min-w-0 max-w-full px-4 py-3 border border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-800 font-semibold text-xs sm:text-sm break-all overflow-hidden" 
+          style={{ wordBreak: 'break-all', overflowWrap: 'break-word', maxWidth: '100%' }}
         >
           {Object.entries(client.clientAddresses).map(([id, address]) => (
-            <option key={id} value={address} className="truncate"> {/* وأيضاً هنا */}
+            <option key={id} value={address} style={{ wordBreak: 'break-all', overflowWrap: 'break-word' }}>
               {address}
             </option>
           ))}
@@ -324,7 +325,7 @@ export default function MyProfile() {
                 <span className="text-red-700 font-bold text-lg">{t("myProfile.email", "البريد الإلكتروني")}:</span>
               </div>
               <div className="flex items-center gap-4 flex-1 min-w-0 overflow-hidden">
-                <span className="text-gray-800 text-xs sm:text-sm md:text-base font-semibold bg-white px-3 py-2 rounded-lg border truncate overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
+                <span className="text-gray-800 text-xs sm:text-sm md:text-base font-semibold bg-white px-3 py-2 rounded-lg border break-all overflow-hidden max-w-full" style={{ wordBreak: 'break-all', overflowWrap: 'break-word' }}>
                   {userInfo.userName}
                 </span>
               </div>

@@ -43,20 +43,31 @@ export default function AnnouncementBar() {
   const isRTL = lang === 'ar';
 
   return (
-    <div className="w-full bg-[#0A2540] text-white py-2 px-4 border-b border-[#05132b]" dir={isRTL ? "rtl" : "ltr"}>
-      <marquee
-        direction={isRTL ? "right" : "left"}
-        scrollamount="6"
-        className="font-medium text-sm md:text-base"
-      >
-        {announcement.linkUrl ? (
-          <a href={announcement.linkUrl} className="hover:underline text-white">
-            {announcement.text}
-          </a>
-        ) : (
-          announcement.text
-        )}
-      </marquee>
+    <div className="w-full bg-[#0A2540] text-white py-2.5 md:py-2 px-2 md:px-4 border-b border-[#05132b] overflow-hidden relative">
+      <div className="announcement-scroll-container">
+        <div className={`announcement-scroll-content ${isRTL ? 'rtl-scroll' : 'ltr-scroll'}`}>
+          {/* Multiple copies for seamless overlapping loop */}
+          {[...Array(5)].map((_, index) => (
+            <React.Fragment key={index}>
+              <span className="announcement-text-item">
+                {announcement.linkUrl ? (
+                  <a 
+                    href={announcement.linkUrl} 
+                    className="inline-block font-medium text-xs sm:text-sm md:text-base hover:underline text-white whitespace-nowrap px-1"
+                  >
+                    {announcement.text}
+                  </a>
+                ) : (
+                  <span className="font-medium text-xs sm:text-sm md:text-base whitespace-nowrap px-1">{announcement.text}</span>
+                )}
+              </span>
+              {index < 4 && (
+                <span className="announcement-spacer text-white/70 whitespace-nowrap"> • • • </span>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

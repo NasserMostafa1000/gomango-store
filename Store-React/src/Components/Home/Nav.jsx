@@ -168,7 +168,7 @@ export default function NavBar() {
               className="relative flex items-center gap-2 bg-transparent hover:bg-gray-100 text-gray-700 px-4 py-2.5 rounded-xl transition duration-200 text-sm font-semibold"
                 onClick={HandleCartClick}
               >
-                <span>{t("cart", "السلة")}</span>
+                <span>{t("cart.title", "السلة")}</span>
                 <img 
                   src="/ProjectImages/gomangoCart.png" 
                   alt="Cart" 
