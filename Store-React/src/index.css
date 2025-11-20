@@ -652,14 +652,23 @@ img {
     width: 100% !important;
     max-width: 100% !important;
     overflow: visible !important;
-    /* لا نمنع transform للسماح بتوسيط اللوجو */
+    align-items: center !important;
+    justify-content: space-between !important;
+    position: relative !important;
   }
   
-  /* السماح بتوسيط اللوجو في المنتصف */
+  /* ضمان أن اللوجو في المنتصف - مطلق التمركز في منتصف الشاشة */
   header[class*="lg:hidden"] > div > div[class*="absolute"],
   header[class*="lg\\:hidden"] > div > div[class*="absolute"] {
+    position: absolute !important;
+    left: 60% !important;
     transform: translateX(-50%) !important;
-    left: 50% !important;
+    z-index: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    top: 0 !important;
+    height: 90% !important;
   }
   
   /* السماح للوجو بالظهور بشكل صحيح */
@@ -668,22 +677,19 @@ img {
     transform: none !important;
   }
 
-  /* ضمان أن العناصر في الجانب الأيمن من MobileHeader لا تختفي */
-  header[class*="lg:hidden"] > div:last-child,
-  header[class*="lg\\:hidden"] > div:last-child {
+  /* ضمان أن العناصر في الجانبين تبقى ظاهرة */
+  header[class*="lg:hidden"] > div > div:not([class*="absolute"]),
+  header[class*="lg\\:hidden"] > div > div:not([class*="absolute"]) {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
     flex-shrink: 0 !important;
-    overflow: visible !important;
     position: relative !important;
-    z-index: 1 !important;
-    /* لا نمنع transform للسماح بتوسيط اللوجو */
-    width: auto !important;
-    min-width: fit-content !important;
+    z-index: 10 !important;
+    align-items: center !important;
   }
 
-  /* ضمان أن الأزرار والعناصر في الجانب الأيمن تبقى ظاهرة */
+  /* ضمان أن الأزرار والعناصر تبقى ظاهرة */
   header[class*="lg:hidden"] button,
   header[class*="lg\\:hidden"] button,
   header[class*="lg:hidden"] a,
@@ -694,7 +700,6 @@ img {
     flex-shrink: 0 !important;
     position: relative !important;
     z-index: 1 !important;
-    /* لا نمنع transform للسماح بتوسيط اللوجو */
   }
 
   /* ضمان أن SearchBar في الموبايل يبقى ظاهراً */
@@ -715,12 +720,6 @@ img {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
-  }
-
-  /* منع أي transform أو translate من إخفاء العناصر */
-  header[class*="lg:hidden"] *,
-  header[class*="lg\\:hidden"] * {
-    transform: none !important;
   }
 }
 

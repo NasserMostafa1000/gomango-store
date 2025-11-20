@@ -166,9 +166,26 @@ export default function ProductDetails() {
       setAvailableQuantity(data.quantity);
       setDetailsId(data.productDetailsId);
       setImg(data.image);
-      // Set additional images if available
-      if (data.images && Array.isArray(data.images) && data.images.length > 0) {
-        setProductImages(data.images);
+      // Fetch additional images for the product details
+      if (data.productDetailsId) {
+        try {
+          const imagesResponse = await fetch(
+            `${API_BASE_URL}Product/GetProductDetailImages/${data.productDetailsId}`
+          );
+          if (imagesResponse.ok) {
+            const imagesData = await imagesResponse.json();
+            if (imagesData && Array.isArray(imagesData) && imagesData.length > 0) {
+              setProductImages(imagesData.map(img => img.imageUrl || img));
+            } else {
+              setProductImages([]);
+            }
+          } else {
+            setProductImages([]);
+          }
+        } catch (error) {
+          console.error("Error fetching product images:", error);
+          setProductImages([]);
+        }
       } else {
         setProductImages([]);
       }

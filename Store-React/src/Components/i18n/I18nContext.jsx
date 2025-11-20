@@ -631,6 +631,10 @@ const translations = {
 			shareCopied: "تم نسخ رابط المشاركة.",
 			shareError: "تعذر مشاركة المنتج حالياً.",
 			maxQuantityReached: "لا توجد كمية أخرى متاحة",
+			colorNotAvailable: "هذا اللون غير متوفر حالياً",
+			colorNotAvailableWithSize: "هذا اللون غير متوفر مع المقاس المحدد",
+			sizeNotAvailable: "هذا المقاس غير متوفر حالياً",
+			sizeNotAvailableWithColor: "هذا المقاس غير متوفر مع اللون المحدد",
 		},
 		addProduct: {
 			successMessage: "تمت إضافة المنتج بنجاح. رقم المنتج: {{id}}",
@@ -1109,6 +1113,10 @@ const translations = {
 			shareCopied: "Share link copied to clipboard.",
 			shareError: "Unable to share this product right now.",
 			maxQuantityReached: "No more quantity available",
+			colorNotAvailable: "This color is not available at the moment",
+			colorNotAvailableWithSize: "This color is not available with the selected size",
+			sizeNotAvailable: "This size is not available at the moment",
+			sizeNotAvailableWithColor: "This size is not available with the selected color",
 		},
 		addProduct: {
 			successMessage: "Product added successfully. Product ID: {{id}}",
@@ -1377,7 +1385,7 @@ const translations = {
 		},
 		contact: {
 			contactTitle: "Contact us",
-			title: "Contact Customer Service",
+			title: "Customer Service",
 			loading: "Loading...",
 			error: "Error",
 			reachUs: "Direct contact methods",

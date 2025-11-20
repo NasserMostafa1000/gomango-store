@@ -45,7 +45,7 @@ namespace StoreBusinessLayer.Orders
                     .FirstOrDefaultAsync(c => c.ClientId == ClientId);
                 if (client != null)
                 {
-                    string customerName =string.IsNullOrEmpty(client.User?.FirstName)?" ": client.User.FirstName;
+                    string customerName = string.IsNullOrEmpty(client.User?.FirstName) ? " " : client.User.FirstName;
                     string orderNumber = newOrder.OrderId.ToString();
                     string message = $@"
 عزيزي/عزيزتي {customerName}،
@@ -65,15 +65,14 @@ namespace StoreBusinessLayer.Orders
                     var clientEmail = client.User?.EmailOrAuthId; // التأكد من الحصول على البريد الإلكتروني أو معرّف المصادقة
                     if (!string.IsNullOrEmpty(clientEmail))
                     {
-                        // إرسال الرسالة إلى العميل
-                        //    await NotificationServices.NotificationsCreator.SendNotification(
-                        //        "شكرًا لطلبك في جومانجو",
-                        //        message,
-                        //        clientEmail,  // البريد الإلكتروني الفعلي
-                        //        "gmail");  // يمكنك استبدال "Gmail" بأي مزود إشعار آخر إن كان مختلفًا
-                        //}
+                        await NotificationServices.NotificationsCreator.SendNotification(
+                            "شكرًا لطلبك في جومانجو",
+                           message,
+                           clientEmail,  // البريد الإلكتروني الفعلي
+                           "gmail");  // يمكنك استبدال "Gmail" بأي مزود إشعار آخر إن كان مختلفًا
+                    } 
                     }
-                }
+                
 
                 return newOrder.OrderId;
             }

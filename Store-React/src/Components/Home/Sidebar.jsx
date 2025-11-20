@@ -255,6 +255,34 @@ function Sidebar({ isOpen, setIsOpen }) {
                 );
               })}
 
+              {/* Login/Logout Button - Mobile Only */}
+              <li className="lg:hidden">
+                <button
+                  onClick={() => {
+                    if (isLoggedIn) {
+                      handleLogout();
+                    } else {
+                      handleNavigation('/login');
+                    }
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all whitespace-nowrap border ${
+                    isLoggedIn
+                      ? 'bg-red-600 hover:bg-red-700 text-white border-transparent shadow-lg'
+                      : 'bg-[#0a2540] hover:bg-[#13345d] text-white border-transparent shadow-sm'
+                  } ${isRTL ? 'flex-row-reverse' : ''}`}
+                  dir={isRTL ? 'rtl' : 'ltr'}
+                  style={{ 
+                    textAlign: isRTL ? 'right' : 'left',
+                    direction: isRTL ? 'rtl' : 'ltr'
+                  }}
+                >
+                  <FiUser className={`w-5 h-5 flex-shrink-0 text-white`} style={{ order: isRTL ? 2 : 0 }} />
+                  <span className="text-sm font-medium flex-1" style={{ textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}>
+                    {isLoggedIn ? t("logout", "تسجيل خروج") : t("login", "تسجيل دخول")}
+                  </span>
+                </button>
+              </li>
+
               {(currentRole === "User" || !isLoggedIn) && (
                 <li>
                   <div className="px-4 py-2" dir={isRTL ? 'rtl' : 'ltr'}>
@@ -321,7 +349,7 @@ function Sidebar({ isOpen, setIsOpen }) {
                       }}
                     >
                       <FiPhone className="w-4 h-4 flex-shrink-0 text-[#0a2540]" style={{ order: isRTL ? 2 : 0 }} />
-                      <span className="flex-1" style={{ textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}>{t("contact.title", "التواصل")}</span>
+                      <span className="flex-1" style={{ textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}>{t("contact.title", "خدمة الدعم")}</span>
                     </button>
                     <button
                       onClick={() => handleNavigation('/terms')}

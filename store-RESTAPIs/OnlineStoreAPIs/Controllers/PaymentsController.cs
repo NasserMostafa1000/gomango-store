@@ -132,7 +132,7 @@ namespace OnlineStoreAPIs.Controllers
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
                                 Name = "Gomango Order",
-                                Description = "طلب من متجر Gomango"
+                                Description = "طلب من متجر جومانجو"
                             }
                         }
                     }
