@@ -18,6 +18,22 @@ export default function AnnouncementBarAdmin() {
   });
   const [submitting, setSubmitting] = useState(false);
   const { t } = useI18n();
+  const [statusBanner, setStatusBanner] = useState(null);
+  const scrollToTopSmooth = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+  const hydrateForm = (data, shouldScroll = false) => {
+    if (!data) return;
+    setForm({
+      id: data.id,
+      textAr: data.textAr || "",
+      textEn: data.textEn || "",
+      linkUrl: data.linkUrl || "",
+      isActive: data.isActive !== false,
+    });
+    if (shouldScroll) {
+      scrollToTopSmooth();
+    }
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -30,13 +46,7 @@ export default function AnnouncementBarAdmin() {
           const data = await res.json();
           if (data) {
             setItem(data);
-            setForm({
-              id: data.id,
-              textAr: data.textAr || "",
-              textEn: data.textEn || "",
-              linkUrl: data.linkUrl || "",
-              isActive: data.isActive !== false,
-            });
+            hydrateForm(data);
           }
         }
       } catch (e) {
@@ -56,10 +66,16 @@ export default function AnnouncementBarAdmin() {
     setForm({ id: 0, textAr: "", textEn: "", linkUrl: "", isActive: true });
   };
 
+  const showStatus = (text, tone = "info") => {
+    setStatusBanner({ text, tone });
+    setTimeout(() => setStatusBanner(null), 4000);
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     try {
+      scrollToTopSmooth();
       const method = form.id ? "PUT" : "POST";
       const url = form.id ? `${API_BASE_URL}AnnouncementBar/${form.id}` : `${API_BASE_URL}AnnouncementBar`;
       const res = await fetch(url, {
@@ -77,20 +93,14 @@ export default function AnnouncementBarAdmin() {
       })).json();
       if (data) {
         setItem(data);
-        setForm({
-          id: data.id,
-          textAr: data.textAr || "",
-          textEn: data.textEn || "",
-          linkUrl: data.linkUrl || "",
-          isActive: data.isActive !== false,
-        });
+        hydrateForm(data);
       } else {
         resetForm();
       }
-      alert("تم الحفظ بنجاح");
+      showStatus("تم حفظ بيانات شريط الإعلان بنجاح", "success");
     } catch (e) {
       console.error(e);
-      alert("حدث خطأ أثناء الحفظ");
+      showStatus("حدث خطأ أثناء الحفظ، حاول مرة أخرى", "error");
     } finally {
       setSubmitting(false);
     }
@@ -99,6 +109,7 @@ export default function AnnouncementBarAdmin() {
   const remove = async (id) => {
     if (!confirm("حذف شريط الإعلان؟")) return;
     try {
+      scrollToTopSmooth();
       const res = await fetch(`${API_BASE_URL}AnnouncementBar/${id}`, { 
         method: "DELETE", 
         headers: { Authorization: token ? `Bearer ${token}` : undefined } 
@@ -106,9 +117,10 @@ export default function AnnouncementBarAdmin() {
       if (!res.ok) throw new Error("failed");
       setItem(null);
       resetForm();
+      showStatus("تم حذف شريط الإعلان", "success");
     } catch (e) {
       console.error(e);
-      alert("حدث خطأ أثناء الحذف");
+      showStatus("تعذر حذف الشريط، حاول مرة أخرى", "error");
     }
   };
 
@@ -121,6 +133,20 @@ export default function AnnouncementBarAdmin() {
         <h1 className="text-2xl md:text-3xl font-extrabold text-[#0A2C52] tracking-wide text-center">إدارة شريط الإعلان</h1>
         <p className="text-[#0A2C52]/80 mt-1 text-center">تعديل شريط الإعلان العلوي</p>
       </div>
+
+      {statusBanner && (
+        <div
+          className={`mb-4 rounded-xl border px-4 py-3 text-sm font-medium ${
+            statusBanner.tone === "success"
+              ? "bg-green-50 border-green-200 text-green-700"
+              : statusBanner.tone === "error"
+              ? "bg-red-50 border-red-200 text-red-700"
+              : "bg-blue-50 border-blue-200 text-blue-700"
+          }`}
+        >
+          {statusBanner.text}
+        </div>
+      )}
 
       <form onSubmit={submit} className="bg-[#F9F6EF] rounded-2xl shadow p-3 md:p-5 grid grid-cols-1 gap-4 border border-[#0A2C52]/20">
         <div>
@@ -188,12 +214,22 @@ export default function AnnouncementBarAdmin() {
             <p className="text-[#0A2C52]"><strong>English:</strong> {item.textEn}</p>
             {item.linkUrl && <p className="text-[#0A2C52]"><strong>الرابط:</strong> {item.linkUrl}</p>}
             <p className="text-[#0A2C52]"><strong>الحالة:</strong> {item.isActive ? "مفعل" : "معطل"}</p>
-            <button 
-              className="mt-3 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-all shadow-md" 
-              onClick={() => remove(item.id)}
-            >
-              حذف
-            </button>
+            <div className="flex flex-wrap gap-3 mt-3">
+              <button 
+                className="px-4 py-2 rounded-xl bg-[#0A2C52] hover:bg-[#13345d] text-white font-semibold transition-all shadow-md" 
+                onClick={() => {
+                  hydrateForm(item, true);
+                }}
+              >
+                تعديل
+              </button>
+              <button 
+                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-all shadow-md" 
+                onClick={() => remove(item.id)}
+              >
+                حذف
+              </button>
+            </div>
           </div>
         </div>
       )}

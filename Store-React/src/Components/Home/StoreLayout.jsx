@@ -220,6 +220,8 @@ function StoreLayout({ children }) {
   };
 
   const isRTL = lang === 'ar';
+  const logoWidth = isRTL ? 180 : 200;
+  const logoHeight = isRTL ? 58 : 65;
 
   return (
     <div className="flex min-h-screen bg-[#F9F6EF]">
@@ -249,7 +251,12 @@ function StoreLayout({ children }) {
               className="flex items-center focus:outline-none"
               aria-label={t("home", "الرئيسية")}
             >
-              <WebSiteLogo width={200} height={65} className="object-contain" style={{ backgroundColor: 'transparent' }} />
+              <WebSiteLogo
+                width={logoWidth}
+                height={logoHeight}
+                className={`object-contain transition-all duration-200 ${isRTL ? "max-w-[180px]" : "max-w-[210px]"} xl:max-w-none`}
+                style={{ backgroundColor: 'transparent' }}
+              />
             </button>
           </div>
 

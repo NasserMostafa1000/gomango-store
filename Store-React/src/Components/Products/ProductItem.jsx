@@ -8,8 +8,12 @@ import { useI18n } from "../i18n/I18nContext";
 export default function ProductItem({ product, CurrentRole, onDeleted, layout = "rail", onClick }) {
   const {
     productId,
-    productName, // API returns the correct language already
+    productName,
+    productNameAr,
+    productNameEn,
     shortName,
+    shortNameAr,
+    shortNameEn,
     productPrice,
     priceAfterDiscount,
     discountPercentage,
@@ -18,7 +22,13 @@ export default function ProductItem({ product, CurrentRole, onDeleted, layout = 
 
   const navigate = useNavigate();
   const { format } = useCurrency();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+
+  const getLocalizedValue = (arValue, enValue, fallback) =>
+    lang === "ar" ? arValue ?? enValue ?? fallback : enValue ?? arValue ?? fallback;
+
+  const localizedName = getLocalizedValue(productNameAr, productNameEn, productName);
+  const localizedShortName = getLocalizedValue(shortNameAr, shortNameEn, shortName ?? localizedName);
 
   const MoveToUpdateProductPage = (event) => {
     event.stopPropagation();
@@ -112,7 +122,7 @@ export default function ProductItem({ product, CurrentRole, onDeleted, layout = 
         <div className={imageWrapperClass}>
           <img
             src={ServerPath + productImage}
-            alt={productName}
+            alt={localizedName}
             className={`${
               isGrid
                 ? "h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
@@ -130,10 +140,10 @@ export default function ProductItem({ product, CurrentRole, onDeleted, layout = 
 
       <div className={infoWrapperClass}>
         <div className={titleClass}>
-          {shortName || productName}
+          {localizedShortName}
         </div>
         <div className={subtitleClass}>
-          {productName}
+          {localizedName}
         </div>
 
         <div className={priceWrapperClass}>

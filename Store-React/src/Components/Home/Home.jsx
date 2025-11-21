@@ -43,16 +43,63 @@ export default function Home() {
   const [loadingClothes, setLoadingClothes] = useState(false);
   const [loadingFeatured, setLoadingFeatured] = useState(false);
   const [loadingDiscountProducts, setloadingDiscountProducts] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [gridProducts, setGridProducts] = useState([]);
   const [gridPage, setGridPage] = useState(1);
   const [hasMoreGrid, setHasMoreGrid] = useState(true);
   const [loadingGrid, setLoadingGrid] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { t, lang } = useI18n();
+  const featuredLoadingRef = useRef(false);
+  const discountLoadingRef = useRef(false);
+  const clothesLoadingRef = useRef(false);
+  const gridLoadingRef = useRef(false);
+  const fetchedPagesRef = useRef({
+    featured: new Set(),
+    discount: new Set(),
+    clothes: new Set(),
+    grid: new Set(),
+  });
+
+  const scrollToSection = useCallback((sectionId) => {
+    const target = document.getElementById(sectionId);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
+  const footerLinks = useMemo(
+    () => [
+      { key: "home", label: t("footer.home", "المتجر"), path: "/" },
+      { key: "contact", label: t("footer.contact", "اتصل بنا"), path: "/Contact" },
+      { key: "about", label: t("footer.about", "معلومات عنا"), path: "/about-us" },
+      { key: "terms", label: t("footer.terms", "الشروط والخصوصية"), path: "/terms" },
+      { key: "categories", label: t("footer.categories", "الأقسام"), sectionId: "home-categories" },
+    ],
+    [t]
+  );
+
+  const getPageKey = (page) => `${lang || "default"}-${page}`;
+
+  const mergeUniqueProducts = (prev, next) => {
+    const existing = new Set(prev.map((item) => item.productId));
+    return [...prev, ...next.filter((item) => !existing.has(item.productId))];
+  };
+
+  const resetFetchedPages = () => {
+    fetchedPagesRef.current = {
+      featured: new Set(),
+      discount: new Set(),
+      clothes: new Set(),
+      grid: new Set(),
+    };
+  };
 
   const fetchFeaturedProducts = useCallback(async (page, reset = false) => {
-    if (loadingFeatured) return;
+    if (featuredLoadingRef.current) return;
+    const pageKey = getPageKey(page);
+    if (!reset && fetchedPagesRef.current.featured.has(pageKey)) return;
+    featuredLoadingRef.current = true;
     setLoadingFeatured(true);
     try {
       const url = `${API_BASE_URL}Product/GetFeaturedProducts?page=${page}&limit=10&lang=${lang}`;
@@ -70,22 +117,28 @@ export default function Home() {
         setHasMoreFeatured(false);
       } else {
         if (reset) {
+          fetchedPagesRef.current.featured.clear();
           setFeaturedProducts(data);
-          setProductsPage(2); // Next page will be 2
+          setProductsPage(2);
         } else {
-          setFeaturedProducts((prev) => [...prev, ...data]);
+          setFeaturedProducts((prev) => mergeUniqueProducts(prev, data));
           setProductsPage((prev) => prev + 1);
         }
+        fetchedPagesRef.current.featured.add(pageKey);
       }
     } catch (error) {
       console.error("Error fetching other products:", error);
     } finally {
+      featuredLoadingRef.current = false;
       setLoadingFeatured(false);
     }
-  }, [lang, loadingFeatured]);
+  }, [lang]);
 
   const fetchDiscountProducts = useCallback(async (page, reset = false) => {
-    if (loadingDiscountProducts) return;
+    if (discountLoadingRef.current) return;
+    const pageKey = getPageKey(page);
+    if (!reset && fetchedPagesRef.current.discount.has(pageKey)) return;
+    discountLoadingRef.current = true;
     setloadingDiscountProducts(true);
     try {
       const url = `${API_BASE_URL}Product/GetDiscountProducts?page=${page}&limit=10&lang=${lang}`;
@@ -103,26 +156,32 @@ export default function Home() {
         setHasMoreDiscountProducts(false);
       } else {
         if (reset) {
+          fetchedPagesRef.current.discount.clear();
           setDiscountProducts(data);
-          setDiscountProductsPage(2); // Next page will be 2
+          setDiscountProductsPage(2);
         } else {
-          setDiscountProducts((prev) => [...prev, ...data]);
+          setDiscountProducts((prev) => mergeUniqueProducts(prev, data));
           setDiscountProductsPage((prev) => prev + 1);
         }
+        fetchedPagesRef.current.discount.add(pageKey);
       }
     } catch (error) {
       console.error("Error fetching discount products:", error);
     } finally {
+      discountLoadingRef.current = false;
       setloadingDiscountProducts(false);
     }
-  }, [lang, loadingDiscountProducts]);
+  }, [lang]);
 
   // Cache for accessories data to avoid re-fetching on pagination
   const accessoriesDataCache = useRef(null);
   const accessoriesLangCache = useRef(null);
 
   const fetchClothesProducts = useCallback(async (page, reset = false) => {
-    if (loadingClothes) return;
+    if (clothesLoadingRef.current) return;
+    const pageKey = getPageKey(page);
+    if (!reset && fetchedPagesRef.current.clothes.has(pageKey)) return;
+    clothesLoadingRef.current = true;
     setLoadingClothes(true);
 
     try {
@@ -166,26 +225,34 @@ export default function Home() {
         setHasMoreClothes(false);
       } else {
         if (reset) {
+          fetchedPagesRef.current.clothes.clear();
           setClothesProducts(paginatedData);
-          setClothesPage(2); // Next page will be 2
+          setClothesPage(2);
         } else {
-          setClothesProducts((prev) => [...prev, ...paginatedData]);
+          setClothesProducts((prev) => mergeUniqueProducts(prev, paginatedData));
           setClothesPage((prev) => prev + 1);
         }
+        fetchedPagesRef.current.clothes.add(pageKey);
       }
       // إذا كانت البيانات أقل من endIndex، لا يوجد المزيد
       if (data.length <= endIndex) {
         setHasMoreClothes(false);
+      } else {
+        setHasMoreClothes(true);
       }
     } catch (error) {
       console.error("Error fetching accessories products:", error);
     } finally {
+      clothesLoadingRef.current = false;
       setLoadingClothes(false);
     }
-  }, [lang, loadingClothes]);
+  }, [lang]);
 
   const fetchGridProducts = useCallback(async (page, reset = false) => {
-    if (loadingGrid) return;
+    if (gridLoadingRef.current) return;
+    const pageKey = getPageKey(page);
+    if (!reset && fetchedPagesRef.current.grid.has(pageKey)) return;
+    gridLoadingRef.current = true;
     setLoadingGrid(true);
     try {
       const url = `${API_BASE_URL}Product/GetAllProductsWithLimit?page=${page}&limit=9&lang=${lang}`;
@@ -194,12 +261,16 @@ export default function Home() {
       const data = await response.json();
       if (data.length === 0) {
         setHasMoreGrid(false);
-      } else if (reset) {
-        setGridProducts(data);
-        setGridPage(2);
       } else {
-        setGridProducts((prev) => [...prev, ...data]);
-        setGridPage((prev) => prev + 1);
+        if (reset) {
+          fetchedPagesRef.current.grid.clear();
+          setGridProducts(data);
+          setGridPage(2);
+        } else {
+          setGridProducts((prev) => mergeUniqueProducts(prev, data));
+          setGridPage((prev) => prev + 1);
+        }
+        fetchedPagesRef.current.grid.add(pageKey);
       }
       if (data.length === 0 && !reset) {
         setHasMoreGrid(false);
@@ -207,9 +278,10 @@ export default function Home() {
     } catch (error) {
       console.error("Error fetching grid products:", error);
     } finally {
+      gridLoadingRef.current = false;
       setLoadingGrid(false);
     }
-  }, [lang, loadingGrid]);
+  }, [lang]);
 
   const handleScroll = useCallback((ref, fetchMore) => {
     if (!ref.current) return;
@@ -226,33 +298,11 @@ export default function Home() {
     if (isAtEnd) fetchMore();
   }, []);
 
-  // Initial load (only once on mount)
   useEffect(() => {
-    if (lang) {
-      fetchDiscountProducts(1, false);
-      fetchClothesProducts(1, false);
-      fetchFeaturedProducts(1, false);
-      fetchGridProducts(1, false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Track previous lang to avoid unnecessary refetches
-  const prevLangRef = useRef(null);
-  
-  // Reset and refetch products when language changes
-  useEffect(() => {
-    if (!lang) return; // Skip if lang is not ready
-    if (lang === prevLangRef.current) return; // Skip if lang hasn't changed
-    
-    // Update ref
-    prevLangRef.current = lang;
-    
-    // Clear cache when language changes
+    if (!lang) return;
     accessoriesDataCache.current = null;
     accessoriesLangCache.current = null;
-    
-    // Reset all states
+    resetFetchedPages();
     setFeaturedProducts([]);
     setDiscountProducts([]);
     setClothesProducts([]);
@@ -265,19 +315,12 @@ export default function Home() {
     setHasMoreDiscountProducts(true);
     setHasMoreClothes(true);
     setHasMoreGrid(true);
-    
-    // Refetch products with new language (reset = true to replace, not append)
-    // Use setTimeout to ensure state updates are complete
-    const timer = setTimeout(() => {
-      fetchDiscountProducts(1, true);
-      fetchClothesProducts(1, true);
-      fetchFeaturedProducts(1, true);
-      fetchGridProducts(1, true);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang]);
+
+    fetchDiscountProducts(1, true);
+    fetchClothesProducts(1, true);
+    fetchFeaturedProducts(1, true);
+    fetchGridProducts(1, true);
+  }, [lang, fetchDiscountProducts, fetchClothesProducts, fetchFeaturedProducts, fetchGridProducts]);
 
   const DiscountProductsRef = useRef(null);
   const ProductsRef = useRef(null);
@@ -471,7 +514,7 @@ export default function Home() {
           </div>
 
           {/* Categories Section - moved above hero */}
-          <section className="bg-[#F9F6EF] border-b border-blue-100 relative z-20">
+          <section id="home-categories" className="bg-[#F9F6EF] border-b border-blue-100 relative z-20">
             <div className="max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-4 sm:py-6">
               <SectionHeader
                 eyebrow={t("homePage.curatedCategories", "أقسام منتقاة")}
@@ -606,11 +649,40 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Features Section */}
-
-
-          {/* Contact Section */}
-
+          <footer className="bg-white text-[#0A2C52] border-t border-blue-100 mt-10" aria-label={t("footer.heading", "روابط صفحاتنا")}>
+            <div className="max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-10 flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+              <div className="space-y-3 max-w-xl">
+                <WebSiteLogo
+                  width={lang === "ar" ? 140 : 160}
+                  height={48}
+                  className="object-contain drop-shadow-sm"
+                />
+                <p className="text-[#1e293b] text-sm leading-relaxed">
+                  {t(
+                    "footer.description",
+                    "تصفح كل صفحات متجرنا بسهولة، وتابع جديد الأقسام والعروض أولاً بأول."
+                  )}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {footerLinks.map((link) => (
+                  <button
+                    key={link.key}
+                    onClick={() => {
+                      if (link.sectionId) {
+                        scrollToSection(link.sectionId);
+                      } else if (link.path) {
+                        navigate(link.path);
+                      }
+                    }}
+                    className="px-5 py-2.5 rounded-full bg-[#0A2C52]/5 hover:bg-[#0A2C52]/10 border border-[#0A2C52]/10 text-sm font-semibold text-[#0A2C52] transition-colors duration-200"
+                  >
+                    {link.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </footer>
         </div>
       </StoreLayout>
     </>

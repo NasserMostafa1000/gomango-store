@@ -138,7 +138,7 @@ export default function BannersAdmin() {
       displayOrder: b.displayOrder || 0,
     });
     setImageFile(null);
-    setImagePreview(b.imageUrl || "");
+    setImagePreview(b.imageUrl ? `${ServerPath}${b.imageUrl}` : "");
   };
 
   const remove = async (id) => {

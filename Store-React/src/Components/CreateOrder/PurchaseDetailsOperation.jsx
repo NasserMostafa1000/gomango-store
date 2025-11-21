@@ -505,12 +505,13 @@ export default function PurchaseOperationDetails() {
             onClick={HandleBuyClick}
             disabled={purchaseLoading}
             style={{ color: 'white' }}
+            type="button"
           >
             <span className="text-white" style={{ color: 'white' }}>
               {purchaseLoading
                 ? t("purchaseDetails.processing", "جاري المعالجة...")
                 : paymentMethod === "online"
-                ? t("purchaseDetails.buyNow", "شراء الآن")
+                ? t("purchaseDetails.buyNow", "شراء")
                 : t("purchaseDetails.completePurchase", "اتمام الشراء")}
             </span>
           </button>

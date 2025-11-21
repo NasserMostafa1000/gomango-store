@@ -6,7 +6,9 @@ import { useI18n } from "../i18n/I18nContext";
 export default function SearchBar({ onSearch, searchType = "products" }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const brandDarkBlue = "#0A2C52";
+  const brandDarkerBlue = "#13294B";
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -61,22 +63,28 @@ export default function SearchBar({ onSearch, searchType = "products" }) {
         <button
           onClick={handleSearch}
           disabled={isLoading}
-          className="absolute left-2 flex items-center justify-center w-10 h-10 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed shadow-md transform group-hover:scale-105"
-          style={{ 
-            background: 'linear-gradient(to right, #4f46e5, #9333ea)',
+          className="absolute left-2 flex items-center justify-center w-12 h-12 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A2C52]/30 focus:ring-offset-2 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed shadow-md transform group-hover:scale-105 gap-1.5"
+          style={{
+            background: `linear-gradient(to right, ${brandDarkBlue}, ${brandDarkerBlue})`,
             color: '#ffffff'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(to right, #4338ca, #7e22ce)';
+            e.currentTarget.style.background = `linear-gradient(to right, ${brandDarkerBlue}, ${brandDarkBlue})`;
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(to right, #4f46e5, #9333ea)';
+            e.currentTarget.style.background = `linear-gradient(to right, ${brandDarkBlue}, ${brandDarkerBlue})`;
           }}
         >
           {isLoading ? (
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" style={{ color: '#ffffff' }}></div>
+            <div
+              className="w-4 h-4 border-2 rounded-full animate-spin"
+              style={{ borderColor: '#ffffff', borderTopColor: 'transparent' }}
+            ></div>
           ) : (
-            <FiSearch size={18} style={{ color: '#ffffff', stroke: '#ffffff' }} />
+            <>
+              <span className="sr-only">{t("searchAction", "ابحث")}</span>
+              <FiSearch size={18} style={{ color: '#60A5FA', stroke: '#60A5FA' }} />
+            </>
           )}
         </button>
 

@@ -2,7 +2,18 @@
 <html lang="ar">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+
+    <!-- أيقونات الموقع -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/ProjectImages/SouqLogoEn.webp" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/ProjectImages/SouqLogoEn.webp" />
+    <link rel="apple-touch-icon" href="/ProjectImages/SouqLogoEn.webp" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#ffffff" />
+
     <style>
       /* منع zoom على الموبايل */
       * {
@@ -10,7 +21,8 @@
         -webkit-tap-highlight-color: transparent;
         -webkit-touch-callout: none;
       }
-      html, body {
+      html,
+      body {
         overflow-x: hidden;
         width: 100%;
         position: relative;
@@ -33,21 +45,24 @@
         touch-action: manipulation;
         overscroll-behavior: none;
       }
-      input, textarea, select, button {
+      input,
+      textarea,
+      select,
+      button {
         font-size: 16px !important; /* منع zoom عند focus على iOS */
         touch-action: manipulation;
       }
-      /* منع pinch zoom و double tap zoom */
       * {
         touch-action: manipulation;
         -webkit-user-select: none;
         user-select: none;
       }
-      input, textarea, [contenteditable] {
+      input,
+      textarea,
+      [contenteditable] {
         -webkit-user-select: text;
         user-select: text;
       }
-      /* منع zoom على الموبايل بشكل كامل */
       @media screen and (max-width: 768px) {
         * {
           touch-action: manipulation !important;
@@ -58,63 +73,80 @@
         }
       }
     </style>
+
     <script>
       // منع zoom بشكل كامل باستخدام JavaScript
-      (function() {
-        // منع pinch zoom
-        document.addEventListener('gesturestart', function (e) {
-          e.preventDefault();
-        }, { passive: false });
-        
-        document.addEventListener('gesturechange', function (e) {
-          e.preventDefault();
-        }, { passive: false });
-        
-        document.addEventListener('gestureend', function (e) {
-          e.preventDefault();
-        }, { passive: false });
-        
-        // منع double tap zoom (أكثر دقة)
+      (function () {
+        document.addEventListener(
+          "gesturestart",
+          function (e) {
+            e.preventDefault();
+          },
+          { passive: false }
+        );
+
+        document.addEventListener(
+          "gesturechange",
+          function (e) {
+            e.preventDefault();
+          },
+          { passive: false }
+        );
+
+        document.addEventListener(
+          "gestureend",
+          function (e) {
+            e.preventDefault();
+          },
+          { passive: false }
+        );
+
         var lastTouchEnd = 0;
-        document.addEventListener('touchend', function (event) {
-          var now = Date.now();
-          if (now - lastTouchEnd <= 300 && event.touches.length === 0) {
-            event.preventDefault();
-          }
-          lastTouchEnd = now;
-        }, { passive: false });
-        
-        // التأكد من viewport meta tag
+        document.addEventListener(
+          "touchend",
+          function (event) {
+            var now = Date.now();
+            if (now - lastTouchEnd <= 300 && event.touches.length === 0) {
+              event.preventDefault();
+            }
+            lastTouchEnd = now;
+          },
+          { passive: false }
+        );
+
         var meta = document.querySelector('meta[name="viewport"]');
         if (meta) {
-          meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+          meta.setAttribute(
+            "content",
+            "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+          );
         }
-        
-        // منع zoom عند تغيير orientation
-        window.addEventListener('orientationchange', function() {
-          setTimeout(function() {
+
+        window.addEventListener("orientationchange", function () {
+          setTimeout(function () {
             if (meta) {
-              meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+              meta.setAttribute(
+                "content",
+                "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+              );
             }
           }, 100);
         });
       })();
     </script>
-<script src="https://cdn.tailwindcss.com"></script>
 
-    <title>
-      جومانجو | تسوق منتجات  لكل بيت في مصر بأفضل سعر وتوصيل سريع
-    </title>
-<!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <title>جومانجو | تسوق منتجات لكل بيت في مصر بأفضل سعر وتوصيل سريع</title>
 
     <!-- تحسين محركات البحث -->
     <meta
       name="description"
-      content="جومانجو أول منصة تجارة إلكترونية  بتجمع بين الأصالة والحداثة. اكتشف منتجات فريدة، عروض حصرية، وتوصيل سريع لكل أنحاء مصر!"
+      content="جومانجو أول منصة تجارة إلكترونية بتجمع بين الأصالة والحداثة. اكتشف منتجات فريدة، عروض حصرية، وتوصيل سريع لكل أنحاء مصر!"
     />
     <meta
       name="keywords"
-      content="جومانجو، سوق، تسوق، منتجات  شراء أونلاين، عروض، خصومات، توصيل سريع، إلكترونيات، ملابس، أجهزة منزلية"
+      content="جومانجو، سوق، تسوق، منتجات، شراء أونلاين، عروض، خصومات، توصيل سريع، إلكترونيات، ملابس، أجهزة منزلية"
     />
     <meta name="author" content="جومانجو" />
 
@@ -126,27 +158,16 @@
     />
     <meta property="og:url" content="https://gomango.shop" />
     <meta property="og:type" content="website" />
-    <meta
-      property="og:image"
-      content="https://gomango.shop/ProjectImages/SouqLogoEn.webp"
-    />
+    <meta property="og:image" content="https://gomango.shop/ProjectImages/SouqLogoEn.webp" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="جومانجو - منتجات  أصلية بأسعار مميزة"
-    />
+    <meta name="twitter:title" content="جومانجو - منتجات أصلية بأسعار مميزة" />
     <meta
       name="twitter:description"
       content="تسوق الآن من جومانجو وتمتع بخصومات كبيرة وتوصيل سريع لكل مكان في مصر."
     />
-    <meta
-      name="twitter:image"
-      content="https://gomango.shop/ProjectImages/SouqLogoEn.webp"
-    />
-    <!-- لو عندك حساب تويتر -->
-    <!-- <meta name="twitter:site" content="@Jomango" /> -->
+    <meta name="twitter:image" content="https://gomango.shop/ProjectImages/SouqLogoEn.webp" />
 
     <!-- خطوط Google -->
     <link

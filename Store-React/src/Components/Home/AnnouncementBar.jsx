@@ -6,10 +6,20 @@ export default function AnnouncementBar() {
   const [announcement, setAnnouncement] = useState(null);
   const { lang } = useI18n();
 
-  useEffect(() => {
+useEffect(() => {
+    const controller = new AbortController();
     const load = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}AnnouncementBar/active?lang=${lang}`);
+        const res = await fetch(
+          `${API_BASE_URL}AnnouncementBar/active?lang=${lang}&ts=${Date.now()}`,
+          {
+            signal: controller.signal,
+            cache: "no-store",
+            headers: {
+              "Cache-Control": "no-cache",
+            },
+          }
+        );
         if (res.ok) {
           const data = await res.json();
           if (process.env.NODE_ENV === 'development') {
@@ -31,11 +41,14 @@ export default function AnnouncementBar() {
           setAnnouncement(null);
         }
       } catch (e) {
-        console.error("Failed to load announcement", e);
-        setAnnouncement(null);
+        if (e.name !== "AbortError") {
+          console.error("Failed to load announcement", e);
+          setAnnouncement(null);
+        }
       }
     };
     load();
+    return () => controller.abort();
   }, [lang]);
 
   if (!announcement) return null;

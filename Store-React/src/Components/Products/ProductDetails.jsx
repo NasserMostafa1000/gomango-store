@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import API_BASE_URL, {
@@ -33,6 +33,7 @@ export default function ProductDetails() {
   const [availableQuantity, setAvailableQuantity] = useState(0);
   const [Quantity, setQuantity] = useState(1);
   const [banner, setBanner] = useState(null);
+  const detailsRequestController = useRef(null);
   const { format } = useCurrency();
   const { t, lang } = useI18n();
 
@@ -152,14 +153,24 @@ export default function ProductDetails() {
     };
   }, [id, location.state?.product, lang]);
 
-  const GetDetailsOfCurrentSizeAndColor = async () => {
-    if (!product) return;
+  const GetDetailsOfCurrentSizeAndColor = async (
+    color = CurrentColor,
+    size = CurrentSize
+  ) => {
+    if (!product || !color || !size) return;
+    const trimmedColor = color?.trim();
+    const trimmedSize = size?.trim();
+    if (!trimmedColor || !trimmedSize) return;
+    detailsRequestController.current?.abort();
+    const controller = new AbortController();
+    detailsRequestController.current = controller;
     setLoading(true);
     try {
       const response = await fetch(
         `${API_BASE_URL}Product/GetDetailsBy?ProductId=${Number(
           product?.productId
-        )}&ColorName=${CurrentColor}&SizeName=${CurrentSize}`
+        )}&ColorName=${encodeURIComponent(trimmedColor)}&SizeName=${encodeURIComponent(trimmedSize)}`,
+        { signal: controller.signal }
       );
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
@@ -175,7 +186,7 @@ export default function ProductDetails() {
           if (imagesResponse.ok) {
             const imagesData = await imagesResponse.json();
             if (imagesData && Array.isArray(imagesData) && imagesData.length > 0) {
-              setProductImages(imagesData.map(img => img.imageUrl || img));
+              setProductImages(imagesData.map((img) => img.imageUrl || img));
             } else {
               setProductImages([]);
             }
@@ -190,9 +201,15 @@ export default function ProductDetails() {
         setProductImages([]);
       }
     } catch (error) {
+      if (error?.name === "AbortError") {
+        return;
+      }
       console.error(error.message);
     } finally {
-      setLoading(false);
+      if (detailsRequestController.current === controller) {
+        detailsRequestController.current = null;
+        setLoading(false);
+      }
     }
   };
 
@@ -315,13 +332,19 @@ export default function ProductDetails() {
     };
 
     fetchDetails();
+  }, [CurrentSize]);
+
+  useEffect(() => {
+    if (CurrentColor && CurrentSize) {
+      GetDetailsOfCurrentSizeAndColor(CurrentColor, CurrentSize);
+    }
   }, [CurrentSize, CurrentColor]);
 
   useEffect(() => {
-    if (CurrentColor) {
-      GetDetailsOfCurrentSizeAndColor();
-    }
-  }, [CurrentSize, CurrentColor]);
+    return () => {
+      detailsRequestController.current?.abort();
+    };
+  }, []);
 
   useEffect(() => {
     const middleY = window.innerHeight / 2;
@@ -475,11 +498,9 @@ export default function ProductDetails() {
               productId={product?.productId}
               onColorChange={(color) => {
                 setCurrentColor(color);
-                GetDetailsOfCurrentSizeAndColor();
               }}
               onSizeChange={(size) => {
                 setCurrentSize(size);
-                GetDetailsOfCurrentSizeAndColor();
               }}
             />
           </div>
@@ -547,11 +568,9 @@ export default function ProductDetails() {
               productId={product?.productId}
               onColorChange={(color) => {
                 setCurrentColor(color);
-                GetDetailsOfCurrentSizeAndColor();
               }}
               onSizeChange={(size) => {
                 setCurrentSize(size);
-                GetDetailsOfCurrentSizeAndColor();
               }}
             />
           </div>

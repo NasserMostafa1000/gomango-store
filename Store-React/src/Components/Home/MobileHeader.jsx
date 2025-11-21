@@ -78,13 +78,16 @@ function MobileHeader({ onMenuClick }) {
     navigate("/Cart");
   };
 
-// ... (نفس الكود السابق حتى الـ return)
-
   const isRTL = lang === "ar";
+  const logoSize = lang === "ar" ? 72 : 110;
+  const logoClass =
+    lang === "ar"
+      ? "object-contain drop-shadow-sm w-[60px] h-[80px] sm:w-[90px] sm:h-[90px]"
+      : "object-contain drop-shadow-sm w-[90px] h-[90px] sm:w-[115px] sm:h-[115px]";
 
-return (
-  <header className="lg:hidden bg-[#F9F6EF] shadow-sm border-b border-[#e5e7eb] sticky top-0 z-30 w-full">
-    <div className="relative flex items-center justify-between px-4 py-3 w-full">
+  return (
+    <header className="lg:hidden bg-[#F9F6EF] shadow-sm border-b border-[#e5e7eb] sticky top-0 z-30 w-full">
+      <div className="relative flex items-center justify-between px-4 py-3 w-full">
       
       {/* الجانب الأيسر - القائمة */}
       <div className="flex items-center gap-4 flex-shrink-0 z-10">
@@ -104,7 +107,7 @@ return (
           className="flex items-center justify-center hover:scale-105 transition-transform duration-200"
           aria-label={t("home", "الرئيسية")}
         >
-          <WebSiteLogo width={90} height={90} className="object-contain drop-shadow-sm w-[90px] h-[90px]" />
+          <WebSiteLogo width={logoSize} height={logoSize} className={logoClass} />
         </button>
       </div>
 

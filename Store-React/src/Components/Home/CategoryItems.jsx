@@ -17,9 +17,10 @@ export default function Categories() {
     navigate(path, { state: { searchQuery: label, apiQuery: searchValue } });
   };
 
+  // ✅ دالة الشَفْل الصحيحة (Fisher–Yates shuffle)
   const shuffleArray = (array) => {
     const result = [...array];
-    for (let i = result.length / 2; i > 0; i--) {
+    for (let i = result.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [result[i], result[j]] = [result[j], result[i]];
     }
@@ -38,8 +39,15 @@ export default function Categories() {
           throw new Error("failed");
         }
         const data = await response.json();
+
         if (isMounted) {
-          setShuffledCategories(shuffleArray(data));
+          if (Array.isArray(data)) {
+            // ✅ تأكيد أن العناصر كلها سليمة
+            const cleanData = data.filter((item) => item && item.imagePath);
+            setShuffledCategories(shuffleArray(cleanData));
+          } else {
+            setShuffledCategories([]);
+          }
         }
       } catch {
         if (isMounted) {
@@ -60,6 +68,7 @@ export default function Categories() {
       <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-brand-navy">
         {t("whatAreYouLookingFor", "ماذا تبحث عنه؟")}
       </h1>
+
       {loading ? (
         <p className="text-center text-gray-600 py-6">
           {t("loadingCategories", "جارٍ تحميل الأقسام...")}

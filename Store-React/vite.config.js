@@ -1,5 +1,9 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { fileURLToPath } from "url";
+import { resolve } from "path";
+
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -9,7 +13,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      input: './index.html'
+      input: resolve(__dirname, "index.html"),
     },
     cssCodeSplit: false,
   },

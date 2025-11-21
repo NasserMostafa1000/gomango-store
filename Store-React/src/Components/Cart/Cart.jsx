@@ -8,13 +8,16 @@ import CurrencySelector from "../Currency/CurrencySelector";
 import { useI18n } from "../i18n/I18nContext";
 import { getOrCreateSessionId, mergeGuestCartToUserCart } from "../utils";
 import BackButton from "../Common/BackButton";
+import WebSiteLogo from "../WebsiteLogo/WebsiteLogo.jsx";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { format } = useCurrency();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const brandNavy = "#0A2C52";
+  const brandDeepNavy = "#13345d";
   
   // Function to translate color names (from Arabic to English or vice versa)
   const translateColor = (colorName) => {
@@ -265,17 +268,28 @@ export default function Cart() {
           name="description"
           content={t("cart.metaDesc", "عرض تفاصيل السلة وإجمالي السعر للمنتجات المُختارة في الملف الشخصي")}
         />
+        <link rel="icon" href="/ProjectImages/gomangoCart.png" />
       </Helmet>
       
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
-        <div className="rounded-2xl shadow-xl p-6 mb-8" style={{ background: 'linear-gradient(to right, #1e3a8a, #1e40af)' }}>
+        <div
+          className="rounded-2xl shadow-xl p-6 mb-8"
+          style={{ background: `linear-gradient(120deg, ${brandNavy}, ${brandDeepNavy})` }}
+        >
           <div className="flex items-center justify-between flex-wrap gap-4">
             <BackButton className="bg-white/20 hover:bg-white/30 text-white border-white/30" />
-            
+
             <div className="flex items-center gap-3">
-              <div className="bg-orange-500 p-3 rounded-full">
-                <FiShoppingCart className="text-white" size={24} />
+              <div className="hidden sm:block">
+                <WebSiteLogo
+                  width={lang === "ar" ? 130 : 150}
+                  height={48}
+                  className="object-contain drop-shadow-lg"
+                />
+              </div>
+              <div className="p-3 rounded-full bg-white text-center shadow-lg border border-white/40">
+                <FiShoppingCart className="text-[#0A2C52]" size={24} />
               </div>
               <h1 className="text-2xl font-bold" style={{ color: 'white' }}>{t("cart.title", "سلة التسوق")}</h1>
             </div>

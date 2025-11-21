@@ -111,16 +111,21 @@ export default function ProductForm() {
   const [product, setProduct] = useState(null);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [imageLoading, setImageLoading] = useState(null);
   const [productDetailImages, setProductDetailImages] = useState({}); // { productDetailId: [images] }
   const [uploadingImages, setUploadingImages] = useState({}); // { productDetailId: true/false }
+  const [resultDialog, setResultDialog] = useState(null); // { status: 'success' | 'error', message: string }
   const navigate = useNavigate();
   const location = useLocation();
   const productId = location.state?.productId;
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const primaryButtonClasses =
     "bg-[#0A2C52] hover:bg-[#13345d] text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:bg-gray-400 disabled:text-white/80 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2";
+
+  const getLocalizedValue = (arValue, enValue) =>
+    lang === "ar" ? arValue ?? enValue : enValue ?? arValue;
   
   // Function to translate color names (from Arabic to English or vice versa)
   const translateColor = (colorName) => {
@@ -173,6 +178,21 @@ export default function ProductForm() {
     fetchProduct();
     fetchCategories();
   }, [productId]);
+
+  const scrollToTopSmooth = () => {
+    if (typeof window === "undefined") return;
+    const scrollElement =
+      document?.scrollingElement || document?.documentElement || document?.body;
+    try {
+      (scrollElement || window).scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } catch {
+      window.scrollTo(0, 0);
+      if (scrollElement) scrollElement.scrollTop = 0;
+    }
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -247,7 +267,8 @@ export default function ProductForm() {
   };
 
   const handleUpdate = async () => {
-    setLoading(true);
+    scrollToTopSmooth();
+    setIsSaving(true);
     setMessage("⏳ " + t("productForm.updating", "جاري التحديث... يمكن أن يأخذ هذا بعض الوقت."));
     try {
       const response = await fetch(
@@ -262,17 +283,25 @@ export default function ProductForm() {
         }
       );
       if (response.ok) {
-        setMessage("✅ " + t("productForm.updateSuccess", "تم تحديث المنتج بنجاح!"));
+        const successMsg = t("productForm.updateSuccess", "تم تحديث المنتج بنجاح!");
+        setMessage("✅ " + successMsg);
+        setResultDialog({ status: "success", message: successMsg });
+        await fetchProduct();
       } else {
-        setMessage("❌ " + t("productForm.updateError", "حدث خطأ أثناء التحديث."));
+        const errorMsg = t("productForm.updateError", "حدث خطأ أثناء التحديث.");
+        setMessage("❌ " + errorMsg);
+        setResultDialog({ status: "error", message: errorMsg });
       }
     } catch (error) {
-      setMessage("❌ حدث خطأ أثناء التحديث.");
+      const exceptionMsg = t("productForm.updateError", "حدث خطأ أثناء التحديث.");
+      setMessage("❌ " + exceptionMsg);
+      setResultDialog({ status: "error", message: exceptionMsg });
     }
-    setLoading(false);
+    setIsSaving(false);
   };
 
   const handleImageUpdate = async (productDetailId) => {
+    scrollToTopSmooth();
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = "image/*";
@@ -328,6 +357,7 @@ export default function ProductForm() {
 
   // Handle adding multiple images to a product detail
   const handleAddMultipleImages = async (productDetailId) => {
+    scrollToTopSmooth();
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = "image/*";
@@ -433,6 +463,7 @@ export default function ProductForm() {
     if (!window.confirm(t("productForm.confirmDeleteImage", "هل أنت متأكد من حذف هذه الصورة؟"))) {
       return;
     }
+    scrollToTopSmooth();
 
     try {
       const token = sessionStorage.getItem("token");
@@ -462,9 +493,37 @@ export default function ProductForm() {
   };
 
   const handleAddDetails = () => {
+    scrollToTopSmooth();
     navigate("/admins/AddProductDetails", {
       state: { productId: product.productId },
     });
+  };
+
+  const handleRemoveDetail = (productDetailId) => {
+    if (!productDetailId) return;
+    const confirmDelete = window.confirm(
+      t(
+        "productForm.confirmDeleteDetail",
+        "هل أنت متأكد من حذف هذه التفاصيل؟ سيتم اعتماد الحذف بعد حفظ التعديلات."
+      )
+    );
+    if (!confirmDelete) return;
+    scrollToTopSmooth();
+    setProduct((prevProduct) => {
+      if (!prevProduct) return prevProduct;
+      return {
+        ...prevProduct,
+        productDetails: prevProduct.productDetails.filter(
+          (detail) => detail.productDetailId !== productDetailId
+        ),
+      };
+    });
+    setProductDetailImages((prevImages) => {
+      const updatedImages = { ...prevImages };
+      delete updatedImages[productDetailId];
+      return updatedImages;
+    });
+    setMessage("⚠️ " + t("productForm.detailMarkedForDeletion", "تم حذف التفاصيل من النموذج. اضغط حفظ لتأكيد الحذف من قاعدة البيانات."));
   };
 
   if (loading && !product) {
@@ -487,8 +546,37 @@ export default function ProductForm() {
     </div>
   );
 
+  const localizedProductName = getLocalizedValue(product.productNameAr, product.productNameEn) || "";
+
   return (
     <div className="min-h-screen bg-[#F9F6EF] py-8 px-4">
+      {resultDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 text-center border">
+            <div
+              className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center text-3xl ${
+                resultDialog.status === "success"
+                  ? "bg-green-100 text-green-600"
+                  : "bg-red-100 text-red-600"
+              }`}
+            >
+              {resultDialog.status === "success" ? "✅" : "❌"}
+            </div>
+            <h3 className="text-2xl font-bold text-[#0A2C52]">
+              {resultDialog.status === "success"
+                ? t("productForm.successTitle", "تم الحفظ بنجاح")
+                : t("productForm.errorTitle", "لم يتم الحفظ")}
+            </h3>
+            <p className="text-gray-600">{resultDialog.message}</p>
+            <button
+              onClick={() => setResultDialog(null)}
+              className="w-full py-3 rounded-xl bg-[#0A2C52] text-white font-semibold hover:bg-[#13345d] transition shadow-lg"
+            >
+              {t("productForm.closeDialog", "حسناً")}
+            </button>
+          </div>
+        </div>
+      )}
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="bg-[#F9F6EF] rounded-2xl shadow-lg p-6 mb-6 border border-[#0A2C52]/20">
@@ -508,7 +596,7 @@ export default function ProductForm() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-[#0A2C52]">{t("productForm.updateProduct", "تحديث المنتج")}</h1>
-                <p className="text-gray-600 mt-1">{t("productForm.editData", "تعديل بيانات")} {product.productNameAr || product.productNameEn}</p>
+                <p className="text-gray-600 mt-1">{t("productForm.editData", "تعديل بيانات")} {localizedProductName}</p>
               </div>
             </div>
             
@@ -734,13 +822,22 @@ export default function ProductForm() {
           <div className="space-y-6">
             {product.productDetails.map((detail, index) => (
               <div key={detail.productDetailId} className="border border-[#0A2C52]/20 rounded-2xl p-6 hover:border-[#F55A00] transition-all duration-300 bg-white">
-                {/* Summary */}
-                <div className="bg-[#F9F6EF] rounded-xl p-4 mb-4 border border-[#0A2C52]/10">
-                  <p className="text-[#0A2C52] font-medium text-center">
-                    {t("productForm.youHave", "لديك")} {detail.quantity} {t("productForm.pieces", "قطعة")} {t("productForm.of", "من")} {product.productNameAr || product.productNameEn} {t("productForm.withColor", "بلون")}{" "}
-                    {translateColor(detail.colorName)}
-                    {detail.sizeName !== "غير محدد" && ` ${t("productForm.withSize", "بمقاس")} ${detail.sizeName}`}
-                  </p>
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between mb-4">
+                  <div className="bg-[#F9F6EF] rounded-xl p-4 border border-[#0A2C52]/10 flex-1">
+                    <p className="text-[#0A2C52] font-medium text-center">
+                      {t("productForm.youHave", "لديك")} {detail.quantity} {t("productForm.pieces", "قطعة")} {t("productForm.of", "من")} {localizedProductName} {t("productForm.withColor", "بلون")}{" "}
+                      {translateColor(detail.colorName)}
+                      {detail.sizeName !== "غير محدد" && ` ${t("productForm.withSize", "بمقاس")} ${detail.sizeName}`}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveDetail(detail.productDetailId)}
+                    className="self-center lg:self-start px-4 py-2 rounded-xl bg-red-100 text-red-700 hover:bg-red-200 transition-colors flex items-center gap-2"
+                  >
+                    <FiTrash2 />
+                    {t("productForm.deleteDetail", "حذف التفاصيل")}
+                  </button>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -750,7 +847,7 @@ export default function ProductForm() {
                       {detail.productImage ? (
                         <img
                           src={ServerPath + detail.productImage}
-                          alt={`${product.productNameAr || product.productNameEn}`}
+                          alt={localizedProductName || "product image"}
                           className="w-full h-48 object-cover rounded-xl shadow-md"
                         />
                       ) : (
@@ -903,16 +1000,17 @@ export default function ProductForm() {
         {/* Save Button */}
         <div className="mt-6 flex justify-center">
           <button
+            type="button"
             onClick={handleUpdate}
-            disabled={loading}
-            className={`min-w-[200px] px-8 py-4 text-lg font-medium ${primaryButtonClasses} transform hover:-translate-y-1 ${loading ? "opacity-80 cursor-wait" : ""}`}
+            disabled={isSaving}
+            className={`min-w-[200px] px-8 py-4 text-lg font-medium ${primaryButtonClasses} transform hover:-translate-y-1 ${isSaving ? "opacity-80 cursor-wait" : ""}`}
           >
-            {loading ? (
+            {isSaving ? (
               <FiLoader className="animate-spin" />
             ) : (
               <FiSave />
             )}
-            {loading ? t("productForm.updating", "جاري التحديث...") : t("productForm.saveChanges", "حفظ التعديلات")}
+            {isSaving ? t("productForm.updating", "جاري التحديث...") : t("productForm.saveChanges", "حفظ التعديلات")}
           </button>
         </div>
       </div>
