@@ -5,7 +5,7 @@ import API_BASE_URL, { ServerPath } from "../Constant";
 
 export default function Categories() {
   const navigate = useNavigate();
-  const [shuffledCategories, setShuffledCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const { t, lang } = useI18n();
 
@@ -15,16 +15,6 @@ export default function Categories() {
     const label = (displayLabel || query || "").trim() || searchValue;
     const path = `/FindProducts?q=${encodeURIComponent(searchValue)}`;
     navigate(path, { state: { searchQuery: label, apiQuery: searchValue } });
-  };
-
-  // ✅ دالة الشَفْل الصحيحة (Fisher–Yates shuffle)
-  const shuffleArray = (array) => {
-    const result = [...array];
-    for (let i = result.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [result[i], result[j]] = [result[j], result[i]];
-    }
-    return result;
   };
 
   useEffect(() => {
@@ -42,16 +32,16 @@ export default function Categories() {
 
         if (isMounted) {
           if (Array.isArray(data)) {
-            // ✅ تأكيد أن العناصر كلها سليمة
+            // ✅ تأكيد أن العناصر كلها سليمة - بدون shuffle
             const cleanData = data.filter((item) => item && item.imagePath);
-            setShuffledCategories(shuffleArray(cleanData));
+            setCategories(cleanData);
           } else {
-            setShuffledCategories([]);
+            setCategories([]);
           }
         }
       } catch {
         if (isMounted) {
-          setShuffledCategories([]);
+          setCategories([]);
         }
       } finally {
         if (isMounted) setLoading(false);
@@ -73,13 +63,13 @@ export default function Categories() {
         <p className="text-center text-gray-600 py-6">
           {t("loadingCategories", "جارٍ تحميل الأقسام...")}
         </p>
-      ) : shuffledCategories.length === 0 ? (
+      ) : categories.length === 0 ? (
         <p className="text-center text-gray-600 py-6">
           {t("noCategories", "لا توجد أقسام متاحة حالياً.")}
         </p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6">
-          {shuffledCategories.map((item) => (
+          {categories.map((item) => (
             <div
               key={item.categoryId}
               className="group relative bg-[#F9F6EF] rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100"

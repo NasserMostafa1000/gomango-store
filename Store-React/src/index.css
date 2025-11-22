@@ -873,3 +873,13 @@ div[class*="flex"] {
     max-width: 50% !important;
   }
 }
+
+/* Scrollbar styles for product images */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: thin;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}

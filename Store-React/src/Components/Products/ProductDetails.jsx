@@ -31,6 +31,7 @@ export default function ProductDetails() {
   const [Sizes, setSizes] = useState([]);
   const [CurrentSize, setCurrentSize] = useState("");
   const [availableQuantity, setAvailableQuantity] = useState(0);
+  const [availableColorsForSize, setAvailableColorsForSize] = useState([]);
   const [Quantity, setQuantity] = useState(1);
   const [banner, setBanner] = useState(null);
   const detailsRequestController = useRef(null);
@@ -102,7 +103,14 @@ export default function ProductDetails() {
         const data = await response.json();
         if (!isMounted) return;
         setProduct(data);
-        setAvailableQuantity(data.quantity);
+        const initialQuantity = data.quantity;
+        setAvailableQuantity(initialQuantity);
+        // ضبط الكمية تلقائياً عند التحميل الأولي
+        if (initialQuantity > 0) {
+          setQuantity(1);
+        } else {
+          setQuantity(0);
+        }
         setDetailsId(data.productDetailsId);
         setImg(data.productImage);
         // Fetch additional images for the initial product details
@@ -174,7 +182,14 @@ export default function ProductDetails() {
       );
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
-      setAvailableQuantity(data.quantity);
+      const newQuantity = data.quantity;
+      setAvailableQuantity(newQuantity);
+      // ضبط الكمية تلقائياً عند تغيير اللون/المقاس
+      if (newQuantity > 0) {
+        setQuantity(1);
+      } else {
+        setQuantity(0);
+      }
       setDetailsId(data.productDetailsId);
       setImg(data.image);
       // Fetch additional images for the product details
@@ -277,8 +292,30 @@ export default function ProductDetails() {
         const data = await response.json();
         setCurrentColor(data.color);
         setDetailsId(data.productDetailsId);
-        setCurrentSize(data.size);
-        setAvailableQuantity(data.quantity);
+        const sizeValue = data.size;
+        setCurrentSize(sizeValue);
+        const newQuantity = data.quantity;
+        setAvailableQuantity(newQuantity);
+        // ضبط الكمية تلقائياً عند التحميل الأولي
+        if (newQuantity > 0) {
+          setQuantity(1);
+        } else {
+          setQuantity(0);
+        }
+        // إذا كان هناك مقاس محدد، احصل على الألوان المتاحة له
+        if (sizeValue) {
+          try {
+            const colorsForSizeResponse = await fetch(
+              `${API_BASE_URL}Product/GetColorsBelongsToSpecificSize?ProductId=${product?.productId}&SizeName=${sizeValue}`
+            );
+            if (colorsForSizeResponse.ok) {
+              const colorsForSizeData = await colorsForSizeResponse.json();
+              setAvailableColorsForSize(colorsForSizeData);
+            }
+          } catch (error) {
+            console.error("Error fetching colors for size:", error);
+          }
+        }
       } catch (error) {
         console.error("Error fetching product details:", error);
       } finally {
@@ -323,7 +360,18 @@ export default function ProductDetails() {
         if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
         setColors(data);
-        if (data.length === 1) setCurrentColor(data[0]);
+        setAvailableColorsForSize(data); // حفظ الألوان المتاحة للمقاس الحالي
+        // التحقق من أن اللون الحالي متوفر مع المقاس الجديد
+        if (CurrentColor && !data.includes(CurrentColor)) {
+          // إذا كان اللون الحالي غير متوفر، اختر أول لون متاح
+          if (data.length > 0) {
+            setCurrentColor(data[0]);
+          } else {
+            setCurrentColor("");
+          }
+        } else if (data.length === 1) {
+          setCurrentColor(data[0]);
+        }
       } catch (error) {
         console.error("Error fetching product details:", error);
       } finally {
@@ -339,6 +387,18 @@ export default function ProductDetails() {
       GetDetailsOfCurrentSizeAndColor(CurrentColor, CurrentSize);
     }
   }, [CurrentSize, CurrentColor]);
+
+  // ضبط الكمية تلقائياً عند تغيير المخزون المتاح (حل احتياطي)
+  useEffect(() => {
+    setQuantity((currentQuantity) => {
+      if (availableQuantity > 0 && currentQuantity > availableQuantity) {
+        return availableQuantity;
+      } else if (availableQuantity === 0 && currentQuantity > 0) {
+        return 0;
+      }
+      return currentQuantity;
+    });
+  }, [availableQuantity]);
 
   useEffect(() => {
     return () => {
@@ -496,6 +556,7 @@ export default function ProductDetails() {
               isRTL={isRTL}
               showBanner={showBanner}
               productId={product?.productId}
+              availableColorsForSize={availableColorsForSize}
               onColorChange={(color) => {
                 setCurrentColor(color);
               }}
@@ -566,6 +627,7 @@ export default function ProductDetails() {
               isRTL={isRTL}
               showBanner={showBanner}
               productId={product?.productId}
+              availableColorsForSize={availableColorsForSize}
               onColorChange={(color) => {
                 setCurrentColor(color);
               }}

@@ -268,5 +268,11 @@ export const sizes = [
   { SizeId: 38, SizeName: "45" },
   { SizeId: 39, SizeName: "46" },
   { SizeId: 40, SizeName: "47" },
+  { SizeId: 41, SizeName: "XS" },
+  { SizeId: 42, SizeName: "XXS" },
+  { SizeId: 43, SizeName: "2XS" },
+  { SizeId: 44, SizeName: "48" },
+  { SizeId: 45, SizeName: "49" },
+  { SizeId: 46, SizeName: "50" },
 
 ];

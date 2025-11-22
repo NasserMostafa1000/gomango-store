@@ -12,7 +12,13 @@ export default function BackButton({ className = "", onClick }) {
     if (onClick) {
       onClick();
     } else {
-      navigate(-1);
+      // التحقق من وجود تاريخ للعودة
+      if (window.history.length > 1) {
+        navigate(-1);
+      } else {
+        // إذا لم يكن هناك تاريخ، العودة للصفحة الرئيسية
+        navigate("/");
+      }
     }
   };
 

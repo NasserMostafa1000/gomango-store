@@ -80,10 +80,22 @@ export default function ProductOptionsCard({
   productId,
   onColorChange,
   onSizeChange,
+  availableColorsForSize,
 }) {
   const [banner, setBanner] = useState(null);
 
-  const handleColorClick = (color) => {
+  const handleColorClick = async (color) => {
+    // التحقق من أن اللون متوفر مع المقاس الحالي
+    if (CurrentSize && availableColorsForSize && !availableColorsForSize.includes(color)) {
+      const message = t("productDetails.colorNotAvailableForSize", "هذا اللون غير متوفر مع المقاس المحدد");
+      if (showBanner) {
+        showBanner(message, "error");
+      } else {
+        setBanner({ text: message, tone: "error" });
+        setTimeout(() => setBanner(null), 4000);
+      }
+      return;
+    }
     setCurrentColor(color);
     if (onColorChange) {
       onColorChange(color);
@@ -126,23 +138,28 @@ export default function ProductOptionsCard({
           <div className="flex flex-wrap gap-2">
             {Colors.map((color, index) => {
               const isSelected = CurrentColor === color;
+              // إذا لم يكن هناك مقاس محدد، أو لم تكن هناك قائمة ألوان متاحة، فجميع الألوان متاحة
+              const isAvailable = !CurrentSize || !availableColorsForSize || availableColorsForSize.length === 0 || availableColorsForSize.includes(color);
               return (
                 <button
                   key={index}
                   type="button"
                   onClick={() => handleColorClick(color)}
+                  disabled={!isAvailable}
                   className={`relative flex flex-col items-center justify-center w-16 h-16 rounded-lg border-2 transition-all duration-200 ${
-                    isSelected
+                    !isAvailable
+                      ? "border-gray-200 opacity-40 cursor-not-allowed"
+                      : isSelected
                       ? "border-[#0A2C52] shadow-lg scale-105"
                       : "border-gray-300 hover:border-[#0A2C52] hover:shadow-md"
                   }`}
-                  title={translateColor(color)}
+                  title={!isAvailable ? `${translateColor(color)} - ${t("productDetails.notAvailableForSize", "غير متوفر مع هذا المقاس")}` : translateColor(color)}
                 >
                   <div
-                    className="w-10 h-10 rounded border border-gray-200"
+                    className={`w-10 h-10 rounded border border-gray-200 ${!isAvailable ? "opacity-50" : ""}`}
                     style={{ backgroundColor: getColorHex(color) }}
                   ></div>
-                  <span className="text-xs mt-1 text-gray-700 font-medium truncate w-full text-center px-1">
+                  <span className={`text-xs mt-1 font-medium truncate w-full text-center px-1 ${!isAvailable ? "text-gray-400" : "text-gray-700"}`}>
                     {translateColor(color)}
                   </span>
                 </button>
@@ -193,64 +210,75 @@ export default function ProductOptionsCard({
       )}
 
       {/* الكمية */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          {t("productDetails.quantity", "الكمية")}
-        </label>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setQuantity(Math.max(1, Quantity - 1))}
-            className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors border border-gray-300"
-          >
-            <span className="text-xl font-bold">-</span>
-          </button>
-          <input
-            type="number"
-            min="1"
-            max={availableQuantity}
-            value={Quantity}
-            onChange={(e) => {
-              const newValue = Number(e.target.value);
-              if (newValue > availableQuantity) {
-                const message = t("productDetails.maxQuantityReached", "لا توجد كمية أخرى متاحة");
-                if (showBanner) {
-                  showBanner(message, "error");
-                } else {
-                  setBanner({ text: message, tone: "error" });
-                  setTimeout(() => setBanner(null), 4000);
+      {availableQuantity > 0 && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            {t("productDetails.quantity", "الكمية")}
+          </label>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setQuantity(Math.max(1, Quantity - 1))}
+              className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors border border-gray-300"
+            >
+              <span className="text-xl font-bold">-</span>
+            </button>
+            <input
+              type="number"
+              min="1"
+              max={availableQuantity}
+              value={Quantity}
+              onChange={(e) => {
+                const newValue = Number(e.target.value);
+                if (newValue > availableQuantity) {
+                  const message = t("productDetails.maxQuantityReached", "لا توجد كمية أخرى متاحة");
+                  if (showBanner) {
+                    showBanner(message, "error");
+                  } else {
+                    setBanner({ text: message, tone: "error" });
+                    setTimeout(() => setBanner(null), 4000);
+                  }
+                  setQuantity(availableQuantity);
+                  return;
                 }
-                setQuantity(availableQuantity);
-                return;
-              }
-              setQuantity(
-                Math.min(
-                  Math.max(1, newValue),
-                  availableQuantity
-                )
-              );
-            }}
-            className="w-20 p-3 border border-gray-300 rounded-lg text-center text-black focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
-          />
-          <button
-            onClick={() => {
-              if (Quantity >= availableQuantity) {
-                const message = t("productDetails.maxQuantityReached", "لا توجد كمية أخرى متاحة");
-                if (showBanner) {
-                  showBanner(message, "error");
-                } else {
-                  setBanner({ text: message, tone: "error" });
-                  setTimeout(() => setBanner(null), 4000);
+                setQuantity(
+                  Math.min(
+                    Math.max(1, newValue),
+                    availableQuantity
+                  )
+                );
+              }}
+              className="w-20 p-3 border border-gray-300 rounded-lg text-center text-black focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
+            />
+            <button
+              onClick={() => {
+                if (Quantity >= availableQuantity) {
+                  const message = t("productDetails.maxQuantityReached", "لا توجد كمية أخرى متاحة");
+                  if (showBanner) {
+                    showBanner(message, "error");
+                  } else {
+                    setBanner({ text: message, tone: "error" });
+                    setTimeout(() => setBanner(null), 4000);
+                  }
+                  return;
                 }
-                return;
-              }
-              setQuantity(Math.min(availableQuantity, Quantity + 1));
-            }}
-            className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors border border-gray-300"
-          >
-            <span className="text-xl font-bold">+</span>
-          </button>
+                setQuantity(Math.min(availableQuantity, Quantity + 1));
+              }}
+              className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors border border-gray-300"
+            >
+              <span className="text-xl font-bold">+</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+      
+      {/* رسالة عدم التوفر */}
+      {availableQuantity === 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+          <p className="text-red-600 font-medium">
+            {t("productDetails.outOfStock", "هذا المنتج غير متوفر حالياً")}
+          </p>
+        </div>
+      )}
 
       {/* الأزرار */}
       {availableQuantity > 0 && (

@@ -177,6 +177,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "OnlineStoreAPIs.Controllers.AnnouncementBarController",
+    "Method": "GetActiveDetails",
+    "RelativePath": "api/AnnouncementBar/active/details",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "OnlineStoreAPIs.Controllers.BannersController",
     "Method": "GetAll",
     "RelativePath": "api/Banners",

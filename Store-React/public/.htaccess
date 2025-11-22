@@ -2,6 +2,10 @@
   RewriteEngine On
   RewriteBase /
   
+  # إعادة توجيه من GOMANGO.SHOP إلى WWW.GOMANGO.SHOP
+  RewriteCond %{HTTP_HOST} ^gomango\.shop$ [NC]
+  RewriteRule ^(.*)$ https://www.gomango.shop/$1 [R=301,L]
+  
   # إعادة توجيه جميع الطلبات إلى index.html للسماح لـ React Router بالعمل
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f

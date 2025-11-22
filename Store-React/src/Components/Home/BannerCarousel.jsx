@@ -50,11 +50,12 @@ export default function BannerCarousel() {
   return (
     <Wrapper>
       <div
-        className={`relative w-full h-[40vh] md:h-[60vh] overflow-hidden rounded-md ${
+        className={`relative w-full overflow-hidden rounded-md ${
           clickUrl ? "cursor-pointer" : ""
         }`}
+        style={{ aspectRatio: '21/9' }}
       >
-        <img src={imageSrc} alt={current.title} className="w-full h-full object-cover" />
+        <img src={imageSrc} alt={current.title} className="w-full h-full object-contain bg-[#F9F6EF]" />
         {(current.title || current.subTitle) && (
           <div className="absolute inset-0 bg-gradient-to-t from-[#F9F6EF]/80 to-transparent flex items-end">
             <div className="p-4 md:p-8 text-[#0A2C52]">

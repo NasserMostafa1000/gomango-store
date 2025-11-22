@@ -154,6 +154,18 @@
         }
       }
     },
+    "/api/AnnouncementBar/active/details": {
+      "get": {
+        "tags": [
+          "AnnouncementBar"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/AnnouncementBar/{id}": {
       "get": {
         "tags": [

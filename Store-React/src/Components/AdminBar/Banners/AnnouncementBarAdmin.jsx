@@ -39,7 +39,8 @@ export default function AnnouncementBarAdmin() {
     const load = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_BASE_URL}AnnouncementBar/active`, {
+        // استخدام endpoint الجديد للحصول على جميع التفاصيل
+        const res = await fetch(`${API_BASE_URL}AnnouncementBar/active/details`, {
           headers: { Authorization: token ? `Bearer ${token}` : undefined }
         });
         if (res.ok) {
@@ -48,6 +49,10 @@ export default function AnnouncementBarAdmin() {
             setItem(data);
             hydrateForm(data);
           }
+        } else if (res.status === 404) {
+          // لا يوجد إعلان نشط
+          setItem(null);
+          resetForm();
         }
       } catch (e) {
         console.error(e);
@@ -88,12 +93,17 @@ export default function AnnouncementBarAdmin() {
       });
       if (!res.ok) throw new Error("failed");
       // reload
-      const data = await (await fetch(`${API_BASE_URL}AnnouncementBar/active`, {
+      const reloadRes = await fetch(`${API_BASE_URL}AnnouncementBar/active/details`, {
         headers: { Authorization: token ? `Bearer ${token}` : undefined }
-      })).json();
-      if (data) {
-        setItem(data);
-        hydrateForm(data);
+      });
+      if (reloadRes.ok) {
+        const data = await reloadRes.json();
+        if (data) {
+          setItem(data);
+          hydrateForm(data);
+        } else {
+          resetForm();
+        }
       } else {
         resetForm();
       }

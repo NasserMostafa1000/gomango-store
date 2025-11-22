@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import API_BASE_URL from "../Constant";
 import ProductItem from "./ProductItem";
 import { getRoleFromToken } from "../utils";
@@ -7,16 +7,21 @@ import { useI18n } from "../i18n/I18nContext";
 
 export default function RelatedProducts({ product }) {
   const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [allProducts, setAllProducts] = useState([]);
   const navigate = useNavigate();
   const token = sessionStorage.getItem("token");
   const role = getRoleFromToken(token);
   const { t, lang } = useI18n();
+  const observerTarget = useRef(null);
 
   useEffect(() => {
     const load = async () => {
       try {
         // جلب جميع المنتجات
-        const res = await fetch(`${API_BASE_URL}Product/GetAllProductsWithLimit?page=1&limit=50&lang=${lang}`);
+        const res = await fetch(`${API_BASE_URL}Product/GetAllProductsWithLimit?page=1&limit=100&lang=${lang}`);
         const data = await res.json();
         let list = data || [];
         
@@ -36,20 +41,70 @@ export default function RelatedProducts({ product }) {
         
         // إذا لم نجد منتجات من نفس الكاتيجوري، نعرض منتجات عشوائية
         if (list.length === 0) {
-          const allRes = await fetch(`${API_BASE_URL}Product/GetAllProductsWithLimit?page=1&limit=20&lang=${lang}`);
+          const allRes = await fetch(`${API_BASE_URL}Product/GetAllProductsWithLimit?page=1&limit=50&lang=${lang}`);
           const allData = await allRes.json();
           list = (allData || []).filter(p => p.productId !== product?.productId);
         }
         
+        setAllProducts(list);
         // أخذ أول 8 منتجات
         setItems(list.slice(0, 8));
+        setPage(2);
+        setHasMore(list.length > 8);
       } catch (e) {
         console.error("Failed to load related products", e);
         setItems([]);
+        setAllProducts([]);
       }
     };
-    if (product) load();
+    if (product) {
+      setItems([]);
+      setPage(1);
+      setHasMore(true);
+      load();
+    }
   }, [product, lang]);
+
+  const loadMore = useCallback(() => {
+    if (loadingMore || !hasMore) return;
+    
+    setLoadingMore(true);
+    const startIndex = (page - 1) * 8;
+    const endIndex = startIndex + 8;
+    const nextItems = allProducts.slice(startIndex, endIndex);
+    
+    if (nextItems.length > 0) {
+      setItems((prev) => [...prev, ...nextItems]);
+      setPage((prev) => prev + 1);
+      setHasMore(endIndex < allProducts.length);
+    } else {
+      setHasMore(false);
+    }
+    
+    setLoadingMore(false);
+  }, [page, allProducts, hasMore, loadingMore]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [hasMore, loadingMore, loadMore]);
 
   const open = (p) => {
     navigate(`/productDetails/${p.productId}`, { state: { product: p }, replace: true });
@@ -78,6 +133,13 @@ export default function RelatedProducts({ product }) {
           </div>
         ))}
       </div>
+      {hasMore && (
+        <div ref={observerTarget} className="flex justify-center items-center py-4">
+          {loadingMore && (
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

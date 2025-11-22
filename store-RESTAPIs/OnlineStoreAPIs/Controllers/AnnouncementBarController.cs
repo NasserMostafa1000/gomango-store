@@ -72,6 +72,40 @@ namespace OnlineStoreAPIs.Controllers
             }
         }
 
+        [HttpGet("active/details")]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> GetActiveDetails()
+        {
+            try
+            {
+                var item = await _announcementBar.GetActiveAsync();
+                if (item == null)
+                {
+                    return NotFound(new { message = "No active announcement found" });
+                }
+                
+                // إرجاع جميع التفاصيل (textAr و textEn)
+                var result = new
+                {
+                    item.Id,
+                    textAr = item.TextAr,
+                    textEn = item.TextEn,
+                    linkUrl = item.LinkUrl,
+                    isActive = item.IsActive,
+                    createdAt = item.CreatedAt,
+                    updatedAt = item.UpdatedAt
+                };
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                #if DEBUG
+                System.Diagnostics.Debug.WriteLine($"AnnouncementBar: Error - {ex.Message}");
+                #endif
+                return StatusCode(500, new { message = "An error occurred while fetching announcement details" });
+            }
+        }
+
         [HttpGet("{id:int}")]
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> GetById(int id)

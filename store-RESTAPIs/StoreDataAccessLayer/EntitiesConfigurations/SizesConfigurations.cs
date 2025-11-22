@@ -68,6 +68,13 @@ namespace StoreDataAccessLayer.EntitiesConfigurations
             new Sizes{SizeId=38, SizeName="45", SizeCategory="بناطيل/احذيه"},
             new Sizes{SizeId=39, SizeName="46", SizeCategory="بناطيل/احذيه"},
             new Sizes{SizeId=40, SizeName="47", SizeCategory="بناطيل/احذيه"},
+            new Sizes{SizeId=41, SizeName="XS", SizeCategory="بناطيل/احذيه"},
+            new Sizes{SizeId=42, SizeName="XXS", SizeCategory="بناطيل/احذيه"},
+            new Sizes{SizeId=43, SizeName="2XS", SizeCategory="بناطيل/احذيه"},
+            new Sizes{SizeId=44, SizeName="48", SizeCategory="بناطيل/احذيه"},
+            new Sizes{SizeId=45, SizeName="49", SizeCategory="بناطيل/احذيه"},
+            new Sizes{SizeId=46, SizeName="50", SizeCategory="بناطيل/احذيه"},
+
             };
         }
     }

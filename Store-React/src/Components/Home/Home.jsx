@@ -54,6 +54,7 @@ export default function Home() {
   const discountLoadingRef = useRef(false);
   const clothesLoadingRef = useRef(false);
   const gridLoadingRef = useRef(false);
+  const gridObserverTarget = useRef(null);
   const fetchedPagesRef = useRef({
     featured: new Set(),
     discount: new Set(),
@@ -283,19 +284,21 @@ export default function Home() {
     }
   }, [lang]);
 
-  const handleScroll = useCallback((ref, fetchMore) => {
-    if (!ref.current) return;
+  const handleScroll = useCallback((ref, fetchMore, hasMore, isLoading) => {
+    if (!ref.current || !hasMore || isLoading) return;
     const { scrollLeft, scrollWidth, clientWidth } = ref.current;
     const isRtl = getComputedStyle(ref.current).direction === "rtl";
 
     // زيادة الحساسية للأجهزة المحمولة
-    const threshold = window.innerWidth < 768 ? 200 : 300;
+    const threshold = window.innerWidth < 768 ? 100 : 150;
     
     const isAtEnd = isRtl
       ? scrollLeft <= threshold
       : scrollLeft + clientWidth >= scrollWidth - threshold;
 
-    if (isAtEnd) fetchMore();
+    if (isAtEnd) {
+      fetchMore();
+    }
   }, []);
 
   useEffect(() => {
@@ -350,22 +353,43 @@ export default function Home() {
     const clothesDiv = clothesRef.current;
 
     const DiscountProductsScrollHandler = () => {
-      handleScroll(DiscountProductsRef, () => {
-        const currentPage = discountPageRef.current;
-        fetchDiscountProducts(currentPage, false);
-      });
+      handleScroll(
+        DiscountProductsRef, 
+        () => {
+          const currentPage = discountPageRef.current;
+          if (hasMoreDisCountProducts && !loadingDiscountProducts) {
+            fetchDiscountProducts(currentPage, false);
+          }
+        },
+        hasMoreDisCountProducts,
+        loadingDiscountProducts
+      );
     };
     const clothesScrollHandler = () => {
-      handleScroll(clothesRef, () => {
-        const currentPage = clothesPageRef.current;
-        fetchClothesProducts(currentPage, false);
-      });
+      handleScroll(
+        clothesRef, 
+        () => {
+          const currentPage = clothesPageRef.current;
+          if (hasMoreClothes && !loadingClothes) {
+            fetchClothesProducts(currentPage, false);
+          }
+        },
+        hasMoreClothes,
+        loadingClothes
+      );
     };
     const productsScrollHandler = () => {
-      handleScroll(ProductsRef, () => {
-        const currentPage = productsPageRef.current;
-        fetchFeaturedProducts(currentPage, false);
-      });
+      handleScroll(
+        ProductsRef, 
+        () => {
+          const currentPage = productsPageRef.current;
+          if (hasMoreFeatured && !loadingFeatured) {
+            fetchFeaturedProducts(currentPage, false);
+          }
+        },
+        hasMoreFeatured,
+        loadingFeatured
+      );
     };
 
     if (DiscountProductsDiv)
@@ -393,7 +417,36 @@ export default function Home() {
     fetchDiscountProducts,
     fetchClothesProducts,
     fetchFeaturedProducts,
+    hasMoreDisCountProducts,
+    hasMoreClothes,
+    hasMoreFeatured,
+    loadingDiscountProducts,
+    loadingClothes,
+    loadingFeatured,
   ]);
+
+  // Infinite scroll for grid products
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMoreGrid && !loadingGrid && gridPage > 1) {
+          fetchGridProducts(gridPage, false);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = gridObserverTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [hasMoreGrid, loadingGrid, gridPage, fetchGridProducts]);
 
   function handleProductClick(product) {
     navigate(`/productDetails/${product.productId}`, {
@@ -618,33 +671,29 @@ export default function Home() {
                   {t("homePage.noProducts", "لا توجد منتجات متاحة حالياً.")}
                 </p>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-                  {gridProducts.map((product) => (
-                    <ProductItem
-                      key={product.productId}
-                      product={product}
-                      CurrentRole={getRoleFromToken(sessionStorage.getItem("token"))}
-                      onDeleted={(deletedId) => {
-                        handleRemoveFromGrid(deletedId ?? product.productId);
-                      }}
-                      layout="grid"
-                      onClick={() => handleProductClick(product)}
-                    />
-                  ))}
-                </div>
-              )}
-              {hasMoreGrid && (
-                <div className="flex justify-center mt-6">
-                  <button
-                    onClick={() => fetchGridProducts(gridPage, false)}
-                    disabled={loadingGrid}
-                    className="px-6 py-2 rounded-lg bg-[#0a2540] text-white font-semibold hover:bg-[#13345d] transition disabled:opacity-50"
-                  >
-                    {loadingGrid
-                      ? t("homePage.loadingMore", "جارٍ التحميل...")
-                      : t("homePage.loadMore", "عرض المزيد")}
-                  </button>
-                </div>
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                    {gridProducts.map((product) => (
+                      <ProductItem
+                        key={product.productId}
+                        product={product}
+                        CurrentRole={getRoleFromToken(sessionStorage.getItem("token"))}
+                        onDeleted={(deletedId) => {
+                          handleRemoveFromGrid(deletedId ?? product.productId);
+                        }}
+                        layout="grid"
+                        onClick={() => handleProductClick(product)}
+                      />
+                    ))}
+                  </div>
+                  {hasMoreGrid && (
+                    <div ref={gridObserverTarget} className="flex justify-center mt-6">
+                      {loadingGrid && (
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                      )}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </section>
