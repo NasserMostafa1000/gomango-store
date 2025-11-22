@@ -71,9 +71,9 @@
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\appsettings.json*",
-              "RelativeToolTip": "appsettings.json*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
+              "ToolTip": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-11-22T05:43:47.546Z",
               "EditorCaption": ""
@@ -88,8 +88,7 @@
               "RelativeToolTip": "..\\StoreDataAccessLayer\\EntitiesConfigurations\\SizesConfigurations.cs",
               "ViewState": "AgIAACEAAAAAAAAAAAAowEYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-22T05:33:20.921Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-22T05:33:20.921Z"
             },
             {
               "$type": "Bookmark",
