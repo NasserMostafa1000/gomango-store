@@ -3,11 +3,11 @@
   "WorkspaceRootPath": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{B79279B1-8F17-41E8-B078-97CEFCB3DE77}|..\\StoreDataAccessLayer\\StoreDataLayer.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\storedataaccesslayer\\entitiesconfigurations\\sizesconfigurations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\onlinestoreapis\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{80373FDE-A381-4E7E-A74C-8AC3D612F9AF}|OnlineStoreAPIs.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B79279B1-8F17-41E8-B078-97CEFCB3DE77}|..\\StoreDataAccessLayer\\StoreDataLayer.csproj|d:\\mr comapny\\projects\\all apps\\apps\\gomango\\store-restapis\\storedataaccesslayer\\entitiesconfigurations\\sizesconfigurations.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -55,24 +55,32 @@
         },
         {
           "DockedWidth": 139,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
               "ToolTip": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\OnlineStoreAPIs\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAACKAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-11-22T05:43:47.546Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "SizesConfigurations.cs",
               "DocumentMoniker": "D:\\MR Comapny\\Projects\\All Apps\\Apps\\Gomango\\store-RESTAPIs\\StoreDataAccessLayer\\EntitiesConfigurations\\SizesConfigurations.cs",
               "RelativeDocumentMoniker": "..\\StoreDataAccessLayer\\EntitiesConfigurations\\SizesConfigurations.cs",
@@ -82,14 +90,6 @@
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-22T05:33:20.921Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
               "$type": "Bookmark",
