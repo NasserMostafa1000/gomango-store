@@ -14,6 +14,7 @@ namespace StoreServices.OrdersServices
         Task<int> PostOrderDetail(OrdersDtos.ClientOrders.PostOrderDetailsReq req);
         List<OrderDetails> PostListOfOrderDetails(List<OrdersDtos.ClientOrders.PostOrderDetailsReq> details, int OrderId);
         Task<bool> PostListOfOrdersDetails(List<OrdersDtos.ClientOrders.PostOrderDetailsReq> req, int OrderId);
+        Task<int> PostGuestOrder(OrdersDtos.GuestOrders.PostGuestOrderReq req);
         Task<string> GetOrderStatusNameById(int ID);
         Task<List<OrdersDtos.ClientOrders.GetOrdersByClientIdReq>> GetOrdersByClientId(int ClientId);
         Task<List<OrdersDtos.ClientOrders.GetOrderDetailsInSpecificOrderReq>> GetOrderDetailsInSpecificOrder(int OrderId);

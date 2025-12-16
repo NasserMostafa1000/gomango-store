@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using StoreDataAccessLayer;
 using StoreDataAccessLayer.Entities;
+using StoreBusinessLayer.Utilities;
 
 namespace StoreServices.BannersServices
 {
@@ -108,23 +109,33 @@ namespace StoreServices.BannersServices
             entity.TitleEn = dto.TitleEn;
             entity.SubTitleAr = dto.SubTitleAr;
             entity.SubTitleEn = dto.SubTitleEn;
+            var previousImage = entity.ImageUrl;
             entity.ImageUrl = dto.ImageUrl;
             entity.LinkUrl = dto.LinkUrl;
             entity.IsActive = dto.IsActive;
             entity.DisplayOrder = dto.DisplayOrder;
             entity.StartsAt = dto.StartsAt;
             entity.EndsAt = dto.EndsAt;
-            await _db.SaveChangesAsync();
-            return true;
+            var saved = await _db.SaveChangesAsync() > 0;
+            if (saved && !string.Equals(previousImage, dto.ImageUrl, StringComparison.OrdinalIgnoreCase))
+            {
+                ImageStorageHelper.TryDelete(previousImage);
+            }
+            return saved;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
             var entity = await _db.Banners.FirstOrDefaultAsync(b => b.Id == id);
             if (entity == null) return false;
+            var previousImage = entity.ImageUrl;
             _db.Banners.Remove(entity);
-            await _db.SaveChangesAsync();
-            return true;
+            var deleted = await _db.SaveChangesAsync() > 0;
+            if (deleted)
+            {
+                ImageStorageHelper.TryDelete(previousImage);
+            }
+            return deleted;
         }
     }
 }

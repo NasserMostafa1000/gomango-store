@@ -31,7 +31,7 @@ namespace StoreDataAccessLayer.EntitiesConfigurations
                new Category { CategoryId = 1, CategoryName = "رجالي", CategoryNameEn = "Men", ImagePath = "/ProjectImages/ForMens.webp" },
                new Category { CategoryId = 2, CategoryName = "نسائي", CategoryNameEn = "Women", ImagePath = "/ProjectImages/ForWomens.png" },
                new Category { CategoryId = 3, CategoryName = "شنط نسائية", CategoryNameEn = "Women Bags", ImagePath = "/ProjectImages/WomenBags.jpg" },
-               new Category { CategoryId = 4, CategoryName = "إاكسسوارات", CategoryNameEn = "Accessories", ImagePath = "/ProjectImages/Accessories.webp" }
+               new Category { CategoryId = 4, CategoryName = "حقائب نسائية واكسسوارات", CategoryNameEn = "Accessories & Women's Bags", ImagePath = "/ProjectImages/Accessories.webp" }
 
 
            );

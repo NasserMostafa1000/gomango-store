@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import API_BASE_URL from "../Constant";
 import { useI18n } from "../i18n/I18nContext";
 import SuccessForm from "./SuccessForm";
+import { trackPurchase } from "../utils/facebookPixel";
 
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
@@ -42,6 +43,45 @@ export default function PaymentSuccess() {
           setOrderId(data.orderId);
           setDiscountCode(data.discountCode);
           setStatus("completed");
+          
+          // تتبع Purchase لـ Facebook Pixel
+          if (data.orderId) {
+            try {
+              // محاولة جلب بيانات الطلب لتتبع المنتجات
+              const orderResponse = await fetch(
+                `${API_BASE_URL}Orders/GetOrderDetails?OrderId=${data.orderId}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+              if (orderResponse.ok) {
+                const orderData = await orderResponse.json();
+                const products = Array.isArray(orderData) 
+                  ? orderData.map(item => ({
+                      productId: item.productId || item.productDetailsId || item.id,
+                      quantity: item.quantity || 1,
+                      unitPrice: item.unitPrice || item.unitPriceAfterDiscount || item.price || 0,
+                      unitPriceAfterDiscount: item.unitPriceAfterDiscount || item.unitPrice || item.price || 0,
+                    }))
+                  : [];
+                const totalValue = products.reduce(
+                  (sum, p) => sum + (p.unitPriceAfterDiscount || p.unitPrice) * (p.quantity || 1),
+                  0
+                );
+                trackPurchase(data.orderId, products, totalValue, "AED");
+              } else {
+                // إذا فشل جلب بيانات الطلب، نتبع فقط رقم الطلب والقيمة الإجمالية
+                trackPurchase(data.orderId, [], data.totalPrice || 0, "AED");
+              }
+            } catch (err) {
+              console.error("Error fetching order details for tracking:", err);
+              // تتبع بدون تفاصيل المنتجات
+              trackPurchase(data.orderId, [], data.totalPrice || 0, "AED");
+            }
+          }
+          
           if (data.discountCode) {
             setShowSuccessForm(true);
           }
@@ -100,7 +140,7 @@ export default function PaymentSuccess() {
               <div className="mt-4 p-4 bg-gradient-to-r from-orange-100 to-orange-50 border-2 border-orange-300 rounded-xl shadow-lg">
                 <div className="text-center space-y-2">
                   <p className="text-orange-800 font-bold text-lg">
-                    {lang === "ar" ? "🎉 مبروك! حصلت على كود خصم الشحن" : "🎉 Congratulations! You got a shipping discount code"}
+                    {lang === "ar" ? "🎉 مبروك! حصلت على كود خصم 15%" : "🎉 Congratulations! You got a 15% discount code"}
                   </p>
                   <div className="bg-white p-3 rounded-lg border-2 border-dashed border-orange-400">
                     <p className="text-orange-700 font-semibold mb-1">
@@ -112,8 +152,8 @@ export default function PaymentSuccess() {
                   </div>
                   <p className="text-orange-700 text-sm">
                     {lang === "ar" 
-                      ? "💡 استخدم هذا الكود في المرة القادمة للحصول على شحن مجاني!" 
-                      : "💡 Use this code in your next purchase to get free shipping!"}
+                      ? "💡 استخدم هذا الكود في المرة القادمة للحصول على خصم 15% على الفاتورة النهائية!" 
+                      : "💡 Use this code in your next purchase to get 15% off your final invoice!"}
                   </p>
                   <button
                     onClick={() => {

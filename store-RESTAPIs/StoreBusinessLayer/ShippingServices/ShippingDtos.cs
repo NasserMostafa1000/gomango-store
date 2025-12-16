@@ -13,8 +13,7 @@ namespace StoreBusinessLayer.Shipping
             public int Id { get; set; }
             public string Governorate { get; set; } = null!;
             public decimal Price { get; set; }
-
-
+            public int DeliveryTimeDays { get; set; }
         }
        
     }

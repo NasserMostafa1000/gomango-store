@@ -98,6 +98,8 @@ namespace StoreServices.CartServices
                         cd.productDetails.Product.ProductPrice,
                         cd.productDetails.Product.DiscountPercentage,
                         cd.productDetails.Product.ProductNameAr,
+                        cd.productDetails.Product.ProductNameEn,
+                        cd.productDetails.Product.ProductId,
                         cd.productDetails.ProductImage
                     })
                     .ToListAsync();
@@ -136,6 +138,9 @@ namespace StoreServices.CartServices
                         Size = cd.SizeId.HasValue && sizeNames.TryGetValue(cd.SizeId.Value, out var sizeName) ? sizeName : null,
                         Quantity = cd.Quantity,
                         ProductName = cd.ProductNameAr,
+                        ProductNameAr = cd.ProductNameAr,
+                        ProductNameEn = cd.ProductNameEn,
+                        ProductId = cd.ProductId,
                         Image = cd.ProductImage,
                         ProductDetailsId=cd.ProductDetailsId
                     };
@@ -281,6 +286,8 @@ namespace StoreServices.CartServices
                         cd.productDetails.Product.ProductPrice,
                         cd.productDetails.Product.DiscountPercentage,
                         cd.productDetails.Product.ProductNameAr,
+                        cd.productDetails.Product.ProductNameEn,
+                        cd.productDetails.Product.ProductId,
                         cd.productDetails.ProductImage
                     })
                     .ToListAsync();
@@ -319,6 +326,9 @@ namespace StoreServices.CartServices
                         Size = cd.SizeId.HasValue && sizeNames.TryGetValue(cd.SizeId.Value, out var sizeName) ? sizeName : null,
                         Quantity = cd.Quantity,
                         ProductName = cd.ProductNameAr,
+                        ProductNameAr = cd.ProductNameAr,
+                        ProductNameEn = cd.ProductNameEn,
+                        ProductId = cd.ProductId,
                         Image = cd.ProductImage,
                         ProductDetailsId = cd.ProductDetailsId
                     };

@@ -43,6 +43,7 @@ namespace StoreBusinessLayer.AdminInfo
             if(ShipPrice != null)
             {
                  adminInfo.ShipPrice = ShipPrice.Price;
+                 adminInfo.DeliveryTimeDays = ShipPrice.DeliveryTimeDays;
                 return adminInfo;
             }
             throw new Exception("The Governorate does not exist");

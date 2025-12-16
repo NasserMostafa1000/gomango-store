@@ -2,8 +2,8 @@ import { GetUserNameFromToken } from "../utils";
 import { useCurrency } from "../Currency/CurrencyContext";
 import { useI18n } from "../i18n/I18nContext";
 
-export default function OrderSummary({ Products, ShipPrice, isFreeShipping = false }) {
-  const userName = GetUserNameFromToken(sessionStorage.getItem("token"));
+export default function OrderSummary({ Products, ShipPrice, isFreeShipping = false, guestName }) {
+  const userName = GetUserNameFromToken(sessionStorage.getItem("token")) || guestName || "زائر";
   const { format } = useCurrency();
   const { t } = useI18n();
   

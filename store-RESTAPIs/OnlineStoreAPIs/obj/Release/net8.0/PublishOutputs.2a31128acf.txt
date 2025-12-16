@@ -44,6 +44,7 @@ D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\bin\
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\bin\Release\net8.0\publish\Microsoft.OpenApi.dll
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\bin\Release\net8.0\publish\Microsoft.SqlServer.Server.dll
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\bin\Release\net8.0\publish\Newtonsoft.Json.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\bin\Release\net8.0\publish\SixLabors.ImageSharp.dll
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\bin\Release\net8.0\publish\Stripe.net.dll
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\bin\Release\net8.0\publish\Swashbuckle.AspNetCore.Swagger.dll
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\bin\Release\net8.0\publish\Swashbuckle.AspNetCore.SwaggerGen.dll

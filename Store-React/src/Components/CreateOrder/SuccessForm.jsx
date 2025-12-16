@@ -142,7 +142,7 @@ const SuccessForm = ({ message, onClose, discountCode, showDiscountCode }) => {
                     </svg>
                   </div>
                   <h4 className="text-2xl font-black text-white drop-shadow-lg">
-                    {lang === "ar" ? "🎉 مبروك! حصلت على كود خصم الشحن" : "🎉 Congratulations! You got a shipping discount code"}
+                    {lang === "ar" ? "🎉 مبروك! حصلت على كود خصم 15%" : "🎉 Congratulations! You got a 15% discount code"}
                   </h4>
                 </div>
                 
@@ -158,8 +158,8 @@ const SuccessForm = ({ message, onClose, discountCode, showDiscountCode }) => {
                     </div>
                     <p className="text-gray-600 text-sm font-semibold text-center">
                       {lang === "ar" 
-                        ? "💡 هذا الكود يتم استخدامه في المرة القادمة للحصول على شحن مجاني" 
-                        : "💡 Use this code in your next purchase to get free shipping"}
+                        ? "💡 هذا الكود يتم استخدامه في المرة القادمة للحصول على خصم 15% على الفاتورة النهائية" 
+                        : "💡 Use this code in your next purchase to get 15% off your final invoice"}
                     </p>
                     <button
                       onClick={copyCode}
@@ -173,8 +173,8 @@ const SuccessForm = ({ message, onClose, discountCode, showDiscountCode }) => {
 
                 <p className="text-white text-sm font-bold mb-3 drop-shadow-md">
                   {lang === "ar" 
-                    ? "✨ استخدم هذا الكود في المرة القادمة للحصول على شحن مجاني!" 
-                    : "✨ Use this code next time to get free shipping!"}
+                    ? "✨ استخدم هذا الكود في المرة القادمة للحصول على خصم 15% على الفاتورة النهائية!" 
+                    : "✨ Use this code next time to get 15% off your final invoice!"}
                 </p>
                 
                 <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl p-3 mt-3 shadow-lg border-2 border-yellow-300">

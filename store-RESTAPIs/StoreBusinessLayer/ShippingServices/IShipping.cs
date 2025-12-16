@@ -11,6 +11,9 @@ namespace StoreServices.ShippingServices
     {
         Task<List<ShippingDtos.GetShippingCostReq>> GetShippingInfo();
         Task<bool> UpdateShippingPrice(string governorate, decimal newPrice);
+        Task<bool> UpdateDeliveryTime(string governorate, int deliveryTimeDays);
+        Task<bool> AddShippingArea(string governorate, decimal price, int deliveryTimeDays);
+        Task<bool> DeleteShippingArea(string governorate);
         Task ResetToEmiratesAsync();
     }
 }

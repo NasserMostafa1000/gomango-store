@@ -1,47 +1,53 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import "../index.css";
 import ReactDOM from "react-dom/client"; // تأكد من استخدام ReactDOM/client
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // استيراد Route أيضًا
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import App from "./App";
-import ForgotPassword from "../Components/Login&Register/ForgotPassword";
-import Signup from "../Components/Login&Register/Signup";
-import Home from "./Home/Home";
-import Login from "../Components/Login&Register/Login";
-import FindProducts from "../Components/Products/FindProducts";
-import ProductDetails from "../Components/Products/ProductDetails";
-import Cart from "./Cart/Cart";
-import PurchaseDetailsOperation from "./CreateOrder/PurchaseDetailsOperation";
-import PaymentSuccess from "./CreateOrder/PaymentSuccess";
-import PaymentCancel from "./CreateOrder/PaymentCancel";
-import MyPurchases from "./Clients/MyPurchases";
-import PurchaseDetails from "./Clients/PurchaseDetails";
-import MyProfile from "./Clients/MyProfile";
-import Orders from "./AdminBar/Orders/Orders";
-import OrderDetails from "./AdminBar/Orders/OrderDetails";
-import Visitors from "./AdminBar/Visitors/Visitors";
-import ShippingInfo from "./AdminBar/Shipping/ShippingInfo";
-import Employees from "./AdminBar/Managers/Employees";
-import AddProduct from "./AdminBar/Products/AddProduct";
-import AddProductDetails from "./AdminBar/Products/AddProductDetails";
-import ProductForm from "./AdminBar/Products/UpdateProduct/ProductForm";
-import CategoriesAdmin from "./AdminBar/Products/CategoriesAdmin";
-import Clients from "./AdminBar/Clients";
-import UpdateAdminInfo from "./AdminBar/UpdateContactUs";
-import LegalContentEditor from "./AdminBar/LegalContent/LegalContentEditor.jsx";
-import ContactUsCom from "./Contact_About/ContactUsCom";
-import AboutUs from "./Contact_About/AboutUs";
-import PrivacyAndTerms from "./Privacy_Terms/PrivacyAndTerms";
-import ClientSearching from "./Clients/CLientSearching";
 import { CurrencyProvider } from "./Currency/CurrencyContext";
-import BannersAdmin from "./AdminBar/Banners/BannersAdmin";
-import AnnouncementBarAdmin from "./AdminBar/Banners/AnnouncementBarAdmin";
-import CurrencyAdmin from "./AdminBar/Currency/CurrencyAdmin";
-import MyReviews from "./Clients/MyReviews";
-import ReviewsAdmin from "./AdminBar/Reviews/ReviewsAdmin";
 import { I18nProvider } from "./i18n/I18nContext";
+import FacebookPixel from "./FacebookPixels.jsx";
 
-// دالة لإصلاح خلفيات الأزرار
+const Home = lazy(() => import("./Home/Home"));
+const ForgotPassword = lazy(() => import("./Login&Register/ForgotPassword"));
+const Signup = lazy(() => import("./Login&Register/Signup"));
+const Login = lazy(() => import("./Login&Register/Login"));
+const FindProducts = lazy(() => import("./Products/FindProducts"));
+const ProductDetails = lazy(() => import("./Products/ProductDetails"));
+const Cart = lazy(() => import("./Cart/Cart"));
+const PurchaseDetailsOperation = lazy(() => import("./CreateOrder/PurchaseDetailsOperation"));
+const PaymentSuccess = lazy(() => import("./CreateOrder/PaymentSuccess"));
+const PaymentCancel = lazy(() => import("./CreateOrder/PaymentCancel"));
+const MyPurchases = lazy(() => import("./Clients/MyPurchases"));
+const PurchaseDetails = lazy(() => import("./Clients/PurchaseDetails"));
+const MyProfile = lazy(() => import("./Clients/MyProfile"));
+const Orders = lazy(() => import("./AdminBar/Orders/Orders"));
+const OrderDetails = lazy(() => import("./AdminBar/Orders/OrderDetails"));
+const Visitors = lazy(() => import("./AdminBar/Visitors/Visitors"));
+const ShippingInfo = lazy(() => import("./AdminBar/Shipping/ShippingInfo"));
+const Employees = lazy(() => import("./AdminBar/Managers/Employees"));
+const AddProduct = lazy(() => import("./AdminBar/Products/AddProduct"));
+const AddProductDetails = lazy(() => import("./AdminBar/Products/AddProductDetails"));
+const ProductForm = lazy(() => import("./AdminBar/Products/UpdateProduct/ProductForm"));
+const CategoriesAdmin = lazy(() => import("./AdminBar/Products/CategoriesAdmin"));
+const Clients = lazy(() => import("./AdminBar/Clients"));
+const UpdateAdminInfo = lazy(() => import("./AdminBar/UpdateContactUs"));
+const LegalContentEditor = lazy(() => import("./AdminBar/LegalContent/LegalContentEditor.jsx"));
+const ContactUsCom = lazy(() => import("./Contact_About/ContactUsCom"));
+const AboutUs = lazy(() => import("./Contact_About/AboutUs"));
+const PrivacyAndTerms = lazy(() => import("./Privacy_Terms/PrivacyAndTerms"));
+const ClientSearching = lazy(() => import("./Clients/CLientSearching"));
+const BannersAdmin = lazy(() => import("./AdminBar/Banners/BannersAdmin"));
+const AnnouncementBarAdmin = lazy(() => import("./AdminBar/Banners/AnnouncementBarAdmin"));
+const CurrencyAdmin = lazy(() => import("./AdminBar/Currency/CurrencyAdmin"));
+const MyReviews = lazy(() => import("./Clients/MyReviews"));
+const ReviewsAdmin = lazy(() => import("./AdminBar/Reviews/ReviewsAdmin"));
+
+const RouteFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-[#F9F6EF]">
+    <div className="h-12 w-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+  </div>
+);
+
 function fixButtonBackgrounds() {
   if (typeof document === 'undefined') return;
   
@@ -151,7 +157,9 @@ root.render(
     <I18nProvider>
       <CurrencyProvider>
         <Router>
-          <Routes>
+               <FacebookPixel />
+          <Suspense fallback={<RouteFallback />}>
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/register" element={<Signup />} />
@@ -195,7 +203,8 @@ root.render(
             <Route path="/MyProfile" element={<MyProfile />} />
             <Route path="/MyReviews" element={<MyReviews />} />
             <Route path="/admin/reviews" element={<ReviewsAdmin />} />
-          </Routes>
+            </Routes>
+          </Suspense>
         </Router>
       </CurrencyProvider>
     </I18nProvider>

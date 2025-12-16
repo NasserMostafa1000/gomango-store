@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import API_BASE_URL, { ServerPath } from "../../Constant";
+import API_BASE_URL from "../../Constant";
 import { useI18n } from "../../i18n/I18nContext";
-import { FaEdit, FaTrash, FaUpload } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 export default function CategoriesAdmin() {
   const { t, lang } = useI18n();
@@ -10,11 +10,9 @@ export default function CategoriesAdmin() {
   const [form, setForm] = useState({
     categoryNameAr: "",
     categoryNameEn: "",
-    imagePath: "",
   });
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState("");
-  const [uploading, setUploading] = useState(false);
 
   const fetchCategories = async () => {
     try {
@@ -45,7 +43,6 @@ export default function CategoriesAdmin() {
     setForm({
       categoryNameAr: "",
       categoryNameEn: "",
-      imagePath: "",
     });
     setEditingId(null);
   };
@@ -58,7 +55,10 @@ export default function CategoriesAdmin() {
       setMessage("يجب تسجيل الدخول كأدمن.");
       return;
     }
-    const payload = { ...form };
+    const payload = { 
+      ...form,
+      imagePath: "."
+    };
     const method = editingId ? "PUT" : "POST";
     const url = editingId
       ? `${API_BASE_URL}categories/${editingId}`
@@ -93,7 +93,6 @@ export default function CategoriesAdmin() {
     setForm({
       categoryNameAr: category.categoryNameAr,
       categoryNameEn: category.categoryNameEn,
-      imagePath: category.imagePath,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -121,31 +120,6 @@ export default function CategoriesAdmin() {
     }
   };
 
-  const handleUpload = async (file) => {
-    if (!file) return;
-    const token = sessionStorage.getItem("token");
-    const formData = new FormData();
-    formData.append("imageFile", file);
-    try {
-      setUploading(true);
-      const response = await fetch(`${API_BASE_URL}categories/upload-image`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-      if (!response.ok) {
-        throw new Error("فشل رفع الصورة");
-      }
-      const data = await response.json();
-      setForm((prev) => ({ ...prev, imagePath: data.imageUrl }));
-    } catch (err) {
-      setMessage(err.message);
-    } finally {
-      setUploading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[#F9F6EF] py-8 px-4">
@@ -188,33 +162,6 @@ export default function CategoriesAdmin() {
                 className="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
               />
             </div>
-            <div>
-              <label className="block text-sm font-semibold text-blue-900 mb-2">
-                {t("categoriesAdmin.image", "صورة التصنيف")}
-              </label>
-              <div className="flex items-center gap-3">
-                <input
-                  type="text"
-                  value={form.imagePath}
-                  onChange={(e) =>
-                    setForm({ ...form, imagePath: e.target.value })
-                  }
-                  required
-                  className="flex-1 border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                  placeholder="/CategoryImages/..."
-                />
-                <label className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg cursor-pointer hover:bg-orange-600 transition">
-                  <FaUpload />
-                  <span>{uploading ? t("uploading", "جاري الرفع...") : t("upload", "رفع")}</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleUpload(e.target.files?.[0])}
-                  />
-                </label>
-              </div>
-            </div>
             <div className="flex items-center gap-3">
               <button
                 type="submit"
@@ -256,19 +203,10 @@ export default function CategoriesAdmin() {
                   key={category.categoryId}
                   className="border border-blue-100 rounded-xl p-4 bg-blue-50/50 shadow-sm flex flex-col"
                 >
-                  <img
-                    src={
-                      category.imagePath?.startsWith("http")
-                        ? category.imagePath
-                        : `${ServerPath}${category.imagePath}`
-                    }
-                    alt={category.name}
-                    className="w-full h-36 object-cover rounded-lg mb-3"
-                  />
-                  <h3 className="text-lg font-semibold text-blue-900">
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">
                     {category.categoryNameAr}
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 mb-4">
                     {category.categoryNameEn}
                   </p>
                   <div className="mt-auto flex items-center gap-2 pt-4">

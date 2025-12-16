@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using StoreDataAccessLayer.Entities;
+using System;
 
 namespace StoreDataAccessLayer.EntitiesConfigurations
 {
@@ -19,6 +20,10 @@ namespace StoreDataAccessLayer.EntitiesConfigurations
             builder.Property(Order => Order.ShippingCoast).HasColumnType("DECIMAL").HasPrecision(10, 2).IsRequired();
             builder.Property(Order => Order.OrderStatusId) .HasColumnType("TINYINT").IsRequired();
             builder.Property(Address => Address.Address).HasColumnType("NVARCHAR").HasMaxLength(350).IsRequired();
+            builder.Property(Order => Order.IsGuest).HasColumnType("BIT").HasDefaultValue(false);
+            builder.Property(Order => Order.GuestName).HasColumnType("NVARCHAR").HasMaxLength(180).IsRequired(false);
+            builder.Property(Order => Order.GuestPhone).HasColumnType("NVARCHAR").HasMaxLength(30).IsRequired(false);
+            builder.Property(Order => Order.GuestEmail).HasColumnType("NVARCHAR").HasMaxLength(200).IsRequired(false);
 
 
             builder.Property(Order => Order.TransactionNumber).HasColumnType("NVARCHAR").HasMaxLength(20).IsRequired(false);
@@ -30,7 +35,11 @@ namespace StoreDataAccessLayer.EntitiesConfigurations
 
             builder.HasOne(order => order.OrderStatus).WithMany(orderStatus => orderStatus.Orders).HasForeignKey(Order => Order.OrderStatusId).IsRequired();
 
-            builder.HasOne(order => order.Client).WithMany(client => client.Orders).HasForeignKey(order => order.ClientId).IsRequired();
+            builder.HasOne(order => order.Client)
+                   .WithMany(client => client.Orders)
+                   .HasForeignKey(order => order.ClientId)
+                   .IsRequired(false)
+                   .OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(order => order.PaymentMethod).WithMany(paymentMethod => paymentMethod.Orders).HasForeignKey(Order => Order.PaymentMethodId).IsRequired();
             builder.HasIndex(order => order.ClientId).HasDatabaseName("IX_Orders_ClientId");
 

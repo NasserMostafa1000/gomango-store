@@ -24,8 +24,6 @@ namespace OnlineStoreAPIs.Controllers
         /// إرجاع قائمة بأسعار الشحن حسب المحافظة
         /// </summary>
         [HttpGet("GetShippingInfo")]
-        [Authorize(Roles = "Admin,Manager,Shipping Manager")]
-
         public async Task<ActionResult> GetShippingInfo()
         {
             try
@@ -60,6 +58,84 @@ namespace OnlineStoreAPIs.Controllers
                     return NotFound($"لم يتم العثور على المحافظة: {Governorate}");
 
                 return Ok(new { message = "تم تحديث السعر بنجاح" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"خطأ في الخادم: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// تحديث فترة الوصول لمنطقة شحن معينة
+        /// </summary>
+        [HttpPut("UpdateDeliveryTime")]
+        [Authorize(Roles = "Admin,Manager,Shipping Manager")]
+        public async Task<ActionResult> UpdateDeliveryTime(string Governorate, int DeliveryTimeDays)
+        {
+            try
+            {
+                var isUpdated = await _shippingRepo.UpdateDeliveryTime(Governorate, DeliveryTimeDays);
+
+                if (!isUpdated)
+                    return NotFound($"لم يتم العثور على المحافظة: {Governorate}");
+
+                return Ok(new { message = "تم تحديث فترة الوصول بنجاح" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"خطأ في الخادم: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// إضافة منطقة شحن جديدة
+        /// </summary>
+        [HttpPost("AddShippingArea")]
+        [Authorize(Roles = "Admin,Manager,Shipping Manager")]
+        public async Task<ActionResult> AddShippingArea(string Governorate, decimal Price, int DeliveryTimeDays)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(Governorate))
+                    return BadRequest("اسم المحافظة مطلوب");
+
+                if (Price <= 0)
+                    return BadRequest("السعر يجب أن يكون أكبر من 0");
+
+                if (DeliveryTimeDays <= 0)
+                    return BadRequest("فترة الوصول يجب أن تكون أكبر من 0");
+
+                var isAdded = await _shippingRepo.AddShippingArea(Governorate, Price, DeliveryTimeDays);
+
+                if (!isAdded)
+                    return Conflict($"المحافظة '{Governorate}' موجودة بالفعل");
+
+                return Ok(new { message = "تمت إضافة المنطقة بنجاح" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"خطأ في الخادم: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// حذف منطقة شحن
+        /// </summary>
+        [HttpDelete("DeleteShippingArea")]
+        [Authorize(Roles = "Admin,Manager,Shipping Manager")]
+        public async Task<ActionResult> DeleteShippingArea(string Governorate)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(Governorate))
+                    return BadRequest("اسم المحافظة مطلوب");
+
+                var isDeleted = await _shippingRepo.DeleteShippingArea(Governorate);
+
+                if (!isDeleted)
+                    return NotFound($"لم يتم العثور على المحافظة: {Governorate}");
+
+                return Ok(new { message = "تم حذف المنطقة بنجاح" });
             }
             catch (Exception ex)
             {

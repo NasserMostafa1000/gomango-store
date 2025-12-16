@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreBusinessLayer.Products;
 using StoreServices.Products.ProductInterfaces;
-using System.IO;
 using System.Linq;
+using OnlineStoreAPIs.Services;
 
 namespace OnlineStoreAPIs.Controllers
 {
@@ -93,28 +93,15 @@ namespace OnlineStoreAPIs.Controllers
                 return BadRequest("لم يتم تحميل أي ملف.");
             }
 
-            var uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CategoryImages");
-            if (!Directory.Exists(uploadDirectory))
+            try
             {
-                Directory.CreateDirectory(uploadDirectory);
+                var fileUrl = await ImageProcessingService.SaveCompressedImageAsync(imageFile, "CategoryImages");
+                return Ok(new { imageUrl = fileUrl });
             }
-
-            var fileExtension = Path.GetExtension(imageFile.FileName).ToLower();
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-            if (!allowedExtensions.Contains(fileExtension))
+            catch (InvalidOperationException ex)
             {
-                return BadRequest("نوع الملف غير مدعوم.");
+                return BadRequest(ex.Message);
             }
-
-            var fileName = $"{Guid.NewGuid()}{fileExtension}";
-            var filePath = Path.Combine(uploadDirectory, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await imageFile.CopyToAsync(stream);
-            }
-
-            var fileUrl = $"/CategoryImages/{fileName}";
-            return Ok(new { imageUrl = fileUrl });
         }
     }
 }

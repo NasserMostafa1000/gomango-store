@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using StoreDataAccessLayer;
 using StoreDataAccessLayer.Entities;
 using StoreServices.Products.ProductInterfaces;
+using StoreBusinessLayer.Utilities;
 using static StoreBusinessLayer.Products.ProductsDtos;
 
 namespace StoreBusinessLayer.Products
@@ -72,11 +73,17 @@ namespace StoreBusinessLayer.Products
                 return false;
             }
 
+            var previousImage = category.ImagePath;
             category.CategoryName = dto.CategoryNameAr.Trim();
             category.CategoryNameEn = dto.CategoryNameEn.Trim();
             category.ImagePath = dto.ImagePath;
             _Context.Category.Update(category);
-            return await _Context.SaveChangesAsync() > 0;
+            var saved = await _Context.SaveChangesAsync() > 0;
+            if (saved && !string.Equals(previousImage, dto.ImagePath, StringComparison.OrdinalIgnoreCase))
+            {
+                ImageStorageHelper.TryDelete(previousImage);
+            }
+            return saved;
         }
 
         public async Task<bool> DeleteCategoryAsync(byte categoryId)
@@ -92,8 +99,14 @@ namespace StoreBusinessLayer.Products
                 throw new InvalidOperationException("لا يمكن حذف تصنيف مرتبط بمنتجات نشطة.");
             }
 
+            var previousImage = category.ImagePath;
             _Context.Category.Remove(category);
-            return await _Context.SaveChangesAsync() > 0;
+            var deleted = await _Context.SaveChangesAsync() > 0;
+            if (deleted)
+            {
+                ImageStorageHelper.TryDelete(previousImage);
+            }
+            return deleted;
 
         }
     }

@@ -4,13 +4,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "../i18n/I18nContext";
 import { getOrCreateSessionId } from "../utils";
+import { trackAddToCart } from "../utils/facebookPixel";
 
-export default function AddToCart({ productDetailsId, Quantity, className = "" }) {
+export default function AddToCart({ productDetailsId, Quantity, className = "", product = null }) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
 
   const handleCartClick = async () => {
     const token = sessionStorage.getItem("token");
@@ -53,7 +54,65 @@ export default function AddToCart({ productDetailsId, Quantity, className = "" }
         throw new Error("Network response was not ok");
       }
 
-      await response.json();
+      const responseData = await response.json();
+      
+      // تتبع AddToCart لـ Facebook Pixel
+      if (product && product.productId) {
+        // استخدام بيانات المنتج الممررة مباشرة
+        trackAddToCart(product, Number(Quantity));
+      } else if (productDetailsId) {
+        // محاولة جلب بيانات المنتج من productDetailsId
+        try {
+          // جلب productDetails للحصول على productId
+          const detailResponse = await fetch(
+            `${API_BASE_URL}Product/GetProductDetailsById?Id=${productDetailsId}`
+          );
+          if (detailResponse.ok) {
+            const detailData = await detailResponse.json();
+            const productId = detailData.productId;
+            
+            if (productId) {
+              // جلب بيانات المنتج الكاملة باستخدام productId
+              const productResponse = await fetch(
+                `${API_BASE_URL}Product/GetProductById?ID=${productId}&lang=${lang || "ar"}`
+              );
+              
+              if (productResponse.ok) {
+                const productData = await productResponse.json();
+                const price = detailData.unitPriceAfterDiscount || detailData.unitPrice || productData.priceAfterDiscount || productData.productPrice || 0;
+                
+                trackAddToCart({
+                  productId: productId,
+                  productName: productData.productName || productData.name || "",
+                  priceAfterDiscount: price,
+                  productPrice: productData.productPrice || 0,
+                  productImage: detailData.image || detailData.productImage || productData.productImage || "",
+                  categoryName: productData.categoryName || productData.categoryNameAr || productData.categoryNameEn || "",
+                }, Number(Quantity));
+              } else {
+                // إذا فشل جلب المنتج الكامل، استخدم بيانات detail فقط
+                console.warn("Could not fetch full product data, using detail data only");
+                if (detailData.productId) {
+                  trackAddToCart({
+                    productId: detailData.productId,
+                    productName: detailData.productName || detailData.name || "",
+                    priceAfterDiscount: detailData.unitPriceAfterDiscount || detailData.unitPrice || 0,
+                    productPrice: detailData.unitPrice || 0,
+                    productImage: detailData.image || detailData.productImage || "",
+                    categoryName: detailData.categoryName || "",
+                  }, Number(Quantity));
+                }
+              }
+            } else {
+              console.warn("No productId found in productDetails response");
+            }
+          } else {
+            console.warn("Failed to fetch productDetails for tracking");
+          }
+        } catch (error) {
+          console.error("Error fetching product for tracking:", error);
+        }
+      }
       
       // عرض رسالة النجاح
       setShowSuccess(true);

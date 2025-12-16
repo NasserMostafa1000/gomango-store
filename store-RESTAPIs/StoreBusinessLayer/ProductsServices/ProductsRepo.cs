@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using StoreDataAccessLayer;
 using StoreDataAccessLayer.Entities;
 using StoreServices.Products.ProductInterfaces;
+using StoreBusinessLayer.Utilities;
 using static StoreBusinessLayer.Products.ProductsDtos;
 
 namespace StoreBusinessLayer.Products
@@ -565,40 +566,8 @@ namespace StoreBusinessLayer.Products
             return productDetails?.ProductImage;
         }
 
-        public static async Task<bool> DeleteImageAsync(string? imagePath)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(imagePath))
-                {
-                    Console.WriteLine("لا توجد صورة سابقة للحذف.");
-                    return true; // لا توجد صورة، إذاً لا يوجد شيء لحذفه.
-                }
-
-                if (imagePath.StartsWith("/"))
-                {
-                    imagePath = imagePath.Substring(1);
-                }
-
-                var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imagePath);
-                if (File.Exists(fullPath))
-                {
-                    File.Delete(fullPath);
-                    Console.WriteLine($"تم حذف الصورة: {fullPath}");
-                    return true;
-                }
-                else
-                {
-                    Console.WriteLine($"⚠️ الملف غير موجود: {fullPath}");
-                    return true; // الصورة غير موجودة، لا داعي للقلق.
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"❌ خطأ أثناء حذف الصورة: {ex.Message}");
-                return false;
-            }
-        }
+        public static Task<bool> DeleteImageAsync(string? imagePath) =>
+            Task.FromResult(ImageStorageHelper.TryDelete(imagePath));
         public async Task<bool> DeleteLastProductImageAsync(int ProductDetailsId)
         {
             try
@@ -737,7 +706,49 @@ namespace StoreBusinessLayer.Products
             // حذف التفاصيل التي لم تعد موجودة في الطلب
             var detailIdsInRequest = updateProductDto.ProductDetails.Select(d => d.ProductDetailId).ToList();
             var detailsToRemove = existingDetails.Where(d => !detailIdsInRequest.Contains(d.ProductDetailsId)).ToList();
-            _Context.ProductDetails.RemoveRange(detailsToRemove);
+
+            if (detailsToRemove.Count > 0)
+            {
+                var detailIds = detailsToRemove.Select(d => d.ProductDetailsId).ToList();
+
+                // ensure no FK constraints block deletion
+                var cartDetails = await _Context.CartDetails
+                    .Where(cd => detailIds.Contains(cd.ProductDetailsId))
+                    .ToListAsync();
+                if (cartDetails.Count > 0)
+                {
+                    _Context.CartDetails.RemoveRange(cartDetails);
+                }
+
+                var orderDetails = await _Context.OrderDetails
+                    .Where(od => detailIds.Contains(od.ProductDetailsId))
+                    .ToListAsync();
+                if (orderDetails.Count > 0)
+                {
+                    _Context.OrderDetails.RemoveRange(orderDetails);
+                }
+
+                var extraImages = await _Context.ProductDetailImages
+                    .Where(img => detailIds.Contains(img.ProductDetailsId))
+                    .ToListAsync();
+
+                foreach (var image in extraImages)
+                {
+                    await DeleteImageAsync(image.ImageUrl);
+                }
+
+                if (extraImages.Count > 0)
+                {
+                    _Context.ProductDetailImages.RemoveRange(extraImages);
+                }
+
+                foreach (var detail in detailsToRemove)
+                {
+                    await DeleteImageAsync(detail.ProductImage);
+                }
+
+                _Context.ProductDetails.RemoveRange(detailsToRemove);
+            }
 
             // حفظ التغييرات في قاعدة البيانات
             await _Context.SaveChangesAsync();
@@ -819,13 +830,25 @@ namespace StoreBusinessLayer.Products
                     _Context.OrderDetails.RemoveRange(orderDetails);
                 }
 
-                // 4. حذف صور المنتج
+                var detailImages = await _Context.ProductDetailImages
+                    .Where(img => productDetailsIds.Contains(img.ProductDetailsId))
+                    .ToListAsync();
+
+                foreach (var detailImage in detailImages)
+                {
+                    await DeleteImageAsync(detailImage.ImageUrl);
+                }
+
+                if (detailImages.Count > 0)
+                {
+                    _Context.ProductDetailImages.RemoveRange(detailImages);
+                }
+
                 foreach (var details in product.ProductDetails)
                 {
                     await DeleteImageAsync(details.ProductImage);
                 }
 
-                // 5. حذف تفاصيل المنتج
                 _Context.ProductDetails.RemoveRange(product.ProductDetails);
             }
 

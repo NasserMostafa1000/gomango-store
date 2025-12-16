@@ -61,36 +61,6 @@ namespace StoreBusinessLayer.Users
 
                     await _context.Clients.AddAsync(newClient);
                     await _context.SaveChangesAsync();
-                    string message = $@"
-مرحبًا {newUser.FirstName} {newUser.SecondName}،
-
-🎉 <strong>مرحبًا بك في جومانجو!</strong>
-
-تم إنشاء حسابك بنجاح. يمكنك الآن الاستمتاع بجميع خدماتنا ومميزاتنا.
-
-📧 <strong>بريدك الإلكتروني:</strong> {newClient.User!.EmailOrAuthId}
-
-نتمنى أن تجد تجربتك معنا ممتعة ومفيدة. إذا كان لديك أي استفسار أو تحتاج إلى مساعدة، نحن هنا لخدمتك.
-
-مع أطيب التحيات،
-فريق جومانجو";
-
-                    try
-                    {
-
-                    await NotificationServices.NotificationsCreator.SendNotification(
-                        "مرحبًا بك في جومانجو - تم إنشاء حسابك بنجاح",  // العنوان
-                        message,  // الرسالة الفعلية
-                        newClient.User.EmailOrAuthId,  // البريد الإلكتروني الخاص بالعميل
-                        "gmail"  // مزود الإشعار (يمكن تغييره حسب الخدمة المستخدمة)
-                    );
-                    }catch(Exception )
-                    {
-                        throw new Exception("خطأ في ارسال الاشعار ");
-                    }
-
-
-
 
                     return newUser;
                 }

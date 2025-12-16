@@ -1518,6 +1518,37 @@
   },
   {
     "ContainingType": "OnlineStoreAPIs.Controllers.OrdersController",
+    "Method": "PostGuestOrder",
+    "RelativePath": "api/Orders/PostGuestOrder",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "StoreBusinessLayer.Orders.OrdersDtos\u002BGuestOrders\u002BPostGuestOrderReq",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      }
+    ]
+  },
+  {
+    "ContainingType": "OnlineStoreAPIs.Controllers.OrdersController",
     "Method": "PostListOrderDetails",
     "RelativePath": "api/Orders/PostListOfOrderDetails",
     "HttpMethod": "POST",
@@ -3088,6 +3119,48 @@
   },
   {
     "ContainingType": "OnlineStoreAPIs.Controllers.ShippingInfoController",
+    "Method": "AddShippingArea",
+    "RelativePath": "api/ShippingInfo/AddShippingArea",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Governorate",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Price",
+        "Type": "System.Decimal",
+        "IsRequired": false
+      },
+      {
+        "Name": "DeliveryTimeDays",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OnlineStoreAPIs.Controllers.ShippingInfoController",
+    "Method": "DeleteShippingArea",
+    "RelativePath": "api/ShippingInfo/DeleteShippingArea",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Governorate",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OnlineStoreAPIs.Controllers.ShippingInfoController",
     "Method": "GetShippingInfo",
     "RelativePath": "api/ShippingInfo/GetShippingInfo",
     "HttpMethod": "GET",
@@ -3104,6 +3177,27 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OnlineStoreAPIs.Controllers.ShippingInfoController",
+    "Method": "UpdateDeliveryTime",
+    "RelativePath": "api/ShippingInfo/UpdateDeliveryTime",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Governorate",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "DeliveryTimeDays",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {

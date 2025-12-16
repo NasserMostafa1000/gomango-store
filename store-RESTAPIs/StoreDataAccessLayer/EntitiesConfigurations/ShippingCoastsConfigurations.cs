@@ -9,6 +9,8 @@ namespace StoreDataAccessLayer.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<ShippingCoasts> builder)
         {
+            builder.ToTable("ShipPrices");
+            
             builder.HasKey(sp => sp.Id);
             builder.Property(sp => sp.Id)
                    .HasColumnType("TINYINT");
@@ -22,6 +24,11 @@ namespace StoreDataAccessLayer.EntitiesConfigurations
                    .HasColumnType("NVARCHAR")
                    .HasMaxLength(55);
 
+            builder.Property(sp => sp.DeliveryTimeDays)
+                   .HasColumnType("INT")
+                   .IsRequired()
+                   .HasDefaultValue(3);
+
             builder.HasData(LoadData());
         }
 
@@ -30,13 +37,13 @@ namespace StoreDataAccessLayer.EntitiesConfigurations
             // الإمارات السبع (بالدرهم الإماراتي AED)
             return new ShippingCoasts[]
             {
-                new ShippingCoasts { Id = 1, GovernorateName = "أبوظبي",        Price = 20.00m },
-                new ShippingCoasts { Id = 2, GovernorateName = "دبي",           Price = 18.00m },
-                new ShippingCoasts { Id = 3, GovernorateName = "الشارقة",       Price = 18.00m },
-                new ShippingCoasts { Id = 4, GovernorateName = "عجمان",         Price = 17.00m },
-                new ShippingCoasts { Id = 5, GovernorateName = "أم القيوين",    Price = 22.00m },
-                new ShippingCoasts { Id = 6, GovernorateName = "رأس الخيمة",    Price = 25.00m },
-                new ShippingCoasts { Id = 7, GovernorateName = "الفجيرة",       Price = 24.00m },
+                new ShippingCoasts { Id = 1, GovernorateName = "أبوظبي",        Price = 20.00m, DeliveryTimeDays = 3 },
+                new ShippingCoasts { Id = 2, GovernorateName = "دبي",           Price = 18.00m, DeliveryTimeDays = 2 },
+                new ShippingCoasts { Id = 3, GovernorateName = "الشارقة",       Price = 18.00m, DeliveryTimeDays = 3 },
+                new ShippingCoasts { Id = 4, GovernorateName = "عجمان",         Price = 17.00m, DeliveryTimeDays = 3 },
+                new ShippingCoasts { Id = 5, GovernorateName = "أم القيوين",    Price = 22.00m, DeliveryTimeDays = 4 },
+                new ShippingCoasts { Id = 6, GovernorateName = "رأس الخيمة",    Price = 25.00m, DeliveryTimeDays = 4 },
+                new ShippingCoasts { Id = 7, GovernorateName = "الفجيرة",       Price = 24.00m, DeliveryTimeDays = 4 },
             };
         }
     }

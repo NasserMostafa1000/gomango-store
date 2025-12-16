@@ -324,7 +324,7 @@ namespace StoreDataLayer.Migrations
                         new
                         {
                             CategoryId = (byte)4,
-                            CategoryName = "إاكسسوارات",
+                            CategoryName = "حقائب نسائية واكسسوارات",
                             CategoryNameEn = "Accessories",
                             ImagePath = "/ProjectImages/Accessories.webp"
                         });

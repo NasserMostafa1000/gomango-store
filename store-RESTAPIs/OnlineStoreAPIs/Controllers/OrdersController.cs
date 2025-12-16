@@ -53,6 +53,34 @@ namespace OnlineStoreAPIs.Controllers
 
         }
 
+        [AllowAnonymous]
+        [HttpPost("PostGuestOrder")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> PostGuestOrder(OrdersDtos.GuestOrders.PostGuestOrderReq req)
+        {
+            try
+            {
+                int orderId = await _OrdersRepo.PostGuestOrder(req);
+
+                // تنظيف سلة الزائر إذا توفرت sessionId
+                if (!string.IsNullOrWhiteSpace(req.SessionId))
+                {
+                    var cart = await _CartsRepo.GetGuestCart(req.SessionId);
+                    if (cart != null)
+                    {
+                        await _CartsRepo.RemoveCartDetailsByCartId(cart.CartId);
+                    }
+                }
+
+                return Ok(new { OrderId = orderId });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message.ToString() });
+            }
+        }
+
 
         [Authorize(Roles = "User,Manager,Shipping Man")]
         [HttpPost("PostOrderDetails")]

@@ -12,10 +12,22 @@ export default function AddressSelector({
   newAddress,
   setNewAddress,
   setAddresses,
+  shippingAreas = [],
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const { t, lang } = useI18n();
   const isRTL = lang === "ar";
+  const availableAreas =
+    shippingAreas.length > 0
+      ? shippingAreas.map(
+          (a) =>
+            a?.governorate ||
+            a?.governorateName ||
+            a?.Governorate ||
+            a?.GovernorateName ||
+            a
+        )
+      : emirates;
 
   const HandleSaveClick = async () => {
     const token = sessionStorage.getItem("token");
@@ -36,9 +48,10 @@ export default function AddressSelector({
       if (!addressId)
         throw new Error(t("addressSelector.failedToGetId", "❌ فشل في الحصول على ID العنوان الجديد!"));
 
+      const translatedGovernorate = t(`emirates.${newAddress.governorate}`, newAddress.governorate);
       const addressFormat = isRTL 
-        ? `${newAddress.governorate}- مدينه ${newAddress.city} شارع ${newAddress.street}`
-        : `${newAddress.governorate}- City ${newAddress.city} Street ${newAddress.street}`;
+        ? `${translatedGovernorate}- مدينه ${newAddress.city} شارع ${newAddress.street}`
+        : `${translatedGovernorate}- City ${newAddress.city} Street ${newAddress.street}`;
       
       setAddresses((prevAddresses) => ({
         ...prevAddresses,
@@ -124,9 +137,9 @@ export default function AddressSelector({
                   dir={isRTL ? "rtl" : "ltr"}
                 >
                   <option value="">{t("addressSelector.selectEmirate", "اختر إمارة")}</option>
-                  {emirates.map((governorate, index) => (
+                  {availableAreas.map((governorate, index) => (
                     <option key={index} value={governorate}>
-                      {governorate}
+                      {t(`emirates.${governorate}`, governorate)}
                     </option>
                   ))}
                 </select>

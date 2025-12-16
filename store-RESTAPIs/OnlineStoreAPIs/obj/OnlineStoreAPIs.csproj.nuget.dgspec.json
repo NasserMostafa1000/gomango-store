@@ -76,6 +76,10 @@
               "target": "Package",
               "version": "[9.0.10, )"
             },
+            "SixLabors.ImageSharp": {
+              "target": "Package",
+              "version": "[3.1.5, )"
+            },
             "Stripe.net": {
               "target": "Package",
               "version": "[49.2.0, )"

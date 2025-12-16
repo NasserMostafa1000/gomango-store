@@ -64,6 +64,41 @@ namespace StoreBusinessLayer.Orders
         }
         }
 
+        public class GuestOrders
+        {
+            public class PostGuestOrderReq
+            {
+                [Required]
+                public string FullName { get; set; } = null!;
+                [Required]
+                public string PhoneNumber { get; set; } = null!;
+                [EmailAddress]
+                public string? Email { get; set; }
+                [Required]
+                public string Address { get; set; } = null!;
+                [Required]
+                public decimal TotalPrice { get; set; }
+                [Required]
+                public decimal ShippingCoast { get; set; }
+                [Required]
+                public byte PaymentMethodId { get; set; }
+                public string? TransactionNumber { get; set; }
+                public string? SessionId { get; set; }
+                [Required]
+                public List<PostGuestOrderProductReq> Products { get; set; } = new();
+            }
+
+            public class PostGuestOrderProductReq
+            {
+                [Required]
+                public int ProductDetailsId { get; set; }
+                [Required]
+                public int Quantity { get; set; }
+                [Required]
+                public decimal UnitPrice { get; set; }
+            }
+        }
+
         public class  AdminOrders
         {
            public class GetOrdersReq
@@ -79,6 +114,8 @@ namespace StoreBusinessLayer.Orders
                 public string OrderStatus { get; set; } = null!;
                 public string FullName { get; set; } = null!;
                 public string ClientPhone { get; set; } = null!;
+                public bool IsGuest { get; set; }
+                public string? GuestEmail { get; set; }
 
 
             }

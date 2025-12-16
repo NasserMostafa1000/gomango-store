@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { FiTrash2, FiShoppingCart, FiPlus, FiMinus } from "react-icons/fi";
 import API_BASE_URL, { ServerPath, SiteName } from "../Constant.js";
 import { useNavigate } from "react-router-dom";
@@ -6,18 +6,23 @@ import { Helmet } from "react-helmet";
 import { useCurrency } from "../Currency/CurrencyContext";
 import CurrencySelector from "../Currency/CurrencySelector";
 import { useI18n } from "../i18n/I18nContext";
-import { getOrCreateSessionId, mergeGuestCartToUserCart } from "../utils";
+import { getOrCreateSessionId, mergeGuestCartToUserCart, egyptianGovernorates } from "../utils";
 import BackButton from "../Common/BackButton";
 import WebSiteLogo from "../WebsiteLogo/WebsiteLogo.jsx";
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [userAddress, setUserAddress] = useState(null);
   const navigate = useNavigate();
   const { format } = useCurrency();
   const { t, lang } = useI18n();
   const brandNavy = "#0A2C52";
   const brandDeepNavy = "#13345d";
+  
+  // استخدام useRef لمنع الطلبات المكررة
+  const hasFetchedCart = useRef(false);
+  const hasFetchedAddress = useRef(false);
   
   // Function to translate color names (from Arabic to English or vice versa)
   const translateColor = (colorName) => {
@@ -66,6 +71,37 @@ export default function Cart() {
     return t(`colors.${colorKey}`, colorName);
   };
 
+  const translateSize = (sizeName) => {
+    if (!sizeName) return sizeName;
+    const toWesternDigits = (str) =>
+      str.replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+    const raw = toWesternDigits(sizeName).trim();
+    const normalized = raw.toLowerCase();
+
+    const arabicYearsMap = {
+      "سنة": "1 year",
+      "سنتين": "2 years",
+      "سنتان": "2 years",
+      "3 سنوات": "3 years",
+      "4 سنوات": "4 years",
+      "5 سنوات": "5 years",
+      "6 سنوات": "6 years",
+      "7 سنوات": "7 years",
+      "8 سنوات": "8 years",
+      "9 سنوات": "9 years",
+      "10 سنوات": "10 years",
+      "11 سنوات": "11 years",
+      "12 سنوات": "12 years",
+    };
+
+    const mapped =
+      arabicYearsMap[raw] ||
+      (normalized.match(/^(\d+)\s*سن(?:ة|وات)$/) && `${normalized.match(/^(\d+)/)[1]} years`) ||
+      raw;
+
+    return t(`sizes.${mapped.toLowerCase()}`, mapped);
+  };
+
   // دالة إنشاء كائن الطلب من عناصر السلة
   function CreateOrdersObj() {
     if (cartItems.length === 1) {
@@ -91,13 +127,6 @@ export default function Cart() {
 
   // دالة الانتقال إلى صفحة تفاصيل الشراء
   async function handleBuyAll() {
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      // إذا لم يكن مسجل دخول، توجهه لتسجيل الدخول
-      navigate("/login");
-      return;
-    }
-    
     setIsLoading(true);
     const Product = CreateOrdersObj();
     Product.totalPrice = totalCartPrice;
@@ -105,8 +134,43 @@ export default function Cart() {
     setIsLoading(false);
   }
 
+  // دالة مساعدة للحصول على اسم المنتج حسب اللغة
+  const getLocalizedProductName = (item) => {
+    if (!item) return "";
+    
+    // إذا كان هناك productNameAr و productNameEn، استخدمهما حسب اللغة
+    if (item.productNameAr && item.productNameEn) {
+      return lang === "ar" ? item.productNameAr : item.productNameEn;
+    }
+    
+    // إذا كان هناك productNameAr فقط واستخدمه للعربية
+    if (item.productNameAr) {
+      if (lang === "ar") {
+        return item.productNameAr;
+      }
+      // إذا كانت اللغة إنجليزية وليس لدينا productNameEn، استخدم productNameAr كحل احتياطي
+      return item.productNameEn || item.productNameAr;
+    }
+    
+    // إذا كان هناك productNameEn فقط واستخدمه للإنجليزية
+    if (item.productNameEn) {
+      if (lang === "en") {
+        return item.productNameEn;
+      }
+      // إذا كانت اللغة عربية وليس لدينا productNameAr، استخدم productNameEn كحل احتياطي
+      return item.productNameAr || item.productNameEn;
+    }
+    
+    // الحل الاحتياطي: استخدام productName
+    return item.productName || "";
+  };
+
   // جلب تفاصيل السلة عند تحميل المكون
   useEffect(() => {
+    // منع الطلبات المكررة
+    if (hasFetchedCart.current) return;
+    hasFetchedCart.current = true;
+    
     const token = sessionStorage.getItem("token");
     const fetchCartDetails = async () => {
       try {
@@ -137,6 +201,8 @@ export default function Cart() {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
+        
+        // البيانات تأتي من الباك إند مع productNameAr و productNameEn و productId
         setCartItems(data || []);
       } catch (error) {
         console.error("Error fetching cart details:", error.message);
@@ -158,6 +224,56 @@ export default function Cart() {
         });
       }
     }
+    
+    // Cleanup function لإعادة تعيين المرجع عند unmount
+    return () => {
+      hasFetchedCart.current = false;
+    };
+  }, []);
+
+  // جلب عنوان المستخدم للتحقق من أنه داخل الإمارات
+  useEffect(() => {
+    // منع الطلبات المكررة
+    if (hasFetchedAddress.current) return;
+    hasFetchedAddress.current = true;
+    
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      // للمستخدم غير المسجل، نعتبر أنه في الإمارات (الافتراضي)
+      setUserAddress(null);
+      return;
+    }
+
+    const fetchUserAddress = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}Addresses/GetAddresses`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const addresses = data.addresses || {};
+          // استخدام أول عنوان متاح
+          const firstAddressId = Object.keys(addresses)[0];
+          if (firstAddressId) {
+            setUserAddress(addresses[firstAddressId]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user address:", error.message);
+      }
+    };
+
+    fetchUserAddress();
+    
+    // Cleanup function لإعادة تعيين المرجع عند unmount
+    return () => {
+      hasFetchedAddress.current = false;
+    };
   }, []);
 
   // دالة حذف منتج من السلة
@@ -212,17 +328,23 @@ export default function Cart() {
       let response;
       
       if (token) {
-        // المستخدم مسجل دخول
-        response = await fetch(
-        `${API_BASE_URL}Carts/RemoveCartDetails/${cartItems[0]?.cartId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+        // المستخدم مسجل دخول - إرسال التوكن في Authorization header
+        if (cartItems.length > 0 && cartItems[0].cartId) {
+          response = await fetch(
+            `${API_BASE_URL}Carts/RemoveCartDetails/${cartItems[0].cartId}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+        } else {
+          // إذا لم يكن هناك cartId، فقط امسح القائمة محلياً
+          setCartItems([]);
+          return;
         }
-      );
       } else {
         // المستخدم غير مسجل - حذف السلة المؤقتة
         const sessionId = getOrCreateSessionId();
@@ -259,6 +381,30 @@ export default function Cart() {
     (acc, item) => acc + item.totalPrice,
     0
   );
+
+  // دالة للتحقق من أن العنوان داخل الإمارات
+  const isAddressInUAE = (address) => {
+    if (!address) return false;
+    const uaeEmirates = egyptianGovernorates; // قائمة الإمارات السبع
+    return uaeEmirates.some(emirate => address.includes(emirate));
+  };
+
+  // حساب المتبقي حتى 200 درهم
+  const FREE_SHIPPING_THRESHOLD = 200;
+  const remainingForFreeShipping = useMemo(() => {
+    // الأسعار بالفعل بالدرهم الإماراتي
+    if (totalCartPrice >= FREE_SHIPPING_THRESHOLD) return 0;
+    return FREE_SHIPPING_THRESHOLD - totalCartPrice;
+  }, [totalCartPrice]);
+
+  // التحقق من أن المستخدم داخل الإمارات
+  const isUserInUAE = useMemo(() => {
+    if (userAddress) {
+      return isAddressInUAE(userAddress);
+    }
+    // إذا لم يكن هناك عنوان، نعتبر أن المستخدم في الإمارات (الافتراضي)
+    return true;
+  }, [userAddress]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-8">
@@ -307,6 +453,32 @@ export default function Cart() {
             </div>
           </div>
         </div>
+
+        {/* Free Shipping Message - Only for UAE users - Under Header */}
+        {cartItems.length > 0 && isUserInUAE && remainingForFreeShipping > 0 && remainingForFreeShipping < FREE_SHIPPING_THRESHOLD && (
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-2xl p-4 shadow-lg mb-6">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-green-500 rounded-full p-2">
+                <FiShoppingCart className="text-white" size={20} />
+              </div>
+              <h4 className="text-lg font-bold text-green-800">
+                {t("cart.freeShippingOffer", "الشحن المجاني قريب!")}
+              </h4>
+            </div>
+            <p className="text-green-700 font-medium">
+              {lang === "ar" 
+                ? `قم بإضافة منتجات بقيمة ${format(remainingForFreeShipping)} لتحصل على الشحن المجاني`
+                : `Add products worth ${format(remainingForFreeShipping)} to get free shipping`
+              }
+            </p>
+            <button
+              onClick={() => navigate("/")}
+              className="mt-3 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
+            >
+              {t("cart.continueShopping", "متابعة التسوق")}
+            </button>
+          </div>
+        )}
 
         {/* Empty State */}
         {cartItems.length === 0 ? (
@@ -359,7 +531,7 @@ export default function Cart() {
                         <div className="w-24 h-24 rounded-xl overflow-hidden border-2 border-blue-200">
                           <img
                             src={`${ServerPath + item.image}`}
-                            alt={item.productName}
+                            alt={getLocalizedProductName(item)}
                             className="w-full h-full object-cover"
                           />
                         </div>
@@ -368,7 +540,7 @@ export default function Cart() {
                       {/* Product Details */}
                       <div className="flex-1">
                         <div className="flex justify-between items-start mb-4 gap-4">
-                          <h3 className="text-lg font-bold text-blue-900 flex-1">{item.productName}</h3>
+                          <h3 className="text-lg font-bold text-blue-900 flex-1">{getLocalizedProductName(item)}</h3>
                           <button
                             onClick={() => handleDeleteProduct(item.cartDetailsId)}
                             className="px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg flex-shrink-0"
@@ -397,7 +569,7 @@ export default function Cart() {
                           </div>
                           <div className="bg-blue-50 rounded-lg p-3">
                             <p className="text-sm text-blue-600 font-medium">{t("cart.size", "المقاس")}</p>
-                            <p className="text-blue-900 font-semibold">{item.size || t("cart.notAvailable", "غير متوفر")}</p>
+                            <p className="text-blue-900 font-semibold">{translateSize(item.size) || t("cart.notAvailable", "غير متوفر")}</p>
                           </div>
                         </div>
 

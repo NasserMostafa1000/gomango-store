@@ -226,6 +226,8 @@ export const colors = [
   { ColorId: 28, ColorName: "أزرق سماوي" },
   { ColorId: 29, ColorName: "أزرق ملكي" },
   { ColorId: 30, ColorName: "قرمزي" },
+  { ColorId: 31, ColorName: "اوف وايت" },
+
 ];
 export const sizes = [
   { SizeId: 1, SizeName: "S" },
@@ -274,5 +276,16 @@ export const sizes = [
   { SizeId: 44, SizeName: "48" },
   { SizeId: 45, SizeName: "49" },
   { SizeId: 46, SizeName: "50" },
-
+  { SizeId: 47, SizeName: "سنة" },
+  { SizeId: 48, SizeName: "سنتين" },
+  { SizeId: 49, SizeName: "ثلاث سنوات" },
+  { SizeId: 50, SizeName: "أربع سنوات" },
+  { SizeId: 51, SizeName: "خمس سنوات" },
+  { SizeId: 52, SizeName: "ست سنوات" },
+  { SizeId: 53, SizeName: "سبع سنوات" },
+  { SizeId: 54, SizeName: "ثماني سنوات" },
+  { SizeId: 55, SizeName: "تسع سنوات" },
+  { SizeId: 56, SizeName: "عشر سنوات" },
+  { SizeId: 57, SizeName: "إحدى عشرة سنة" },
+  { SizeId: 58, SizeName: "اثنتا عشرة سنة" },
 ];

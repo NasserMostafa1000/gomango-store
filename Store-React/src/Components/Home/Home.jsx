@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo, forwardRef } from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import StoreLayout from "./StoreLayout";
 import ProductItem from "../Products/ProductItem.jsx";
 import API_BASE_URL, { SiteName } from "../Constant.js";
-import CategoryItems from "./CategoryItems.jsx";
 import { getRoleFromToken } from "../utils.js";
-import ContactUs from "./ContactUs.jsx";
 import WebSiteLogo from "../WebsiteLogo/WebsiteLogo.jsx";
 import BannerCarousel from "./BannerCarousel";
 import AnnouncementBar from "./AnnouncementBar";
@@ -30,6 +28,142 @@ const SectionHeader = ({ title, eyebrow, description }) => (
   </div>
 );
 
+const LazySectionPlaceholder = ({ message, helper }) => (
+  <div className="flex flex-col items-center justify-center gap-3 py-16 text-center text-gray-500">
+    <div className="h-10 w-10 border-4 border-gray-300 border-t-transparent rounded-full animate-spin" />
+    <p className="text-sm font-semibold">{message}</p>
+    {helper && <p className="text-xs text-gray-400 max-w-sm">{helper}</p>}
+  </div>
+);
+
+const ProductsRail = forwardRef(({ items, emptyMessage, isLoadingMore, onRemove, handleProductClick, t, getRoleFromToken }, ref) => {
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScrollability = useCallback(() => {
+    if (!ref.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = ref.current;
+    const isRtl = getComputedStyle(ref.current).direction === "rtl";
+    
+    if (isRtl) {
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    } else {
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  }, [ref]);
+
+  useEffect(() => {
+    const scrollContainer = ref.current;
+    if (!scrollContainer) return;
+    
+    checkScrollability();
+    scrollContainer.addEventListener('scroll', checkScrollability);
+    window.addEventListener('resize', checkScrollability);
+    
+    return () => {
+      scrollContainer.removeEventListener('scroll', checkScrollability);
+      window.removeEventListener('resize', checkScrollability);
+    };
+  }, [ref, checkScrollability, items.length]);
+
+  const scrollLeft = () => {
+    if (!ref.current) return;
+    const isRtl = getComputedStyle(ref.current).direction === "rtl";
+    const scrollAmount = 400;
+    if (isRtl) {
+      ref.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    } else {
+      ref.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (!ref.current) return;
+    const isRtl = getComputedStyle(ref.current).direction === "rtl";
+    const scrollAmount = 400;
+    if (isRtl) {
+      ref.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    } else {
+      ref.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div className="px-4 sm:px-6 md:px-8 lg:px-16 relative">
+      {items.length === 0 && isLoadingMore ? (
+        <p className="text-center text-sm text-gray-600 py-6 sm:py-8">{t("loadingProducts", "جارٍ التحميل...")}</p>
+      ) : items.length === 0 ? (
+        <p className="text-center text-sm text-gray-600 py-6 sm:py-8">{emptyMessage}</p>
+      ) : (
+        <div className="relative">
+          {/* Left Arrow - Desktop Only */}
+          <button
+            onClick={scrollLeft}
+            disabled={!canScrollLeft}
+            className={`hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 items-center justify-center border border-gray-200 ${
+              !canScrollLeft ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            aria-label="Scroll left"
+          >
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          {/* Right Arrow - Desktop Only */}
+          <button
+            onClick={scrollRight}
+            disabled={!canScrollRight}
+            className={`hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 items-center justify-center border border-gray-200 ${
+              !canScrollRight ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            aria-label="Scroll right"
+          >
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          <div
+            className="flex gap-3 sm:gap-4 overflow-x-auto pb-3 md:pb-4 snap-x snap-mandatory scrollbar-hide"
+            ref={ref}
+            style={{ 
+              scrollbarWidth: 'none', 
+              msOverflowStyle: 'none',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
+            {items.map((product) => (
+              <div
+                onClick={() => handleProductClick(product)}
+                key={product.productId}
+                className="snap-start flex-shrink-0 w-48 sm:w-56 md:w-64 lg:w-72"
+              >
+                <ProductItem
+                  product={product}
+                  CurrentRole={getRoleFromToken(sessionStorage.getItem("token"))}
+                  onDeleted={(deletedId) => {
+                    if (typeof onRemove === "function") {
+                      onRemove(deletedId ?? product.productId);
+                    }
+                  }}
+                />
+              </div>
+            ))}
+            {isLoadingMore && (
+              <div className="flex-shrink-0 w-48 sm:w-56 md:w-64 lg:w-72 flex items-center justify-center">
+                <div className="h-6 w-6 sm:h-8 sm:w-8 border-2 border-brand-orange border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+});
+
 export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [Discountproducts, setDiscountProducts] = useState([]);
@@ -48,6 +182,11 @@ export default function Home() {
   const [hasMoreGrid, setHasMoreGrid] = useState(true);
   const [loadingGrid, setLoadingGrid] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sectionsReady, setSectionsReady] = useState({
+    discounts: false,
+    accessories: false,
+    grid: false,
+  });
   const navigate = useNavigate();
   const { t, lang } = useI18n();
   const featuredLoadingRef = useRef(false);
@@ -61,6 +200,13 @@ export default function Home() {
     clothes: new Set(),
     grid: new Set(),
   });
+  
+  // استخدام useRef لمنع استدعاء useEffect مرتين
+  const hasInitializedFeatured = useRef(false);
+  const hasInitializedDiscount = useRef(false);
+  const hasInitializedClothes = useRef(false);
+  const hasInitializedGrid = useRef(false);
+  const lastLangRef = useRef(null);
 
   const scrollToSection = useCallback((sectionId) => {
     const target = document.getElementById(sectionId);
@@ -86,6 +232,33 @@ export default function Home() {
     const existing = new Set(prev.map((item) => item.productId));
     return [...prev, ...next.filter((item) => !existing.has(item.productId))];
   };
+
+  useEffect(() => {
+    const observers = [];
+    const createObserver = (ref, key) => {
+      if (!ref.current) return;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            setSectionsReady((prev) => (prev[key] ? prev : { ...prev, [key]: true }));
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.2, rootMargin: "0px 0px -10% 0px" }
+      );
+
+      observer.observe(ref.current);
+      observers.push(observer);
+    };
+
+    createObserver(discountSectionRef, "discounts");
+    createObserver(accessoriesSectionRef, "accessories");
+    createObserver(gridSectionRef, "grid");
+
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+    };
+  }, []);
 
   const resetFetchedPages = () => {
     fetchedPagesRef.current = {
@@ -187,7 +360,7 @@ export default function Home() {
 
     try {
       // استخدام البحث بكلمة "إاكسسوارات" للحصول على منتجات الإكسسوارات
-      const searchQuery = lang === 'ar' ? 'إاكسسوارات' : 'accessories';
+      const searchQuery = lang === 'ar' ? 'حقائب نسائية واكسسوارات' : "Accessories & Women's Bags";
       
       // إذا تغيرت اللغة أو reset، نجلب البيانات من جديد
       if (reset || accessoriesLangCache.current !== lang || !accessoriesDataCache.current) {
@@ -303,6 +476,12 @@ export default function Home() {
 
   useEffect(() => {
     if (!lang) return;
+    
+    // منع الاستدعاء المكرر لنفس اللغة
+    if (lastLangRef.current === lang && hasInitializedFeatured.current) return;
+    lastLangRef.current = lang;
+    hasInitializedFeatured.current = true;
+    
     accessoriesDataCache.current = null;
     accessoriesLangCache.current = null;
     resetFetchedPages();
@@ -319,15 +498,58 @@ export default function Home() {
     setHasMoreClothes(true);
     setHasMoreGrid(true);
 
-    fetchDiscountProducts(1, true);
-    fetchClothesProducts(1, true);
     fetchFeaturedProducts(1, true);
+    
+    return () => {
+      // إعادة تعيين عند تغيير اللغة
+      if (lastLangRef.current !== lang) {
+        hasInitializedFeatured.current = false;
+        hasInitializedDiscount.current = false;
+        hasInitializedClothes.current = false;
+        hasInitializedGrid.current = false;
+      }
+    };
+  }, [lang, fetchFeaturedProducts]);
+
+  useEffect(() => {
+    if (!lang || !sectionsReady.discounts) return;
+    
+    // منع الاستدعاء المكرر
+    const key = `${lang}-${sectionsReady.discounts}`;
+    if (hasInitializedDiscount.current === key) return;
+    hasInitializedDiscount.current = key;
+    
+    fetchDiscountProducts(1, true);
+  }, [lang, sectionsReady.discounts, fetchDiscountProducts]);
+
+  useEffect(() => {
+    if (!lang || !sectionsReady.accessories) return;
+    
+    // منع الاستدعاء المكرر
+    const key = `${lang}-${sectionsReady.accessories}`;
+    if (hasInitializedClothes.current === key) return;
+    hasInitializedClothes.current = key;
+    
+    fetchClothesProducts(1, true);
+  }, [lang, sectionsReady.accessories, fetchClothesProducts]);
+
+  useEffect(() => {
+    if (!lang || !sectionsReady.grid) return;
+    
+    // منع الاستدعاء المكرر
+    const key = `${lang}-${sectionsReady.grid}`;
+    if (hasInitializedGrid.current === key) return;
+    hasInitializedGrid.current = key;
+    
     fetchGridProducts(1, true);
-  }, [lang, fetchDiscountProducts, fetchClothesProducts, fetchFeaturedProducts, fetchGridProducts]);
+  }, [lang, sectionsReady.grid, fetchGridProducts]);
 
   const DiscountProductsRef = useRef(null);
   const ProductsRef = useRef(null);
   const clothesRef = useRef(null);
+  const discountSectionRef = useRef(null);
+  const accessoriesSectionRef = useRef(null);
+  const gridSectionRef = useRef(null);
   
   // Use refs to track current page numbers for scroll handlers
   const discountPageRef = useRef(DiscountProductsPage);
@@ -392,22 +614,23 @@ export default function Home() {
       );
     };
 
-    if (DiscountProductsDiv)
+    if (sectionsReady.discounts && DiscountProductsDiv)
       DiscountProductsDiv.addEventListener(
         "scroll",
         DiscountProductsScrollHandler
       );
-    if (clothesDiv) clothesDiv.addEventListener("scroll", clothesScrollHandler);
+    if (sectionsReady.accessories && clothesDiv)
+      clothesDiv.addEventListener("scroll", clothesScrollHandler);
     if (productsDiv)
       productsDiv.addEventListener("scroll", productsScrollHandler);
 
     return () => {
-      if (DiscountProductsDiv)
+      if (sectionsReady.discounts && DiscountProductsDiv)
         DiscountProductsDiv.removeEventListener(
           "scroll",
           DiscountProductsScrollHandler
         );
-      if (clothesDiv)
+      if (sectionsReady.accessories && clothesDiv)
         clothesDiv.removeEventListener("scroll", clothesScrollHandler);
       if (productsDiv)
         productsDiv.removeEventListener("scroll", productsScrollHandler);
@@ -423,10 +646,13 @@ export default function Home() {
     loadingDiscountProducts,
     loadingClothes,
     loadingFeatured,
+    sectionsReady.discounts,
+    sectionsReady.accessories,
   ]);
 
   // Infinite scroll for grid products
   useEffect(() => {
+    if (!sectionsReady.grid) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMoreGrid && !loadingGrid && gridPage > 1) {
@@ -446,7 +672,7 @@ export default function Home() {
         observer.unobserve(currentTarget);
       }
     };
-  }, [hasMoreGrid, loadingGrid, gridPage, fetchGridProducts]);
+  }, [hasMoreGrid, loadingGrid, gridPage, fetchGridProducts, sectionsReady.grid]);
 
   function handleProductClick(product) {
     navigate(`/productDetails/${product.productId}`, {
@@ -477,49 +703,6 @@ export default function Home() {
     setFeaturedProducts((prev) => prev.filter((item) => item.productId !== id));
   const handleRemoveFromGrid = (id) =>
     setGridProducts((prev) => prev.filter((item) => item.productId !== id));
-
-  const renderProductsRail = (items, ref, emptyMessage, isLoadingMore, onRemove) => (
-    <div className="px-4 sm:px-6 md:px-8 lg:px-16">
-      {items.length === 0 && isLoadingMore ? (
-        <p className="text-center text-sm text-gray-600 py-6 sm:py-8">{t("loadingProducts", "جارٍ التحميل...")}</p>
-      ) : items.length === 0 ? (
-        <p className="text-center text-sm text-gray-600 py-6 sm:py-8">{emptyMessage}</p>
-      ) : (
-        <div
-          className="flex gap-3 sm:gap-4 overflow-x-auto pb-3 md:pb-4 snap-x snap-mandatory scrollbar-hide"
-          ref={ref}
-          style={{ 
-            scrollbarWidth: 'none', 
-            msOverflowStyle: 'none',
-            WebkitOverflowScrolling: 'touch'
-          }}
-        >
-          {items.map((product) => (
-            <div
-              onClick={() => handleProductClick(product)}
-              key={product.productId}
-              className="snap-start flex-shrink-0 w-48 sm:w-56 md:w-64 lg:w-72" // أحجام متجاوبة
-            >
-              <ProductItem
-                product={product}
-                CurrentRole={getRoleFromToken(sessionStorage.getItem("token"))}
-                onDeleted={(deletedId) => {
-                  if (typeof onRemove === "function") {
-                    onRemove(deletedId ?? product.productId);
-                  }
-                }}
-              />
-            </div>
-          ))}
-          {isLoadingMore && (
-            <div className="flex-shrink-0 w-48 sm:w-56 md:w-64 lg:w-72 flex items-center justify-center">
-              <div className="h-6 w-6 sm:h-8 sm:w-8 border-2 border-brand-orange border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
 
   return (
     <>
@@ -566,39 +749,9 @@ export default function Home() {
             <AnnouncementBar />
           </div>
 
-          {/* Categories Section - moved above hero */}
-          <section id="home-categories" className="bg-[#F9F6EF] border-b border-blue-100 relative z-20">
-            <div className="max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-4 sm:py-6">
-              <SectionHeader
-                eyebrow={t("homePage.curatedCategories", "أقسام منتقاة")}
-                title={t("homePage.shopPopular", "تسوّق فئاتنا الشائعة")}
-                description={t("homePage.shopPopularDesc", "اكتشف مجموعتنا المختارة من الأقسام الشائعة")}
-              />
-              <div className="mt-4 sm:mt-6">
-                <CategoryItems />
-              </div>
-            </div>
-          </section>
-          
-          {/* Hero Section */}
+          {/* Banner Section - First thing after Announcement Bar */}
           <section className="relative bg-gradient-to-r from-orange-50 via-orange-100 to-orange-50">
-            <div className="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-10 sm:py-14 md:py-16 text-[#0a2540] space-y-8 w-full">
-              <div className="space-y-4 md:space-y-5 text-center md:text-right">
-                <p className="text-xs sm:text-sm md:text-base uppercase tracking-[0.35em] text-[#13345d]/70">
-                 {t("homePage.brand", "جومانجو")}
-                </p>
-                <p className="text-xs sm:text-sm md:text-base text-[#13345d]/80 leading-relaxed">
-                  {t("homePage.heroDesc", "متجر إلكتروني متكامل يدعم تعدد العملات، بانرز مخصصة للعروض، وتجربة مريحة لعملائك على كل الشاشات.")}
-                </p>
-                <div className="flex flex-wrap justify-center md:justify-end gap-3">
-                  <button
-                    onClick={() => navigate("/Contact")}
-                    className="bg-[#0a2540] text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-semibold hover:bg-[#13345d] transition shadow-lg border-2 border-[#0a2540] text-sm sm:text-base"
-                  >
-                    {t("homePage.heroCtaContact", "تواصل معنا")}
-                  </button>
-                </div>
-              </div>
+            <div className="relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16 py-6 sm:py-8 md:py-10 w-full">
               <div className="w-full rounded-2xl overflow-hidden shadow-2xl border border-[#0a2540]/10 bg-white/70 backdrop-blur">
                 <BannerCarousel />
               </div>
@@ -613,56 +766,92 @@ export default function Home() {
               title={t("homePage.featuredProducts", "المنتجات المميزة")}
               description={t("homePage.productsDesc", "منتجات أصلية معروضة بأسعار تنافسية، يتم تحديثها باستمرار لتلبية طلبات العملاء.")}
             />
-            {renderProductsRail(
-              featuredProducts,
-              ProductsRef,
-              t("noFeaturedProducts", "لا توجد منتجات مميزة حالياً."),
-              loadingFeatured,
-              handleRemoveFromFeatured
-            )}
+            <ProductsRail
+              ref={ProductsRef}
+              items={featuredProducts}
+              emptyMessage={t("noFeaturedProducts", "لا توجد منتجات مميزة حالياً.")}
+              isLoadingMore={loadingFeatured}
+              onRemove={handleRemoveFromFeatured}
+              handleProductClick={handleProductClick}
+              t={t}
+              getRoleFromToken={getRoleFromToken}
+            />
           </section>
 
           {/* Discount Products Section */}
-          <section className="py-6 sm:py-8 md:py-12 space-y-6 sm:space-y-8 bg-[#F9F6EF]">
+          <section
+            ref={discountSectionRef}
+            className="py-6 sm:py-8 md:py-12 space-y-6 sm:space-y-8 bg-[#F9F6EF]"
+          >
             <SectionHeader
               eyebrow={t("homePage.newThisWeek", "جديد هذا الأسبوع")}
               title={t("homePage.discountsUpTo", "خصومات تصل إلى 60%")}
               description={t("homePage.discountsDesc", "عروض مختارة بعناية لتلبية احتياجات الأسرة  مع جودة عالية وأسعار منافسة.")}
             />
-            {renderProductsRail(
-              Discountproducts,
-              DiscountProductsRef,
-              t("noDiscountProducts", "لا توجد منتجات عليها خصومات حالياً."),
-              loadingDiscountProducts,
-              handleRemoveFromDiscount
+            {sectionsReady.discounts ? (
+              <ProductsRail
+                ref={DiscountProductsRef}
+                items={Discountproducts}
+                emptyMessage={t("noDiscountProducts", "لا توجد منتجات عليها خصومات حالياً.")}
+                isLoadingMore={loadingDiscountProducts}
+                onRemove={handleRemoveFromDiscount}
+                handleProductClick={handleProductClick}
+                t={t}
+                getRoleFromToken={getRoleFromToken}
+              />
+            ) : (
+              <LazySectionPlaceholder
+                message={t("homePage.scrollForDiscounts", "تابع التمرير لعرض أحدث الخصومات")}
+                helper={t("homePage.lazySectionHint", "نقوم بتحميل هذا القسم فقط عند ظهوره لضمان أفضل أداء.")}
+              />
             )}
           </section>
 
           {/* Accessories Section */}
-          <section className="py-6 sm:py-8 md:py-12 space-y-6 sm:space-y-8 bg-[#F9F6EF]">
+          <section
+            ref={accessoriesSectionRef}
+            className="py-6 sm:py-8 md:py-12 space-y-6 sm:space-y-8 bg-[#F9F6EF]"
+          >
             <SectionHeader
-              eyebrow={t("homePage.latestAccessories", "الإكسسوارات")}
-              title={t("homePage.latestAccessories", "الإكسسوارات")}
+              eyebrow={t("homePage.latestAccessories", "حقائب نسائية واكسسوارات")}
+              title={t("homePage.latestAccessories", "حقائب نسائية واكسسوارات")}
               description={t("homePage.clothesDesc", "صيحات الموسم مع خامات مريحة وتصاميم تناسب جميع الأعمار. التوصيل لجميع المحافظات.")}
             />
-            {renderProductsRail(
-              clothesProducts,
-              clothesRef,
-              t("noClothesProducts", "لا توجد منتجات للملابس حالياً."),
-              loadingClothes,
-              handleRemoveFromClothes
+            {sectionsReady.accessories ? (
+              <ProductsRail
+                ref={clothesRef}
+                items={clothesProducts}
+                emptyMessage={t("noClothesProducts", "لا توجد منتجات ل إكسسوارات حالياً.")}
+                isLoadingMore={loadingClothes}
+                onRemove={handleRemoveFromClothes}
+                handleProductClick={handleProductClick}
+                t={t}
+                getRoleFromToken={getRoleFromToken}
+              />
+            ) : (
+              <LazySectionPlaceholder
+                message={t("homePage.scrollForAccessories", "قم بالتمرير لمشاهدة أحدث الإكسسوارات")}
+                helper={t("homePage.lazySectionHint", "سيتم تحميل المنتجات بمجرد وصولك إلى هذا القسم.")}
+              />
             )}
           </section>
 
           {/* Grid Products Section */}
-          <section className="py-6 sm:py-8 md:py-12 bg-[#F9F6EF]">
+          <section
+            ref={gridSectionRef}
+            className="py-6 sm:py-8 md:py-12 bg-[#F9F6EF]"
+          >
             <SectionHeader
               eyebrow={t("homePage.allProductsEyebrow", "تصفح الكل")}
               title={t("homePage.allProductsTitle", "كل المنتجات في مكان واحد")}
-              description={t("homePage.allProductsDesc", "شبكة منتجات ديناميكية تُظهر آخر الإضافات ويمكن تصفحها وتحميل المزيد بسهولة.")}
             />
             <div className="px-4 sm:px-6 md:px-8 lg:px-16">
-              {gridProducts.length === 0 && loadingGrid ? (
+              {!sectionsReady.grid ? (
+                <LazySectionPlaceholder
+                  message={t("homePage.scrollForCatalog", "تابع التمرير للوصول إلى كل المنتجات")}
+                  helper={t("homePage.lazySectionHint", "نعرض المنتجات عند الحاجة فقط للحفاظ على سرعة التصفح.")}
+                />
+              ) : gridProducts.length === 0 && loadingGrid ? (
                 <p className="text-center text-sm text-gray-600 py-6 sm:py-8">
                   {t("loadingProducts", "جارٍ التحميل...")}
                 </p>
@@ -729,6 +918,17 @@ export default function Home() {
                     {link.label}
                   </button>
                 ))}
+              </div>
+            </div>
+            {/* Copyright Section */}
+            <div className="border-t border-blue-100 mt-6 pt-6">
+              <div className="max-w-screen-xl mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+                <p className="text-center text-sm text-[#1e293b]">
+                  {lang === "ar" 
+                    ? `جميع الحقوق محفوظة © ${new Date().getFullYear()} جومانجو`
+                    : `All rights reserved © ${new Date().getFullYear()} Gomango`
+                  }
+                </p>
               </div>
             </div>
           </footer>

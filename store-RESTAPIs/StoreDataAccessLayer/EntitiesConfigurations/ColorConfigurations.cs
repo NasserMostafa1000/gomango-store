@@ -49,7 +49,9 @@ namespace StoreDataAccessLayer.EntitiesConfigurations
                  new Colors { ColorId = 27, ColorName = "أخضر فاتح" },
                  new Colors { ColorId = 28, ColorName = "أزرق سماوي" },
                  new Colors { ColorId = 29, ColorName = "أزرق ملكي" },
-                 new Colors { ColorId = 30, ColorName = "قرمزي" }
+                 new Colors { ColorId = 30, ColorName = "قرمزي" },
+                new Colors { ColorId = 31, ColorName = "اوف وايت" }
+
 
              );
 

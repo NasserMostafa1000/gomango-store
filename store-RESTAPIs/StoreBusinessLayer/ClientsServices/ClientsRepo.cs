@@ -61,11 +61,6 @@ namespace StoreBusinessLayer.Clients
                 await _DbContext.Clients.AddAsync(NewClient);
                 await _DbContext.SaveChangesAsync();
 
-                // إرسال إشعار للعميل عند إضافة حساب جديد
-                string message = $"مرحبًا {Dto.FirstName} {Dto.SecondName}،\n\n🎉 <strong>مرحبًا بك في جومانجو!</strong>\n\nتم إنشاء حسابك بنجاح. يمكنك الآن الاستمتاع بجميع خدماتنا ومميزاتنا.\n\n📧 <strong>بريدك الإلكتروني:</strong> {Dto.Email}\n\nنتمنى أن تجد تجربتك معنا ممتعة ومفيدة. إذا كان لديك أي استفسار أو تحتاج إلى مساعدة، نحن هنا لخدمتك.";
-
-                await SendNotificationToUser(UserId, message);
-
                 return NewClient.ClientId;
             }
             catch (Exception ex)
@@ -105,9 +100,6 @@ namespace StoreBusinessLayer.Clients
                 targetClient.PhoneNumber = phoneNumber;
                 _DbContext.Update(targetClient);
                 await _DbContext.SaveChangesAsync();
-                string message = $"مرحبًا {targetClient.User.FirstName} {targetClient.User.SecondName}،\n\n✅ تم تحديث رقم الهاتف الخاص بك في حسابك في جومانجو بنجاح.\n\n📱 <strong>رقم الهاتف الجديد:</strong> {phoneNumber}\n\nإذا كان لديك أي استفسار أو تحتاج إلى مساعدة، نحن هنا لخدمتك.";
-
-                await SendNotificationToUser(targetClient.UserId, message);
 
                 return true;
             }
@@ -128,14 +120,6 @@ namespace StoreBusinessLayer.Clients
 
             await _DbContext.Addresses.AddAsync(Address);
             await _DbContext.SaveChangesAsync();
-            var targetClient = await _DbContext.Clients
-                        .Include(c => c.User)
-                        .FirstOrDefaultAsync(c => c.ClientId == ClientId); if (targetClient != null)
-            {
-                string message = $"مرحبًا {targetClient.User.FirstName} {targetClient.User.SecondName}،\n\n✅ تم إضافة عنوان جديد إلى حسابك في جومانجو بنجاح.\n\n📍 <strong>تفاصيل العنوان:</strong>\n• المحافظة: {req.Governorate}\n• المدينة: {req.City}\n• الشارع: {req.street}\n\nيمكنك تعديل أو حذف هذا العنوان في أي وقت من خلال حسابك الشخصي.";
-
-                await SendNotificationToUser(targetClient.UserId, message);
-            }
 
             return Address.AddressId;
         }
@@ -147,8 +131,6 @@ namespace StoreBusinessLayer.Clients
                 client.User.EmailOrAuthId = newEmail;
                 _DbContext.Clients.Update(client);
                 await _DbContext.SaveChangesAsync();
-                string message = $"مرحبًا {client.User.FirstName} {client.User.SecondName}،\n\n✅ تم تحديث البريد الإلكتروني الخاص بحسابك في جومانجو بنجاح.\n\n📧 <strong>البريد الإلكتروني الجديد:</strong> {newEmail}\n\nإذا كان لديك أي استفسار أو تحتاج إلى مساعدة، نحن هنا لخدمتك.";
-                await SendNotificationToUser(client.UserId, message);
 
                 return true;
             }

@@ -30,6 +30,9 @@ namespace StoreBusinessLayer.Carts
 
 
             public string ProductName { get; set; } = null!;
+            public string? ProductNameAr { get; set; }
+            public string? ProductNameEn { get; set; }
+            public int? ProductId { get; set; }
 
         }
     }

@@ -25,6 +25,7 @@ namespace StoreBusinessLayer.Orders
                 var newOrder = new StoreDataAccessLayer.Entities.Orders
                 {
                     ClientId = ClientId,
+                    IsGuest = false,
                     // الحالة الافتراضية قيد المعالجة
                     OrderStatusId = 1,
                     PaymentMethodId = req.PaymentMethodId,
@@ -39,15 +40,17 @@ namespace StoreBusinessLayer.Orders
                 await _Context.Orders.AddAsync(newOrder);
                 await _Context.SaveChangesAsync();
 
-                // إرسال رسالة شكر مع تعليمات متابعة الطلب
-                var client = await _Context.Clients
-                    .Include(c => c.User) // التأكد من تحميل الـ User مع العميل
-                    .FirstOrDefaultAsync(c => c.ClientId == ClientId);
-                if (client != null)
+                // محاولة إرسال رسالة شكر (لا تؤثر على نجاح الطلب إذا فشلت)
+                try
                 {
-                    string customerName = string.IsNullOrEmpty(client.User?.FirstName) ? " " : client.User.FirstName;
-                    string orderNumber = newOrder.OrderId.ToString();
-                    string message = $@"
+                    var client = await _Context.Clients
+                        .Include(c => c.User) // التأكد من تحميل الـ User مع العميل
+                        .FirstOrDefaultAsync(c => c.ClientId == ClientId);
+                    if (client != null)
+                    {
+                        string customerName = string.IsNullOrEmpty(client.User?.FirstName) ? " " : client.User.FirstName;
+                        string orderNumber = newOrder.OrderId.ToString();
+                        string message = $@"
 عزيزي/عزيزتي {customerName}،
 
 نشكرك على ثقتك بنا! تم استلام طلبك بنجاح في جومانجو ونحن الآن بصدد معالجته.
@@ -61,18 +64,23 @@ namespace StoreBusinessLayer.Orders
 مع أطيب التحيات،
 فريق جومانجو";
 
-                    // التحقق من البريد الإلكتروني وإرسال الإشعار
-                    var clientEmail = client.User?.EmailOrAuthId; // التأكد من الحصول على البريد الإلكتروني أو معرّف المصادقة
-                    if (!string.IsNullOrEmpty(clientEmail))
-                    {
-                        await NotificationServices.NotificationsCreator.SendNotification(
-                            "شكرًا لطلبك في جومانجو",
-                           message,
-                           clientEmail,  // البريد الإلكتروني الفعلي
-                           "gmail");  // يمكنك استبدال "Gmail" بأي مزود إشعار آخر إن كان مختلفًا
-                    } 
+                        // التحقق من البريد الإلكتروني وإرسال الإشعار
+                        var clientEmail = client.User?.EmailOrAuthId; // التأكد من الحصول على البريد الإلكتروني أو معرّف المصادقة
+                        if (!string.IsNullOrEmpty(clientEmail))
+                        {
+                            await NotificationServices.NotificationsCreator.SendNotification(
+                                "شكرًا لطلبك في جومانجو",
+                               message,
+                               clientEmail,  // البريد الإلكتروني الفعلي
+                               "gmail");  // يمكنك استبدال "Gmail" بأي مزود إشعار آخر إن كان مختلفًا
+                        }
                     }
-                
+                }
+                catch (Exception)
+                {
+                    // تجاهل أي أخطاء في إرسال البريد الإلكتروني حتى لا تؤثر على نجاح الطلب
+                    // الطلب تم إنشاؤه بنجاح حتى لو فشل إرسال البريد
+                }
 
                 return newOrder.OrderId;
             }
@@ -80,6 +88,44 @@ namespace StoreBusinessLayer.Orders
             {
                 throw new Exception(ex.Message.ToString());
             }
+        }
+        public async Task<int> PostGuestOrder(OrdersDtos.GuestOrders.PostGuestOrderReq req)
+        {
+            if (req.Products == null || req.Products.Count == 0)
+            {
+                throw new Exception("لا يوجد منتجات في الطلب");
+            }
+
+            var newOrder = new StoreDataAccessLayer.Entities.Orders
+            {
+                ClientId = null,
+                IsGuest = true,
+                GuestName = req.FullName,
+                GuestPhone = req.PhoneNumber,
+                GuestEmail = req.Email,
+                OrderStatusId = 1,
+                PaymentMethodId = req.PaymentMethodId,
+                ShippingCoast = req.ShippingCoast,
+                TotalAmount = req.TotalPrice,
+                TransactionNumber = req.TransactionNumber,
+                Address = req.Address,
+            };
+
+            await _Context.Orders.AddAsync(newOrder);
+            await _Context.SaveChangesAsync();
+
+            var details = req.Products.Select(detail => new OrderDetails
+            {
+                ProductDetailsId = detail.ProductDetailsId,
+                UnitPrice = detail.UnitPrice,
+                Quantity = detail.Quantity,
+                OrderId = newOrder.OrderId,
+            }).ToList();
+
+            await _Context.OrderDetails.AddRangeAsync(details);
+            await _Context.SaveChangesAsync();
+
+            return newOrder.OrderId;
         }
         public async Task<int>PostOrderDetail(OrdersDtos.ClientOrders.PostOrderDetailsReq req)
         {
@@ -211,9 +257,15 @@ namespace StoreBusinessLayer.Orders
             ShippingCoast = O.ShippingCoast,
             RejectionReason = O.RejectionReason,
             Address = O.Address!,
-            FullName = O.Client.User!.FirstName + " " + O.Client.User.SecondName,
-            ClientPhone = O.Client.PhoneNumber!,
-            OrderStatus = O.OrderStatus.StatusName
+            FullName = O.IsGuest
+                ? (string.IsNullOrWhiteSpace(O.GuestName) ? "زائر" : O.GuestName!)
+                : (O.Client != null && O.Client.User != null ? O.Client.User.FirstName + " " + O.Client.User.SecondName : "غير متوفر"),
+            ClientPhone = O.IsGuest
+                ? (O.GuestPhone ?? "غير متوفر")
+                : (O.Client != null ? O.Client.PhoneNumber ?? "غير متوفر" : "غير متوفر"),
+            OrderStatus = O.OrderStatus.StatusName,
+            IsGuest = O.IsGuest,
+            GuestEmail = O.GuestEmail
         })
         .Paginate(PageNumber)  
         .ToListAsync();
@@ -240,9 +292,15 @@ namespace StoreBusinessLayer.Orders
                     TransactionNumber = O.TransactionNumber,
                     ShippingCoast=O.ShippingCoast,
                     Address = O.Address!,
-                    FullName = O.Client.User!.FirstName + " " + O.Client.User.SecondName,
-                    ClientPhone = O.Client.PhoneNumber!,
-                    OrderStatus = O.OrderStatus.StatusName
+                    FullName = O.IsGuest
+                        ? (string.IsNullOrWhiteSpace(O.GuestName) ? "زائر" : O.GuestName!)
+                        : (O.Client != null && O.Client.User != null ? O.Client.User.FirstName + " " + O.Client.User.SecondName : "غير متوفر"),
+                    ClientPhone = O.IsGuest
+                        ? (O.GuestPhone ?? "غير متوفر")
+                        : (O.Client != null ? O.Client.PhoneNumber ?? "غير متوفر" : "غير متوفر"),
+                    OrderStatus = O.OrderStatus.StatusName,
+                    IsGuest = O.IsGuest,
+                    GuestEmail = O.GuestEmail
                 })
                 .FirstOrDefaultAsync();
 
@@ -455,31 +513,7 @@ namespace StoreBusinessLayer.Orders
                 _Context.Orders.Update(order);
                 int RowsAffected = await _Context.SaveChangesAsync();
 
-                {
-                    if (order != null)
-                    {
-
-
-                        string customerName = order.Client.User!.FirstName+" "+order.Client.User.SecondName;  // استبدالها بالقيمة الفعلية
-                        string orderNumber = order.OrderId.ToString();  // استبدالها بالقيمة الفعلية
-
-                        string message = MessageBasedOnTheStatus(statusName, customerName, orderNumber, RejectionReason);
-
-                        // التحقق من البريد الإلكتروني وإرسال الإشعار بناءً عليه
-                        var clientEmail = order.Client?.User?.EmailOrAuthId;  // التأكد من الحصول على البريد الإلكتروني أو معرّف المصادقة
-
-                        if (!string.IsNullOrEmpty(clientEmail))
-                        {
-                            // إذا كان البريد الإلكتروني موجودًا، أرسل الإشعار
-                            await NotificationServices.NotificationsCreator.SendNotification(
-                                $"تحديث حالة الطلب - {statusName}",
-                                message,
-                                clientEmail,  // البريد الإلكتروني الفعلي
-                                "gmail");  // يمكنك استبدال "Gmail" بأي مزود إشعار آخر إن كان مختلفًا
-                        }
-                    }
-                    return true;
-                }
+                return true;
             }
             return false;
         }

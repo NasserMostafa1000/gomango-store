@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "../i18n/I18nContext";
-import API_BASE_URL, { ServerPath } from "../Constant";
+import API_BASE_URL from "../Constant";
+import { trackViewCategory } from "../utils/facebookPixel";
 
 export default function Categories() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ export default function Categories() {
     const searchValue = (query || "").trim();
     if (!searchValue) return;
     const label = (displayLabel || query || "").trim() || searchValue;
+    // تتبع ViewCategory لـ Facebook Pixel
+    trackViewCategory(label);
     const path = `/FindProducts?q=${encodeURIComponent(searchValue)}`;
     navigate(path, { state: { searchQuery: label, apiQuery: searchValue } });
   };
@@ -33,7 +36,7 @@ export default function Categories() {
         if (isMounted) {
           if (Array.isArray(data)) {
             // ✅ تأكيد أن العناصر كلها سليمة - بدون shuffle
-            const cleanData = data.filter((item) => item && item.imagePath);
+            const cleanData = data.filter((item) => item && (item.name || item.categoryNameAr || item.categoryNameEn));
             setCategories(cleanData);
           } else {
             setCategories([]);
@@ -68,49 +71,29 @@ export default function Categories() {
           {t("noCategories", "لا توجد أقسام متاحة حالياً.")}
         </p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4 lg:gap-6">
-          {categories.map((item) => (
-            <div
-              key={item.categoryId}
-              className="group relative bg-[#F9F6EF] rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100"
-              onClick={() => {
-                const searchValue =
-                  item.categoryNameEn ||
-                  item.nameEn ||
-                  item.slug ||
-                  item.name ||
-                  item.categoryNameAr ||
-                  "";
-                const displayLabel =
-                  lang === "ar"
-                    ? item.name || item.categoryNameAr || searchValue
-                    : item.name || searchValue;
-                handleSearch(searchValue, displayLabel);
-              }}
-            >
-              <div className="relative h-32 md:h-40 lg:h-48 overflow-hidden">
-                <img
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  src={
-                    item.imagePath?.startsWith("http")
-                      ? item.imagePath
-                      : `${ServerPath}${item.imagePath}`
-                  }
-                  alt={item.name}
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-              </div>
-              <div className="p-3 md:p-4">
-                <h3 className="text-sm md:text-base font-semibold text-gray-800 line-clamp-2 text-center group-hover:text-brand-orange transition-colors">
-                  {item.name}
-                </h3>
-              </div>
-              <div className="absolute top-2 right-2 bg-brand-orange text-white text-xs px-2 py-1 rounded-full font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                {t("browse", "تصفح")}
-              </div>
-            </div>
-          ))}
+        <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+          {categories.map((item) => {
+            const searchValue =
+              item.categoryNameEn ||
+              item.nameEn ||
+              item.slug ||
+              item.name ||
+              item.categoryNameAr ||
+              "";
+            const displayLabel =
+              lang === "ar"
+                ? item.name || item.categoryNameAr || searchValue
+                : item.name || searchValue;
+            return (
+              <button
+                key={item.categoryId}
+                onClick={() => handleSearch(searchValue, displayLabel)}
+                className="px-4 py-2 md:px-6 md:py-3 bg-white rounded-lg shadow-sm hover:shadow-md border border-gray-200 hover:border-brand-orange text-gray-800 hover:text-brand-orange font-semibold text-sm md:text-base transition-all duration-200 hover:bg-orange-50"
+              >
+                {item.name}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

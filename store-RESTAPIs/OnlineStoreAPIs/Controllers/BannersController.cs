@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreServices.BannersServices;
+using OnlineStoreAPIs.Services;
 
 namespace OnlineStoreAPIs.Controllers
 {
@@ -22,34 +23,15 @@ namespace OnlineStoreAPIs.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult> UploadBannerImage([FromForm] IFormFile imageFile)
         {
-            if (imageFile == null || imageFile.Length == 0)
+            try
             {
-                return BadRequest("No file uploaded.");
+                var fileUrl = await ImageProcessingService.SaveCompressedImageAsync(imageFile, "BannersImages");
+                return Ok(new { ImageUrl = fileUrl });
             }
-
-            var fileExtension = Path.GetExtension(imageFile.FileName).ToLower();
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".tiff" };
-            if (!allowedExtensions.Contains(fileExtension))
+            catch (InvalidOperationException ex)
             {
-                return BadRequest("نوع الملف غير مدعوم.");
+                return BadRequest(ex.Message);
             }
-
-            var uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "BannersImages");
-            if (!Directory.Exists(uploadDirectory))
-            {
-                Directory.CreateDirectory(uploadDirectory);
-            }
-
-            var fileName = Guid.NewGuid().ToString() + fileExtension;
-            var filePath = Path.Combine(uploadDirectory, fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await imageFile.CopyToAsync(stream);
-            }
-
-            var fileUrl = $"/BannersImages/{fileName}";
-            return Ok(new { ImageUrl = fileUrl });
         }
 
         [HttpGet("active")]

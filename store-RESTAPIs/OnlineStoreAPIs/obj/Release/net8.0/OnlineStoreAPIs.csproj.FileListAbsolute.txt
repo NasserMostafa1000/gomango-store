@@ -1522,3 +1522,4 @@ D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Release\net8.0\staticwebassets.build.json.cache
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Release\net8.0\staticwebassets.build.endpoints.json
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Release\net8.0\swae.build.ex.cache
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\bin\Release\net8.0\SixLabors.ImageSharp.dll

@@ -35,6 +35,7 @@ const getColorHex = (colorName) => {
     "أزرق سماوي": "#00CED1",
     "أزرق ملكي": "#4169E1",
     "قرمزي": "#DC143C",
+    "اوف وايت": "#FAF9F6",
     "red": "#FF0000",
     "blue": "#0000FF",
     "green": "#008000",
@@ -57,6 +58,7 @@ const getColorHex = (colorName) => {
     "magenta": "#FF00FF",
     "lime": "#32CD32",
     "olive": "#808000",
+    "off white": "#FAF9F6",
   };
   return colorMap[colorName] || "#CCCCCC";
 };
@@ -75,12 +77,14 @@ export default function ProductOptionsCard({
   handlBuyClick,
   DetailsId,
   translateColor,
+  translateSize,
   isRTL,
   showBanner,
   productId,
   onColorChange,
   onSizeChange,
   availableColorsForSize,
+  product = null,
 }) {
   const [banner, setBanner] = useState(null);
 
@@ -159,7 +163,7 @@ export default function ProductOptionsCard({
                     className={`w-10 h-10 rounded border border-gray-200 ${!isAvailable ? "opacity-50" : ""}`}
                     style={{ backgroundColor: getColorHex(color) }}
                   ></div>
-                  <span className={`text-xs mt-1 font-medium truncate w-full text-center px-1 ${!isAvailable ? "text-gray-400" : "text-gray-700"}`}>
+                  <span className={`text-xs mt-1 font-medium w-full text-center px-1 leading-tight ${!isAvailable ? "text-gray-400" : "text-gray-700"}`}>
                     {translateColor(color)}
                   </span>
                 </button>
@@ -177,12 +181,13 @@ export default function ProductOptionsCard({
           </label>
           {Sizes.length === 1 ? (
             <div className="p-3 bg-gray-50 rounded-lg text-gray-900">
-              {CurrentSize}
+              {translateSize ? translateSize(CurrentSize) : CurrentSize}
             </div>
           ) : (
             <div className="flex flex-wrap gap-2">
               {Sizes.map((size, index) => {
                 const isSelected = CurrentSize === size;
+                const translatedSize = translateSize ? translateSize(size) : size;
                 return (
                   <button
                     key={index}
@@ -194,12 +199,12 @@ export default function ProductOptionsCard({
                         : "border-gray-300 hover:border-[#0A2C52] hover:bg-[#0A2C52] hover:shadow-md"
                     }`}
                     style={!isSelected ? { backgroundColor: '#FFFFFF' } : {}}
-                    title={size}
+                    title={translatedSize}
                   >
                     {isSelected ? (
-                      <span style={{ color: '#FFFFFF' }}>{size}</span>
+                      <span style={{ color: '#FFFFFF' }}>{translatedSize}</span>
                     ) : (
-                      <span className="group-hover:text-white" style={{ color: '#000000' }}>{size}</span>
+                      <span className="group-hover:text-white" style={{ color: '#000000' }}>{translatedSize}</span>
                     )}
                   </button>
                 );
@@ -295,6 +300,7 @@ export default function ProductOptionsCard({
             className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-lg transition duration-300 shadow-lg flex items-center justify-center"
             productDetailsId={DetailsId}
             Quantity={Quantity}
+            product={product}
           />
         </div>
       )}

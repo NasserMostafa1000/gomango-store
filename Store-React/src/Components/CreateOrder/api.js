@@ -22,12 +22,27 @@ export const fetchShipOrderInfo = async (token, Governorate) => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     }
   );
 
   if (!response.ok) throw new Error("Failed to fetch Ship Info");
+  return await response.json();
+};
+
+export const fetchShippingAreas = async () => {
+  const response = await fetch(
+    `${API_BASE_URL}ShippingInfo/GetShippingInfo`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) throw new Error("Failed to fetch shipping areas");
   return await response.json();
 };
 
@@ -128,4 +143,22 @@ export const PostListOfOrdersDetails = async (
     console.error("❌ خطأ أثناء إتمام الطلب:", error.message);
     alert(`⚠️ خطأ: ${error.message}`);
   }
+};
+
+export const postGuestOrder = async (orderData) => {
+  const response = await fetch(`${API_BASE_URL}Orders/PostGuestOrder`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(orderData),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "❌ فشل في إتمام الطلب للزائر!");
+  }
+
+  const data = await response.json();
+  return data.orderId;
 };

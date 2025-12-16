@@ -601,7 +601,7 @@ namespace StoreDataLayer.Migrations
                     { (byte)1, "رجالي", "Men", "/ProjectImages/ForMens.webp" },
                     { (byte)2, "نسائي", "Women", "/ProjectImages/ForWomens.png" },
                     { (byte)3, "شنط نسائية", "Women Bags", "/ProjectImages/WomenBags.jpg" },
-                    { (byte)4, "إاكسسوارات", "Accessories", "/ProjectImages/Accessories.webp" }
+                    { (byte)4, "حقائب نسائية واكسسوارات", "Accessories", "/ProjectImages/Accessories.webp" }
                 });
 
             migrationBuilder.InsertData(

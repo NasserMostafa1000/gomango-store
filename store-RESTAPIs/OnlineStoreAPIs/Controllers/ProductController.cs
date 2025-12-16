@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StoreBusinessLayer.Products;
 using StoreServices.Products.ProductInterfaces;
+using OnlineStoreAPIs.Services;
 
 namespace OnlineStoreAPIs.Controllers
 {
@@ -644,29 +645,15 @@ namespace OnlineStoreAPIs.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult> UploadProductImage(IFormFile imageFile)
         {
-            if (imageFile == null || imageFile.Length == 0)
+            try
             {
-                return BadRequest("No file uploaded.");
+                var imageUrl = await ImageProcessingService.SaveCompressedImageAsync(imageFile, "ProductsImages");
+                return Ok(new { ImageUrl = imageUrl });
             }
-
-            // تحديد مسار المجلد (سوف نستخدم مجلد ProductsImages هنا لتناسق المسارات)
-            var uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProductsImages");
-            if (!Directory.Exists(uploadDirectory))
+            catch (InvalidOperationException ex)
             {
-                Directory.CreateDirectory(uploadDirectory);
+                return BadRequest(ex.Message);
             }
-
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-            var filePath = Path.Combine(uploadDirectory, fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await imageFile.CopyToAsync(stream);
-            }
-
-            // استخدام نفس مسار ProductsImages لجميع الدوال
-            var fileUrl = $"/ProductsImages/{fileName}";
-            return Ok(new { ImageUrl = fileUrl });
         }
         [HttpPut("UpdateProductImage")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -677,38 +664,17 @@ namespace OnlineStoreAPIs.Controllers
         {
             try
             {
-                await _ProductsRepo.DeleteLastProductImageAsync(ProductDetailsId);
-
-                if (imageFile == null || imageFile.Length == 0)
-                {
-                    return BadRequest("لم يتم تحميل أي ملف.");
-                }
-
-                var fileExtension = Path.GetExtension(imageFile.FileName).ToLower();
-                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".tiff" };
-                if (!allowedExtensions.Contains(fileExtension))
-                {
-                    return BadRequest("نوع الملف غير مدعوم.");
-                }
-
-                var uploadDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProductsImages");
-                if (!Directory.Exists(uploadDirectory))
-                {
-                    Directory.CreateDirectory(uploadDirectory);
-                }
-
-                var fileName = $"{Guid.NewGuid()}{fileExtension}";
-                var filePath = Path.Combine(uploadDirectory, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(stream);
-                }
-
-                string fileUrl = $"/ProductsImages/{fileName}";
+                var previousImage = await _ProductsRepo.GetProductImagePathAsync(ProductDetailsId);
+                var fileUrl = await ImageProcessingService.SaveCompressedImageAsync(imageFile, "ProductsImages");
                 bool isUpdated = await _ProductsRepo.UpdateProductImageAsync(ProductDetailsId, fileUrl);
+                if (isUpdated)
+                {
+                    await ProductsRepo.DeleteImageAsync(previousImage);
+                    return Ok(new { FileUrl = fileUrl });
+                }
 
-                return isUpdated ? Ok(new { FileUrl = fileUrl }) : BadRequest("حدث خطأ أثناء تحديث الصورة.");
+                await ProductsRepo.DeleteImageAsync(fileUrl);
+                return BadRequest("حدث خطأ أثناء تحديث الصورة.");
             }
             catch (Exception ex)
             {

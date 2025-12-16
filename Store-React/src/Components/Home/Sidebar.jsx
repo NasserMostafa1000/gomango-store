@@ -23,6 +23,7 @@ import { useI18n } from '../i18n/I18nContext';
 import WebSiteLogo from '../WebsiteLogo/WebsiteLogo';
 import CurrencySelector from '../Currency/CurrencySelector';
 import API_BASE_URL from '../Constant';
+import { trackViewCategory } from '../utils/facebookPixel';
 
 function Sidebar({ isOpen, setIsOpen }) {
   const { t, lang } = useI18n();
@@ -65,6 +66,8 @@ function Sidebar({ isOpen, setIsOpen }) {
     const query = (category || "").trim();
     if (!query) return;
     const label = (displayLabel || category || "").trim() || query;
+    // تتبع ViewCategory لـ Facebook Pixel
+    trackViewCategory(label);
     const path = `/FindProducts?q=${encodeURIComponent(query)}`;
     navigate(path, { state: { searchQuery: label, apiQuery: query } });
     if (window.innerWidth < 1024) {
@@ -299,7 +302,7 @@ function Sidebar({ isOpen, setIsOpen }) {
                           {t("noCategories", "لا توجد أقسام")}
                         </p>
                       ) : (
-                        categories.slice(0, 6).map((category) => {
+                        categories.map((category) => {
                           const searchValue = (category.categoryNameEn || category.nameEn || category.slug || category.name || category.categoryNameAr || "").trim();
                           const displayLabel = (category.name || category.categoryNameAr || searchValue).trim();
                           return (

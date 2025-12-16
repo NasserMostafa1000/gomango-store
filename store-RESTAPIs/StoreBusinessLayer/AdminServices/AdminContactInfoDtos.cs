@@ -16,6 +16,8 @@ namespace StoreBusinessLayer.AdminInfo
             public string TransactionNumber { get; set; } = null!;
             
             public decimal ShipPrice { get; set; }
+            
+            public int DeliveryTimeDays { get; set; }
         }
         public class GetAdminInfoReq
         {

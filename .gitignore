@@ -20,8 +20,7 @@ dist/
 .env.local
 .env.development
 .env.production
-store-RESTAPIs/OnlineStoreAPIs/appsettings.json
-store-RESTAPIs/OnlineStoreAPIs/appsettings.*.json
+/store-RESTAPIs/OnlineStoreAPIs/appsettings.json
 # System files
 Thumbs.db
 desktop.ini

@@ -9,6 +9,7 @@ import CurrencySelector from '../Currency/CurrencySelector';
 import { useI18n } from '../i18n/I18nContext';
 import { FiUser } from 'react-icons/fi';
 import API_BASE_URL from '../Constant';
+import CategoriesBar from './CategoriesBar';
 
 function StoreLayout({ children }) {
   // السايد بار مغلق افتراضياً ويمكن فتحه/إغلاقه
@@ -339,6 +340,9 @@ function StoreLayout({ children }) {
         <div className="lg:hidden px-4 py-3 bg-[#F9F6EF] border-b" style={{ borderColor: '#e5e7eb' }}>
           <SearchBar onSearch={HandleSearhOn} searchType="products" />
         </div>
+
+        {/* Desktop Categories Bar */}
+        <CategoriesBar />
 
         {/* Page Content */}
         <main className="flex-1 bg-[#F9F6EF]">

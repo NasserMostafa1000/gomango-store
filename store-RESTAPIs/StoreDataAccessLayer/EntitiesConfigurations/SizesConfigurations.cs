@@ -74,7 +74,18 @@ namespace StoreDataAccessLayer.EntitiesConfigurations
             new Sizes{SizeId=44, SizeName="48", SizeCategory="بناطيل/احذيه"},
             new Sizes{SizeId=45, SizeName="49", SizeCategory="بناطيل/احذيه"},
             new Sizes{SizeId=46, SizeName="50", SizeCategory="بناطيل/احذيه"},
-
+new Sizes{SizeId=47, SizeName="سنة", SizeCategory="أطفال"},
+new Sizes{SizeId=48, SizeName="سنتين", SizeCategory="أطفال"},
+new Sizes{SizeId=49, SizeName="ثلاث سنوات", SizeCategory="أطفال"},
+new Sizes{SizeId=50, SizeName="أربع سنوات", SizeCategory="أطفال"},
+new Sizes{SizeId=51, SizeName="خمس سنوات", SizeCategory="أطفال"},
+new Sizes{SizeId=52, SizeName="ست سنوات", SizeCategory="أطفال"},
+new Sizes{SizeId=53, SizeName="سبع سنوات", SizeCategory="أطفال"},
+new Sizes{SizeId=54, SizeName="ثماني سنوات", SizeCategory="أطفال"},
+new Sizes{SizeId=55, SizeName="تسع سنوات", SizeCategory="أطفال"},
+new Sizes{SizeId=56, SizeName="عشر سنوات", SizeCategory="أطفال"},
+new Sizes{SizeId=57, SizeName="إحدى عشرة سنة", SizeCategory="أطفال"},
+new Sizes{SizeId=58, SizeName="اثنتا عشرة سنة", SizeCategory="أطفال"},
             };
         }
     }

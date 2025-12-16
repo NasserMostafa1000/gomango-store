@@ -14,7 +14,7 @@ namespace StoreDataAccessLayer
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             var conn = config.GetConnectionString("ConnStr")
                        ?? Environment.GetEnvironmentVariable("ConnStr")
-                       ?? "Server=localhost;Database=GomangoShop;Trusted_Connection=True;TrustServerCertificate=True;";
+                       ?? "Data Source=SQL1003.site4now.net;Initial Catalog=db_ac07d8_gomango;User Id=db_ac07d8_gomango_admin;Password=Gomango@1234";
             optionsBuilder.UseSqlServer(conn);
             return new AppDbContext(optionsBuilder.Options);
         }

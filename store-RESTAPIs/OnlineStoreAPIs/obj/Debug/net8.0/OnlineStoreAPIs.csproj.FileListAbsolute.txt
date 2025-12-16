@@ -2085,10 +2085,11 @@ D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\staticwebassets.development.json
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\staticwebassets.build.endpoints.json
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\swae.build.ex.cache
-D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\OnlineSt.628F7D5E.Up2Date
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\OnlineStoreAPIs.dll
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\refint\OnlineStoreAPIs.dll
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\OnlineStoreAPIs.pdb
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\OnlineStoreAPIs.genruntimeconfig.cache
 D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\ref\OnlineStoreAPIs.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\bin\Debug\net8.0\SixLabors.ImageSharp.dll
+D:\MR Comapny\Projects\All Apps\Apps\Gomango\store-RESTAPIs\OnlineStoreAPIs\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

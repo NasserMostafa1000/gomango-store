@@ -11,5 +11,6 @@ namespace StoreDataAccessLayer.Entities
          public  byte Id { get; set; }
         public string GovernorateName { get; set; } = null!;
          public decimal Price { get; set; }
+         public int DeliveryTimeDays { get; set; }
     }
 }

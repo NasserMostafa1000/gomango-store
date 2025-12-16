@@ -7,6 +7,7 @@ import { getRoleFromToken } from "../utils.js";
 import { useI18n } from "../i18n/I18nContext";
 import ProductItem from "./ProductItem.jsx";
 import BackButton from "../Common/BackButton";
+import { trackSearch, trackViewCategory } from "../utils/facebookPixel";
 
 export default function FindProducts() {
   const location = useLocation();
@@ -64,6 +65,17 @@ export default function FindProducts() {
         setProducts(normalized.slice(startIndex, endIndex));
         setPage(2);
         setHasMore(normalized.length > itemsPerPage);
+        
+        // تتبع Search أو ViewCategory لـ Facebook Pixel
+        if (apiQuery) {
+          // إذا كان الاستعلام يشبه اسم قسم (يمكن تحسين هذا المنطق)
+          const isCategory = normalized.length > 0 && normalized[0]?.categoryName;
+          if (isCategory) {
+            trackViewCategory(displayQuery || apiQuery, normalized);
+          } else {
+            trackSearch(displayQuery || apiQuery, normalized.length);
+          }
+        }
       } else {
         setLoadingMore(true);
         // استخدام البيانات المحفوظة

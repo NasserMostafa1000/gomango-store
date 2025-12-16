@@ -16,6 +16,8 @@ import ProductMediaCard from "./ProductMediaCard.jsx";
 import ProductInfoCard from "./ProductInfoCard.jsx";
 import ProductOptionsCard from "./ProductOptionsCard.jsx";
 import BackButton from "../Common/BackButton";
+import { trackViewContent } from "../utils/facebookPixel";
+import { fetchShippingAreas } from "../CreateOrder/api.js";
 
 export default function ProductDetails() {
   const location = useLocation();
@@ -34,7 +36,27 @@ export default function ProductDetails() {
   const [availableColorsForSize, setAvailableColorsForSize] = useState([]);
   const [Quantity, setQuantity] = useState(1);
   const [banner, setBanner] = useState(null);
+  const [shippingAreas, setShippingAreas] = useState([]);
+  const [selectedShippingArea, setSelectedShippingArea] = useState("");
+  const [deliveryTimeDays, setDeliveryTimeDays] = useState(null);
+  const [showReviews, setShowReviews] = useState(false);
+  const [showRelatedProducts, setShowRelatedProducts] = useState(false);
+  const [isUpdatingDetails, setIsUpdatingDetails] = useState(false);
+  const reviewsElementsRef = useRef([]);
+  const relatedProductsElementsRef = useRef([]);
+  const reviewsObserverRef = useRef(null);
+  const relatedProductsObserverRef = useRef(null);
   const detailsRequestController = useRef(null);
+  
+  // استخدام useRef لمنع الطلبات المكررة
+  const hasFetchedProduct = useRef(false);
+  const hasFetchedInitialData = useRef(false);
+  const hasFetchedShippingAreas = useRef(false);
+  const lastFetchedProductId = useRef(null);
+  const lastFetchedLang = useRef(null);
+  const hasFetchedColorsForSize = useRef(null); // لتتبع آخر مقاس تم جلب ألوانه
+  const hasFetchedDetails = useRef(null); // لتتبع آخر لون ومقاس تم جلب تفاصيلهما
+  
   const { format } = useCurrency();
   const { t, lang } = useI18n();
 
@@ -82,13 +104,50 @@ export default function ProductDetails() {
       "أزرق سماوي": "cyan",
       "أزرق ملكي": "blue",
       "قرمزي": "red",
+      "اوف وايت": "off white",
     };
     
     const colorKey = colorMap[colorName] || colorName.toLowerCase().trim();
     return t(`colors.${colorKey}`, colorName);
   };
 
+  // Function to translate size names
+  const translateSize = (sizeName) => {
+    if (!sizeName) return sizeName;
+    
+    const sizeMap = {
+      "سنة": "1 year",
+      "سنتين": "2 years",
+      "ثلاث سنوات": "3 years",
+      "أربع سنوات": "4 years",
+      "خمس سنوات": "5 years",
+      "ست سنوات": "6 years",
+      "سبع سنوات": "7 years",
+      "ثماني سنوات": "8 years",
+      "تسع سنوات": "9 years",
+      "عشر سنوات": "10 years",
+      "إحدى عشرة سنة": "11 years",
+      "اثنتا عشرة سنة": "12 years",
+    };
+    
+    const sizeKey = sizeMap[sizeName] || sizeName.toLowerCase().trim();
+    return t(`sizes.${sizeKey}`, sizeName);
+  };
+
+  // Function to translate governorate/region names
+  const translateGovernorate = (governorate) => {
+    if (!governorate) return governorate;
+    return t(`emirates.${governorate}`, governorate);
+  };
+
   useEffect(() => {
+    // منع الطلبات المكررة لنفس المنتج واللغة
+    const productKey = `${id}-${lang}`;
+    if (hasFetchedProduct.current === productKey) return;
+    hasFetchedProduct.current = productKey;
+    lastFetchedProductId.current = id;
+    lastFetchedLang.current = lang;
+    
     let isMounted = true;
     const stateProduct = location.state?.product;
 
@@ -132,6 +191,18 @@ export default function ProductDetails() {
             setProductImages([]);
           }
         }
+        
+        // تتبع ViewContent لـ Facebook Pixel
+        if (data && data.productId) {
+          trackViewContent({
+            productId: data.productId,
+            productName: data.productName || "",
+            priceAfterDiscount: data.priceAfterDiscount || data.productPrice || 0,
+            productPrice: data.productPrice || 0,
+            productImage: data.productImage || "",
+            categoryName: data.categoryName || data.categoryNameAr || data.categoryNameEn || "",
+          });
+        }
       } catch (error) {
         if (isMounted) {
           console.error("Error fetching product:", error);
@@ -144,6 +215,18 @@ export default function ProductDetails() {
             }
             if (stateProduct.productDetailsId != null) {
               setDetailsId(stateProduct.productDetailsId);
+            }
+            
+            // تتبع ViewContent للـ state product أيضاً
+            if (stateProduct.productId) {
+              trackViewContent({
+                productId: stateProduct.productId,
+                productName: stateProduct.productName || "",
+                priceAfterDiscount: stateProduct.priceAfterDiscount || stateProduct.productPrice || 0,
+                productPrice: stateProduct.productPrice || 0,
+                productImage: stateProduct.productImage || "",
+                categoryName: stateProduct.categoryName || stateProduct.categoryNameAr || stateProduct.categoryNameEn || "",
+              });
             }
           }
         }
@@ -158,6 +241,13 @@ export default function ProductDetails() {
 
     return () => {
       isMounted = false;
+      // إعادة تعيين المراجع عند تغيير المنتج أو اللغة
+      if (lastFetchedProductId.current !== id || lastFetchedLang.current !== lang) {
+        hasFetchedProduct.current = false;
+        hasFetchedInitialData.current = false;
+        hasFetchedColorsForSize.current = null;
+        hasFetchedDetails.current = null;
+      }
     };
   }, [id, location.state?.product, lang]);
 
@@ -172,7 +262,7 @@ export default function ProductDetails() {
     detailsRequestController.current?.abort();
     const controller = new AbortController();
     detailsRequestController.current = controller;
-    setLoading(true);
+    setIsUpdatingDetails(true);
     try {
       const response = await fetch(
         `${API_BASE_URL}Product/GetDetailsBy?ProductId=${Number(
@@ -223,7 +313,139 @@ export default function ProductDetails() {
     } finally {
       if (detailsRequestController.current === controller) {
         detailsRequestController.current = null;
-        setLoading(false);
+        setIsUpdatingDetails(false);
+      }
+    }
+  };
+
+  const GetDetailsByColorOnly = async (color = CurrentColor) => {
+    if (!product || !color) return;
+    const trimmedColor = color?.trim();
+    if (!trimmedColor) return;
+    detailsRequestController.current?.abort();
+    const controller = new AbortController();
+    detailsRequestController.current = controller;
+    setIsUpdatingDetails(true);
+    try {
+      // Try to fetch by color only with empty size name
+      // Some APIs accept empty string for optional parameters
+      let response = await fetch(
+        `${API_BASE_URL}Product/GetDetailsBy?ProductId=${Number(
+          product?.productId
+        )}&ColorName=${encodeURIComponent(trimmedColor)}&SizeName=`,
+        { signal: controller.signal }
+      );
+      
+      // If that doesn't work, try with null or without SizeName parameter
+      if (!response.ok) {
+        response = await fetch(
+          `${API_BASE_URL}Product/GetDetailsBy?ProductId=${Number(
+            product?.productId
+          )}&ColorName=${encodeURIComponent(trimmedColor)}&SizeName=null`,
+          { signal: controller.signal }
+        );
+      }
+      
+      // If still doesn't work, try a different approach: fetch the initial product details
+      // and check if we can get details by making a call that matches the color
+      if (!response.ok) {
+        // Fallback: Use GetProductDetailsById which returns the default detail
+        // Then we'll need to find the matching color detail
+        // For now, let's try one more time with a space or try to get all details
+        const fallbackResponse = await fetch(
+          `${API_BASE_URL}Product/GetProductDetailsById?Id=${product?.productId}`,
+          { signal: controller.signal }
+        );
+        if (fallbackResponse.ok) {
+          const defaultData = await fallbackResponse.json();
+          // If the default detail matches our color, use it
+          if (defaultData.color === trimmedColor || defaultData.colorName === trimmedColor) {
+            const newQuantity = defaultData.quantity || 0;
+            setAvailableQuantity(newQuantity);
+            if (newQuantity > 0) {
+              setQuantity(1);
+            } else {
+              setQuantity(0);
+            }
+            setDetailsId(defaultData.productDetailsId);
+            setImg(defaultData.image || defaultData.productImage);
+            // Fetch additional images
+            if (defaultData.productDetailsId) {
+              try {
+                const imagesResponse = await fetch(
+                  `${API_BASE_URL}Product/GetProductDetailImages/${defaultData.productDetailsId}`,
+                  { signal: controller.signal }
+                );
+                if (imagesResponse.ok) {
+                  const imagesData = await imagesResponse.json();
+                  if (imagesData && Array.isArray(imagesData) && imagesData.length > 0) {
+                    setProductImages(imagesData.map((img) => img.imageUrl || img));
+                  } else {
+                    setProductImages([]);
+                  }
+                } else {
+                  setProductImages([]);
+                }
+              } catch (error) {
+                console.error("Error fetching product images:", error);
+                setProductImages([]);
+              }
+            } else {
+              setProductImages([]);
+            }
+            return;
+          }
+        }
+        // If we reach here, the API might not support color-only queries
+        // In this case, we'll just update the color but keep the current images
+        // This is a graceful degradation
+        console.warn("Could not fetch product details by color only. API may require both color and size.");
+        return;
+      }
+      
+      const data = await response.json();
+      const newQuantity = data.quantity;
+      setAvailableQuantity(newQuantity);
+      if (newQuantity > 0) {
+        setQuantity(1);
+      } else {
+        setQuantity(0);
+      }
+      setDetailsId(data.productDetailsId);
+      setImg(data.image);
+      // Fetch additional images for the product details
+      if (data.productDetailsId) {
+        try {
+          const imagesResponse = await fetch(
+            `${API_BASE_URL}Product/GetProductDetailImages/${data.productDetailsId}`,
+            { signal: controller.signal }
+          );
+          if (imagesResponse.ok) {
+            const imagesData = await imagesResponse.json();
+            if (imagesData && Array.isArray(imagesData) && imagesData.length > 0) {
+              setProductImages(imagesData.map((img) => img.imageUrl || img));
+            } else {
+              setProductImages([]);
+            }
+          } else {
+            setProductImages([]);
+          }
+        } catch (error) {
+          console.error("Error fetching product images:", error);
+          setProductImages([]);
+        }
+      } else {
+        setProductImages([]);
+      }
+    } catch (error) {
+      if (error?.name === "AbortError") {
+        return;
+      }
+      console.error(error.message);
+    } finally {
+      if (detailsRequestController.current === controller) {
+        detailsRequestController.current = null;
+        setIsUpdatingDetails(false);
       }
     }
   };
@@ -242,12 +464,6 @@ export default function ProductDetails() {
   }
 
   const handlBuyClick = () => {
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      showBanner(t("productDetails.loginRequired", "يجب تسجيل الدخول لمتابعة عملية الشراء."), "error");
-      navigate("/Login", { state: { path: `/ProductDetails/${id}` } });
-      return;
-    }
     const Product = CurrentProduct();
     navigate("/PurchaseDetails", { state: { Product, fromCart: false } });
   };
@@ -280,40 +496,72 @@ export default function ProductDetails() {
     }
   };
 
+  // دمج fetchProducts و fetchColorsAndSizes في useEffect واحد لتجنب التحميل المتعدد
   useEffect(() => {
     if (!product) return;
+    
+    // منع الطلبات المكررة لنفس المنتج واللغة
+    const dataKey = `${product?.productId}-${lang}`;
+    if (hasFetchedInitialData.current === dataKey) return;
+    hasFetchedInitialData.current = dataKey;
 
-    const fetchProducts = async () => {
+    const fetchInitialData = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE_URL}Product/GetProductDetailsById?Id=${product?.productId}`
-        );
-        if (!response.ok) throw new Error("Network response was not ok");
-        const data = await response.json();
-        setCurrentColor(data.color);
-        setDetailsId(data.productDetailsId);
-        const sizeValue = data.size;
+        // جلب البيانات بشكل متوازي
+        const [detailsResponse, sizesResponse, colorsResponse] = await Promise.all([
+          fetch(`${API_BASE_URL}Product/GetProductDetailsById?Id=${product?.productId}`),
+          fetch(`${API_BASE_URL}Product/GetSizesByProductId?productId=${product?.productId}`),
+          fetch(`${API_BASE_URL}Product/GetColorsByProductId?productId=${product?.productId}`)
+        ]);
+
+        if (!detailsResponse.ok || !sizesResponse.ok || !colorsResponse.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const [detailsData, sizesData, colorsData] = await Promise.all([
+          detailsResponse.json(),
+          sizesResponse.json(),
+          colorsResponse.json()
+        ]);
+
+        // تحديث البيانات
+        setCurrentColor(detailsData.color);
+        setDetailsId(detailsData.productDetailsId);
+        const sizeValue = detailsData.size;
         setCurrentSize(sizeValue);
-        const newQuantity = data.quantity;
+        const newQuantity = detailsData.quantity;
         setAvailableQuantity(newQuantity);
+        
         // ضبط الكمية تلقائياً عند التحميل الأولي
         if (newQuantity > 0) {
           setQuantity(1);
         } else {
           setQuantity(0);
         }
+
+        // تحديث المقاسات والألوان
+        setSizes(sizesData);
+        if (sizesData.length === 1) setCurrentSize(sizesData[0]);
+        setColors(colorsData);
+        if (colorsData.length === 1) setCurrentColor(colorsData[0]);
+
         // إذا كان هناك مقاس محدد، احصل على الألوان المتاحة له
         if (sizeValue) {
-          try {
-            const colorsForSizeResponse = await fetch(
-              `${API_BASE_URL}Product/GetColorsBelongsToSpecificSize?ProductId=${product?.productId}&SizeName=${sizeValue}`
-            );
-            if (colorsForSizeResponse.ok) {
-              const colorsForSizeData = await colorsForSizeResponse.json();
-              setAvailableColorsForSize(colorsForSizeData);
+          // منع الطلبات المكررة لنفس المقاس في fetchInitialData
+          const initialSizeKey = `${product?.productId}-${sizeValue}-initial`;
+          if (hasFetchedColorsForSize.current !== initialSizeKey) {
+            hasFetchedColorsForSize.current = initialSizeKey;
+            try {
+              const colorsForSizeResponse = await fetch(
+                `${API_BASE_URL}Product/GetColorsBelongsToSpecificSize?ProductId=${product?.productId}&SizeName=${sizeValue}`
+              );
+              if (colorsForSizeResponse.ok) {
+                const colorsForSizeData = await colorsForSizeResponse.json();
+                setAvailableColorsForSize(colorsForSizeData);
+              }
+            } catch (error) {
+              console.error("Error fetching colors for size:", error);
             }
-          } catch (error) {
-            console.error("Error fetching colors for size:", error);
           }
         }
       } catch (error) {
@@ -323,36 +571,29 @@ export default function ProductDetails() {
       }
     };
 
-    const fetchColorsAndSizes = async () => {
-      try {
-        const sizesResponse = await fetch(
-          `${API_BASE_URL}Product/GetSizesByProductId?productId=${product?.productId}`
-        );
-        if (!sizesResponse.ok) throw new Error("Network response was not ok");
-        const sizesData = await sizesResponse.json();
-        setSizes(sizesData);
-        if (sizesData.length === 1) setCurrentSize(sizesData[0]);
-
-        const colorsResponse = await fetch(
-          `${API_BASE_URL}Product/GetColorsByProductId?productId=${product?.productId}`
-        );
-        if (!colorsResponse.ok) throw new Error("Network response was not ok");
-        const colorsData = await colorsResponse.json();
-        setColors(colorsData);
-        if (colorsData.length === 1) setCurrentColor(colorsData[0]);
-      } catch (error) {
-        console.error("Error fetching colors and sizes:", error);
+    fetchInitialData();
+    
+    return () => {
+      // إعادة تعيين المرجع عند تغيير المنتج أو اللغة
+      if (product?.productId) {
+        const dataKey = `${product?.productId}-${lang}`;
+        if (hasFetchedInitialData.current === dataKey) {
+          hasFetchedInitialData.current = false;
+        }
       }
     };
-
-    fetchProducts();
-    fetchColorsAndSizes();
-  }, [product, lang]);
+  }, [product?.productId, lang]);
 
   useEffect(() => {
     const fetchDetails = async () => {
-      if (!CurrentSize) return;
-      setLoading(true);
+      if (!CurrentSize || !product) return;
+      
+      // منع الطلبات المكررة لنفس المقاس
+      const sizeKey = `${product?.productId}-${CurrentSize}`;
+      if (hasFetchedColorsForSize.current === sizeKey) return;
+      hasFetchedColorsForSize.current = sizeKey;
+      
+      setIsUpdatingDetails(true);
       try {
         const response = await fetch(
           `${API_BASE_URL}Product/GetColorsBelongsToSpecificSize?ProductId=${product?.productId}&SizeName=${CurrentSize}`
@@ -374,19 +615,37 @@ export default function ProductDetails() {
         }
       } catch (error) {
         console.error("Error fetching product details:", error);
+        hasFetchedColorsForSize.current = null; // إعادة تعيين عند الخطأ
       } finally {
-        setLoading(false);
+        setIsUpdatingDetails(false);
       }
     };
 
     fetchDetails();
-  }, [CurrentSize]);
+  }, [CurrentSize, product?.productId, CurrentColor]);
 
   useEffect(() => {
-    if (CurrentColor && CurrentSize) {
+    // إذا كان هناك مقاسات وكان كل من اللون والمقاس محددين
+    const hasSizes = Sizes.length > 0 && Sizes[0] !== null;
+    
+    if (CurrentColor && CurrentSize && hasSizes && product) {
+      // منع الطلبات المكررة لنفس اللون والمقاس
+      const detailsKey = `${product?.productId}-${CurrentColor}-${CurrentSize}`;
+      if (hasFetchedDetails.current === detailsKey) return;
+      hasFetchedDetails.current = detailsKey;
+      
       GetDetailsOfCurrentSizeAndColor(CurrentColor, CurrentSize);
     }
-  }, [CurrentSize, CurrentColor]);
+    // إذا لم يكن هناك مقاسات وكان اللون محدد فقط
+    else if (CurrentColor && !hasSizes && product) {
+      // منع الطلبات المكررة لنفس اللون
+      const colorOnlyKey = `${product?.productId}-${CurrentColor}-no-size`;
+      if (hasFetchedDetails.current === colorOnlyKey) return;
+      hasFetchedDetails.current = colorOnlyKey;
+      
+      GetDetailsByColorOnly(CurrentColor);
+    }
+  }, [CurrentSize, CurrentColor, Sizes, product]);
 
   // ضبط الكمية تلقائياً عند تغيير المخزون المتاح (حل احتياطي)
   useEffect(() => {
@@ -407,16 +666,129 @@ export default function ProductDetails() {
   }, []);
 
   useEffect(() => {
-    const middleY = window.innerHeight / 2;
-    window.scrollTo({
-      top: middleY - 500,
-      behavior: "smooth",
+    // منع الطلبات المكررة
+    if (hasFetchedShippingAreas.current) return;
+    hasFetchedShippingAreas.current = true;
+    
+    const loadShippingAreas = async () => {
+      try {
+        const areas = await fetchShippingAreas();
+        setShippingAreas(areas);
+      } catch (error) {
+        console.error("Error loading shipping areas:", error);
+      }
+    };
+    loadShippingAreas();
+    
+    return () => {
+      hasFetchedShippingAreas.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (selectedShippingArea) {
+      const area = shippingAreas.find(a => a.governorate === selectedShippingArea);
+      if (area) {
+        setDeliveryTimeDays(area.deliveryTimeDays);
+      }
+    } else {
+      setDeliveryTimeDays(null);
+    }
+  }, [selectedShippingArea, shippingAreas]);
+
+  // Callback refs للتعليقات والمنتجات ذات الصلة
+  const reviewsRefCallback = (node) => {
+    if (node && !reviewsElementsRef.current.includes(node)) {
+      reviewsElementsRef.current.push(node);
+      if (reviewsObserverRef.current && !showReviews) {
+        reviewsObserverRef.current.observe(node);
+      }
+    }
+  };
+
+  const relatedProductsRefCallback = (node) => {
+    if (node && !relatedProductsElementsRef.current.includes(node)) {
+      relatedProductsElementsRef.current.push(node);
+      if (relatedProductsObserverRef.current && !showRelatedProducts) {
+        relatedProductsObserverRef.current.observe(node);
+      }
+    }
+  };
+
+  // Intersection Observer للتحميل الكسول للتعليقات والمنتجات ذات الصلة
+  useEffect(() => {
+    if (!product) return;
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '200px',
+      threshold: 0.1
+    };
+
+    // إنشاء observers فقط مرة واحدة
+    if (!reviewsObserverRef.current) {
+      reviewsObserverRef.current = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !showReviews) {
+            setShowReviews(true);
+            if (reviewsObserverRef.current) {
+              reviewsObserverRef.current.unobserve(entry.target);
+            }
+          }
+        });
+      }, observerOptions);
+    }
+
+    if (!relatedProductsObserverRef.current) {
+      relatedProductsObserverRef.current = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !showRelatedProducts) {
+            setShowRelatedProducts(true);
+            if (relatedProductsObserverRef.current) {
+              relatedProductsObserverRef.current.unobserve(entry.target);
+            }
+          }
+        });
+      }, observerOptions);
+    }
+
+    // مراقبة جميع العناصر الموجودة
+    reviewsElementsRef.current.forEach(element => {
+      if (element && !showReviews && reviewsObserverRef.current) {
+        reviewsObserverRef.current.observe(element);
+      }
     });
-  });
+
+    relatedProductsElementsRef.current.forEach(element => {
+      if (element && !showRelatedProducts && relatedProductsObserverRef.current) {
+        relatedProductsObserverRef.current.observe(element);
+      }
+    });
+
+    return () => {
+      reviewsElementsRef.current.forEach(element => {
+        if (element && reviewsObserverRef.current) {
+          reviewsObserverRef.current.unobserve(element);
+        }
+      });
+      relatedProductsElementsRef.current.forEach(element => {
+        if (element && relatedProductsObserverRef.current) {
+          relatedProductsObserverRef.current.unobserve(element);
+        }
+      });
+    };
+  }, [product, showReviews, showRelatedProducts]);
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-screen">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+    </div>
+  );
+
+  // Loading indicator عند تحديث التفاصيل فقط
+  const DetailsLoadingOverlay = isUpdatingDetails && (
+    <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-lg">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
     </div>
   );
 
@@ -439,7 +811,7 @@ export default function ProductDetails() {
   const Price = product?.discountPercentage === 0 ? product?.productPrice : product?.priceAfterDiscount;
   const isRTL = lang === "ar";
   const deliveryText = `${t("productDetails.deliveryTime", "التوصيل خلال")} ${getDeliveryDate(lang === "en" ? "en" : "ar")}`;
-  const returnPolicyText = t("productDetails.returnPolicy", "إرجاع خلال 14 يوم");
+  const returnPolicyText = t("productDetails.returnPolicy", "إرجاع خلال 7 أيام");
   
   // API returns the correct language already
   const productName = product?.productName || "";
@@ -463,7 +835,7 @@ export default function ProductDetails() {
             offers: {
               "@type": "Offer",
               url: window.location.href,
-              priceCurrency: "EGP",
+              priceCurrency: "AED",
               price: Price,
               priceValidUntil: "2025-12-31",
               availability:
@@ -539,31 +911,74 @@ export default function ProductDetails() {
               onShare={handleShareProduct}
             />
 
-            <ProductOptionsCard
-              t={t}
-              Colors={Colors}
-              CurrentColor={CurrentColor}
-              setCurrentColor={setCurrentColor}
-              Sizes={Sizes}
-              CurrentSize={CurrentSize}
-              setCurrentSize={setCurrentSize}
-              Quantity={Quantity}
-              setQuantity={setQuantity}
-              availableQuantity={availableQuantity}
-              handlBuyClick={handlBuyClick}
-              DetailsId={DetailsId}
-              translateColor={translateColor}
-              isRTL={isRTL}
-              showBanner={showBanner}
-              productId={product?.productId}
-              availableColorsForSize={availableColorsForSize}
-              onColorChange={(color) => {
-                setCurrentColor(color);
-              }}
-              onSizeChange={(size) => {
-                setCurrentSize(size);
-              }}
-            />
+            <div className="relative">
+              {DetailsLoadingOverlay}
+              <ProductOptionsCard
+                t={t}
+                Colors={Colors}
+                CurrentColor={CurrentColor}
+                setCurrentColor={setCurrentColor}
+                Sizes={Sizes}
+                CurrentSize={CurrentSize}
+                setCurrentSize={setCurrentSize}
+                Quantity={Quantity}
+                setQuantity={setQuantity}
+                availableQuantity={availableQuantity}
+                handlBuyClick={handlBuyClick}
+                DetailsId={DetailsId}
+                translateColor={translateColor}
+                translateSize={translateSize}
+                isRTL={isRTL}
+                showBanner={showBanner}
+                productId={product?.productId}
+                availableColorsForSize={availableColorsForSize}
+                product={product ? {
+                  productId: product.productId,
+                  productName: product.productName || "",
+                  priceAfterDiscount: product.priceAfterDiscount || product.productPrice || 0,
+                  productPrice: product.productPrice || 0,
+                  productImage: product.productImage || Img || "",
+                  categoryName: product.categoryName || product.categoryNameAr || product.categoryNameEn || "",
+                } : null}
+                onColorChange={(color) => {
+                  setCurrentColor(color);
+                }}
+                onSizeChange={(size) => {
+                  setCurrentSize(size);
+                }}
+              />
+            </div>
+
+            {/* Shipping Area Selector */}
+            <div className="bg-blue-50 rounded-2xl shadow-xl p-6 border border-blue-200">
+              <div className="flex flex-col space-y-4">
+                <label className="text-lg font-semibold text-blue-900">
+                  {t("productDetails.shipTo", "شحن إلى")}:
+                </label>
+                <select
+                  value={selectedShippingArea}
+                  onChange={(e) => setSelectedShippingArea(e.target.value)}
+                  className="w-full p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-900"
+                >
+                  <option value="">{t("productDetails.selectShippingArea", "اختر منطقة الشحن")}</option>
+                  {shippingAreas.map((area) => (
+                    <option key={area.id} value={area.governorate}>
+                      {translateGovernorate(area.governorate)}
+                    </option>
+                  ))}
+                </select>
+                {deliveryTimeDays !== null && (
+                  <div className="bg-white p-4 rounded-lg border border-blue-200">
+                    <p className="text-blue-800 font-medium">
+                      {t("productDetails.estimatedDelivery", "الوقت المتوقع للوصول")}:{" "}
+                      <span className="font-bold text-orange-600">
+                        {deliveryTimeDays} {t("productDetails.days", "يوم")}
+                      </span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* قسم التفاصيل الإضافية */}
@@ -576,14 +991,26 @@ export default function ProductDetails() {
             </div>
           </div>
 
-          {/* التعليقات */}
-          <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
-            <Reviews productId={Number(product?.productId || id)} />
+          {/* التعليقات - Lazy Loading */}
+          <div ref={reviewsRefCallback} className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6 min-h-[200px]">
+            {showReviews ? (
+              <Reviews productId={Number(product?.productId || id)} />
+            ) : (
+              <div className="flex justify-center items-center h-32">
+                <div className="text-gray-400">{t("productDetails.loading", "جاري التحميل...")}</div>
+              </div>
+            )}
           </div>
 
-          {/* المنتجات ذات الصلة */}
-          <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
-            <RelatedProducts product={product} />
+          {/* المنتجات ذات الصلة - Lazy Loading */}
+          <div ref={relatedProductsRefCallback} className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6 min-h-[200px]">
+            {showRelatedProducts ? (
+              <RelatedProducts product={product} />
+            ) : (
+              <div className="flex justify-center items-center h-32">
+                <div className="text-gray-400">{t("productDetails.loading", "جاري التحميل...")}</div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -610,31 +1037,74 @@ export default function ProductDetails() {
               onShare={handleShareProduct}
             />
 
-            <ProductOptionsCard
-              t={t}
-              Colors={Colors}
-              CurrentColor={CurrentColor}
-              setCurrentColor={setCurrentColor}
-              Sizes={Sizes}
-              CurrentSize={CurrentSize}
-              setCurrentSize={setCurrentSize}
-              Quantity={Quantity}
-              setQuantity={setQuantity}
-              availableQuantity={availableQuantity}
-              handlBuyClick={handlBuyClick}
-              DetailsId={DetailsId}
-              translateColor={translateColor}
-              isRTL={isRTL}
-              showBanner={showBanner}
-              productId={product?.productId}
-              availableColorsForSize={availableColorsForSize}
-              onColorChange={(color) => {
-                setCurrentColor(color);
-              }}
-              onSizeChange={(size) => {
-                setCurrentSize(size);
-              }}
-            />
+            <div className="relative">
+              {DetailsLoadingOverlay}
+              <ProductOptionsCard
+                t={t}
+                Colors={Colors}
+                CurrentColor={CurrentColor}
+                setCurrentColor={setCurrentColor}
+                Sizes={Sizes}
+                CurrentSize={CurrentSize}
+                setCurrentSize={setCurrentSize}
+                Quantity={Quantity}
+                setQuantity={setQuantity}
+                availableQuantity={availableQuantity}
+                handlBuyClick={handlBuyClick}
+                DetailsId={DetailsId}
+                translateColor={translateColor}
+                translateSize={translateSize}
+                isRTL={isRTL}
+                showBanner={showBanner}
+                productId={product?.productId}
+                availableColorsForSize={availableColorsForSize}
+                product={product ? {
+                  productId: product.productId,
+                  productName: product.productName || "",
+                  priceAfterDiscount: product.priceAfterDiscount || product.productPrice || 0,
+                  productPrice: product.productPrice || 0,
+                  productImage: product.productImage || Img || "",
+                  categoryName: product.categoryName || product.categoryNameAr || product.categoryNameEn || "",
+                } : null}
+                onColorChange={(color) => {
+                  setCurrentColor(color);
+                }}
+                onSizeChange={(size) => {
+                  setCurrentSize(size);
+                }}
+              />
+            </div>
+
+            {/* Shipping Area Selector */}
+            <div className="bg-blue-50 rounded-2xl shadow-xl p-6 border border-blue-200">
+              <div className="flex flex-col space-y-4">
+                <label className="text-lg font-semibold text-blue-900">
+                  {t("productDetails.shipTo", "شحن إلى")}:
+                </label>
+                <select
+                  value={selectedShippingArea}
+                  onChange={(e) => setSelectedShippingArea(e.target.value)}
+                  className="w-full p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-blue-900"
+                >
+                  <option value="">{t("productDetails.selectShippingArea", "اختر منطقة الشحن")}</option>
+                  {shippingAreas.map((area) => (
+                    <option key={area.id} value={area.governorate}>
+                      {translateGovernorate(area.governorate)}
+                    </option>
+                  ))}
+                </select>
+                {deliveryTimeDays !== null && (
+                  <div className="bg-white p-4 rounded-lg border border-blue-200">
+                    <p className="text-blue-800 font-medium">
+                      {t("productDetails.estimatedDelivery", "الوقت المتوقع للوصول")}:{" "}
+                      <span className="font-bold text-orange-600">
+                        {deliveryTimeDays} {t("productDetails.days", "يوم")}
+                      </span>
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -650,14 +1120,26 @@ export default function ProductDetails() {
             </div>
           </div>
 
-          {/* التعليقات */}
-          <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
-            <Reviews productId={Number(product?.productId || id)} />
+          {/* التعليقات - Lazy Loading */}
+          <div ref={reviewsRefCallback} className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6 min-h-[200px]">
+            {showReviews ? (
+              <Reviews productId={Number(product?.productId || id)} />
+            ) : (
+              <div className="flex justify-center items-center h-32">
+                <div className="text-gray-400">{t("productDetails.loading", "جاري التحميل...")}</div>
+              </div>
+            )}
           </div>
 
-          {/* المنتجات ذات الصلة */}
-          <div className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6">
-            <RelatedProducts product={product} />
+          {/* المنتجات ذات الصلة - Lazy Loading */}
+          <div ref={relatedProductsRefCallback} className="bg-[#FAFAFA] rounded-2xl shadow-xl p-6 min-h-[200px]">
+            {showRelatedProducts ? (
+              <RelatedProducts product={product} />
+            ) : (
+              <div className="flex justify-center items-center h-32">
+                <div className="text-gray-400">{t("productDetails.loading", "جاري التحميل...")}</div>
+              </div>
+            )}
           </div>
         </div>
         </div>
